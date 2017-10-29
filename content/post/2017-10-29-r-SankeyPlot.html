@@ -1,0 +1,66 @@
+---
+title: "桑基图（Sankey diagram）"
+output: html_document
+categories: ["R"]
+date: 2017-10-29T21:13:14-05:00
+---
+
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/d3/d3.min.js"></script>
+<script src="/rmarkdown-libs/sankey/sankey.js"></script>
+<script src="/rmarkdown-libs/sankeyNetwork-binding/sankeyNetwork.js"></script>
+
+
+<div class="section level2">
+<h2>简介</h2>
+<p>桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图： <img src="https://user-images.githubusercontent.com/13619847/30794024-6e688e3a-a1f8-11e7-894a-4c2924890bb6.png" /></p>
+</div>
+<div class="section level2">
+<h2>数据准备</h2>
+<p>此处我们使用<a href="https://bitbucket.org/biobakery/biobakery/wiki/metaphlan2">Metaphlan2 tutorial</a>中的数据，来源于牙龈菌斑的宏基因组测序：</p>
+<pre class="r"><code>download.file(&#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&#39;, destfile = &#39;SRS014476-Supragingival_plaque_profile.txt&#39;)
+taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE)</code></pre>
+</div>
+<div id="networkdd3" class="section level2">
+<h2>加载networkdD3包</h2>
+<p>该包使用D3.js实现数据的交互式可视化，具体一些例子参见<a href="https://christophergandrud.github.io/networkD3/">这里</a>：</p>
+<pre class="r"><code>library(networkD3)</code></pre>
+</div>
+<div class="section level2">
+<h2>数据预处理</h2>
+<p>函数<a href="https://www.rdocumentation.org/packages/networkD3/versions/0.4/topics/sankeyNetwork">sankeyNetwork</a>主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从<strong>0</strong>开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。</p>
+<pre class="r"><code>second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA)
+
+taxtab &lt;- taxtab[-grep(&#39;unclassified&#39;, taxtab$V1), ]   ## remove unlassified taxa
+ 
+tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;)                ## split into different taxonomy levels
+target &lt;- sapply(tax_split, tail, n=1)                 ## target node
+mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target)
+target_id &lt;- mapping$id
+source &lt;- sapply(tax_split, second_last)               ## source node
+source_id &lt;- mapping[source,]
+value &lt;- taxtab$V2                                     ## width of flow
+
+links &lt;- data.frame(source=source_id, target=target_id, value) ## links
+links &lt;- links[!is.na(links$source), ]                 ## root of the tree has no parent (source)
+nodes &lt;- data.frame(do.call(rbind, strsplit(target,&#39;__&#39;)))
+colnames(nodes)=c(&#39;tax&#39;, &#39;name&#39;)</code></pre>
+</div>
+<div class="section level2">
+<h2>绘图</h2>
+<pre class="r"><code>sankeyNetwork(Links = links, Nodes = nodes, 
+              Source = &quot;source&quot;, Target = &quot;target&quot;, 
+              Value = &quot;value&quot;, NodeID = &quot;name&quot;, NodeGroup = &#39;tax&#39;,
+              sinksRight=FALSE, fontSize = 10, nodeWidth = 20, nodePadding=40, 
+              height =200, width = 900)</code></pre>
+<p><div id="htmlwidget-1" style="width:900px;height:200px;" class="sankeyNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"links":{"source":[0,0,1,2,3,4,5,5,6,7,8,9,10,11],"target":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],"value":[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966]},"nodes":{"name":["Bacteria","Actinobacteria","Bacteroidetes","Actinobacteria","Flavobacteriia","Actinomycetales","Flavobacteriales","Corynebacteriaceae","Micrococcaceae","Flavobacteriaceae","Corynebacterium","Rothia","Capnocytophaga","Corynebacterium_matruchotii","Rothia_dentocariosa"],"group":["k","p","p","c","c","o","o","f","f","f","g","g","g","s","s"]},"options":{"NodeID":"name","NodeGroup":"tax","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":10,"fontFamily":null,"nodeWidth":20,"nodePadding":40,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":false}},"evals":[],"jsHooks":[]}</script> 在此图中，不同颜色代表不同的taxonomy level，连接的宽度代表相对丰度。</p>
+</div>
+<div class="section level2">
+<h2>桑基图工具的其他选择</h2>
+<ul>
+<li>用于生成第一张图的<a href="https://github.com/BetaCollins/Sankey">源代码</a>基于Cairo，操作更加复杂</li>
+<li>最新发布于<a href="https://www.biorxiv.org/content/early/2017/09/20/191767">bioRxiv</a>的BioSankey：<a href="https://github.com/nthomasCUBE/BioSankey" class="uri">https://github.com/nthomasCUBE/BioSankey</a></li>
+<li>拥有图形界面的Pavian: <a href="https://github.com/fbreitwieser/pavian" class="uri">https://github.com/fbreitwieser/pavian</a></li>
+</ul>
+</div>
