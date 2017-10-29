@@ -1,4 +1,4 @@
-baseURL = "https://lch14forever.github.io/blog/"
+baseURL = "/"
 languageCode = "en"
 title = "Chenhao's Blog"
 theme = "hugo-nuo"
@@ -6,6 +6,7 @@ enableRobotsTXT = true
 pygmentsuseclasses = true
 PygmentsCodeFences = true
 canonifyurls = true
+ignoreFiles = ["_files$", "_cache$"]
 
 # Disqus Username
 disqusShortname = "lichenhao"
@@ -35,7 +36,7 @@ copyright = "© This site was created with R BlogDown and HuGo by Chenhao Li."
   avatar = "/img/avatar.jpg"
   seotitle = "Chenhao's blog posts"
   subtitle = "~ Think as a scientist & Work as an engineer ~"
-  description = "Hugo is one of the most popular open-source static site generators. With its amazing speed and flexibility, Hugo makes building websites fun again."
+  description = ""
   paginate = 10
 
   # Choose your social networks
