@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Chenhao&#39;s Blog</title>
-    <link>/</link>
-    <description>Recent content on Chenhao&#39;s Blog</description>
+    <title>R on Chenhao&#39;s Blog</title>
+    <link>/tags/r/</link>
+    <description>Recent content in R on Chenhao&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
-    <lastBuildDate>Wed, 09 Apr 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 29 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Links</title>
-      <link>/links/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/links/</guid>
-      <description>Ritchie and his friends.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/about/</guid>
-      <description>I am a bioinformatician and Ph.D student from Computational and System Biology Group 5 (CSB5), Genome Institute of Singapore (GIS). I graduated from Faculty of Science, National University of Singapore (NUS), majored in computational biology, after which I decided to seek after a career as a researcher. I am interested in abroad range of biological problems. I believe that all biological processes will leave some clues. By investigating such clues, we can not only identify the indicators of the biological process (i.</description>
-    </item>
     
     <item>
       <title>桑基图（Sankey diagram）</title>
