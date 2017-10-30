@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>超大宏基因组数据集CuratedMetagenomicData</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Chenhao Li (李陈浩)" />
+  <meta name="description" content="简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
+ 完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
+ 安装 通过Bioconductor安装最新版本
+## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
+suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 查看metadata
+combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # ." />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@li_chenhao" />
+    <meta name="twitter:title" content="超大宏基因组数据集CuratedMetagenomicData" />
+    <meta name="twitter:description" content="简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
+ 完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
+ 安装 通过Bioconductor安装最新版本
+## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
+suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 查看metadata
+combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # ." />
+    <meta name="twitter:image" content="/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.30.2" />
+
+
+<link rel="canonical" href="/post/2017-10-30-r-curatedmetagenomicdata/" />
+<link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+
+
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Chenhao&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Chenhao&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="/img/avatar.jpg" alt="Avatar">
+  
+  <h2 class="title">Chenhao&#39;s Blog</h2>
+  
+  <p class="subtitle">~ Think as a scientist &amp; Work as an engineer ~</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/lch14forever">Works</a></li>
+      
+        <li class="menu-item "><a href="/links/">Links</a></li>
+      
+        <li class="menu-item "><a href="/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:lichenhao.sg@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/lch14forever" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/li_chenhao" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.linkedin.com/in/chenhao-li-1b695b99" title="Linkedin"><span class="icon icon-linkedin"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">超大宏基因组数据集CuratedMetagenomicData</h1>
+      <p class="post-meta">@Chenhao Li (李陈浩) · Oct 30, 2017 · 6 min read</p>
+    </header>
+    <article class="post-content"><div class="section level1">
+<h1>简介</h1>
+<p>CuratedMetagenomicData(<a href="https://waldronlab.github.io/curatedMetagenomicData/" class="uri">https://waldronlab.github.io/curatedMetagenomicData/</a>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-included/">6000余个样本</a>并在持续<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/">扩建</a>当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。</p>
+</div>
+<div class="section level1">
+<h1>完整帮助信息</h1>
+<p><a href="https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html" class="uri">https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html</a></p>
+</div>
+<div class="section level1">
+<h1>安装</h1>
+<p>通过<a href="https://bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html">Bioconductor</a>安装最新版本</p>
+<pre class="r"><code>## try http:// if https:// URLs are not supported
+source(&quot;https://bioconductor.org/biocLite.R&quot;)
+useDevel()
+biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
+</div>
+<div class="section level1">
+<h1>基本使用</h1>
+<p>调用</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(curatedMetagenomicData))</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
+<pre><code>## Warning: package &#39;BiocGenerics&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## Warning: package &#39;ExperimentHub&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## Warning: package &#39;AnnotationHub&#39; was built under R version 3.4.2</code></pre>
+<p>查看metadata</p>
+<pre class="r"><code>combined_metadata</code></pre>
+<pre><code>## # A tibble: 6,058 x 80
+##     dataset_name      sampleID subjectID body_site antibiotics_current_use
+##            &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;                   &lt;chr&gt;
+##  1 AsnicarF_2017 MV_FEI1_t1Q14   MV_FEI1     stool                    &lt;NA&gt;
+##  2 AsnicarF_2017 MV_FEI2_t1Q14   MV_FEI2     stool                    &lt;NA&gt;
+##  3 AsnicarF_2017 MV_FEI3_t1Q14   MV_FEI3     stool                    &lt;NA&gt;
+##  4 AsnicarF_2017 MV_FEI4_t1Q14   MV_FEI4     stool                    &lt;NA&gt;
+##  5 AsnicarF_2017 MV_FEI4_t2Q15   MV_FEI4     stool                    &lt;NA&gt;
+##  6 AsnicarF_2017 MV_FEI5_t1Q14   MV_FEI5     stool                    &lt;NA&gt;
+##  7 AsnicarF_2017 MV_FEI5_t2Q14   MV_FEI5     stool                    &lt;NA&gt;
+##  8 AsnicarF_2017 MV_FEI5_t3Q15   MV_FEI5     stool                    &lt;NA&gt;
+##  9 AsnicarF_2017 MV_FEM1_t1Q14   MV_FEM1     stool                    &lt;NA&gt;
+## 10 AsnicarF_2017 MV_FEM2_t1Q14   MV_FEM2     stool                    &lt;NA&gt;
+## # ... with 6,048 more rows, and 75 more variables: study_condition &lt;chr&gt;,
+## #   disease &lt;chr&gt;, age &lt;int&gt;, infant_age &lt;int&gt;, age_category &lt;chr&gt;,
+## #   gender &lt;chr&gt;, country &lt;chr&gt;, non_westernized &lt;chr&gt;,
+## #   sequencing_platform &lt;chr&gt;, DNA_extraction_kit &lt;chr&gt;, PMID &lt;chr&gt;,
+## #   number_reads &lt;int&gt;, number_bases &lt;dbl&gt;, minimum_read_length &lt;int&gt;,
+## #   median_read_length &lt;dbl&gt;, pregnant &lt;chr&gt;, lactating &lt;chr&gt;,
+## #   NCBI_accession &lt;chr&gt;, BMI &lt;dbl&gt;, antibiotics_family &lt;chr&gt;,
+## #   momeducat &lt;int&gt;, alcohol &lt;chr&gt;, `flg-genotype` &lt;chr&gt;,
+## #   disease_subtype &lt;chr&gt;, hdl &lt;dbl&gt;, triglycerides &lt;dbl&gt;, hba1c &lt;dbl&gt;,
+## #   ldl &lt;dbl&gt;, tnm &lt;chr&gt;, body_subsite &lt;chr&gt;, visit_number &lt;int&gt;,
+## #   days_from_first_collection &lt;int&gt;, `c-peptide` &lt;dbl&gt;, family &lt;int&gt;,
+## #   cholesterol &lt;dbl&gt;, glucose &lt;dbl&gt;, mumps &lt;chr&gt;, adiponectin &lt;dbl&gt;,
+## #   `insulin(cat)` &lt;chr&gt;, `fgf-19` &lt;dbl&gt;, hscrp &lt;dbl&gt;, leptin &lt;dbl&gt;,
+## #   glutamate_decarboxylase_2_antibody &lt;dbl&gt;, creatinine &lt;dbl&gt;,
+## #   `il-1` &lt;dbl&gt;, cd163 &lt;dbl&gt;, `glp-1` &lt;dbl&gt;, hitchip_probe_class &lt;chr&gt;,
+## #   hitchip_probe_number &lt;int&gt;, protein_intake &lt;dbl&gt;,
+## #   days_after_onset &lt;int&gt;, stec_count &lt;chr&gt;, shigatoxin_2_elisa &lt;chr&gt;,
+## #   stool_texture &lt;chr&gt;, ferm_milk_prod_consumer &lt;chr&gt;,
+## #   mgs_richness &lt;dbl&gt;, location &lt;chr&gt;, dyastolic_p &lt;dbl&gt;,
+## #   systolic_p &lt;dbl&gt;, prothrombin_time &lt;int&gt;, creatine &lt;dbl&gt;, inr &lt;dbl&gt;,
+## #   ctp &lt;int&gt;, albumine &lt;dbl&gt;, bilubirin &lt;dbl&gt;, smoker &lt;chr&gt;,
+## #   ever_smoker &lt;chr&gt;, birth_control_pil &lt;chr&gt;, hla_drb12 &lt;int&gt;,
+## #   hla_dqa12 &lt;int&gt;, hla_dqa11 &lt;int&gt;, hla_drb11 &lt;int&gt;,
+## #   start_solidfood &lt;int&gt;, ajcc &lt;chr&gt;, fobt &lt;chr&gt;</code></pre>
+<p>查看metadata参数</p>
+<pre class="r"><code>colnames(combined_metadata)</code></pre>
+<pre><code>##  [1] &quot;dataset_name&quot;                      
+##  [2] &quot;sampleID&quot;                          
+##  [3] &quot;subjectID&quot;                         
+##  [4] &quot;body_site&quot;                         
+##  [5] &quot;antibiotics_current_use&quot;           
+##  [6] &quot;study_condition&quot;                   
+##  [7] &quot;disease&quot;                           
+##  [8] &quot;age&quot;                               
+##  [9] &quot;infant_age&quot;                        
+## [10] &quot;age_category&quot;                      
+## [11] &quot;gender&quot;                            
+## [12] &quot;country&quot;                           
+## [13] &quot;non_westernized&quot;                   
+## [14] &quot;sequencing_platform&quot;               
+## [15] &quot;DNA_extraction_kit&quot;                
+## [16] &quot;PMID&quot;                              
+## [17] &quot;number_reads&quot;                      
+## [18] &quot;number_bases&quot;                      
+## [19] &quot;minimum_read_length&quot;               
+## [20] &quot;median_read_length&quot;                
+## [21] &quot;pregnant&quot;                          
+## [22] &quot;lactating&quot;                         
+## [23] &quot;NCBI_accession&quot;                    
+## [24] &quot;BMI&quot;                               
+## [25] &quot;antibiotics_family&quot;                
+## [26] &quot;momeducat&quot;                         
+## [27] &quot;alcohol&quot;                           
+## [28] &quot;flg-genotype&quot;                      
+## [29] &quot;disease_subtype&quot;                   
+## [30] &quot;hdl&quot;                               
+## [31] &quot;triglycerides&quot;                     
+## [32] &quot;hba1c&quot;                             
+## [33] &quot;ldl&quot;                               
+## [34] &quot;tnm&quot;                               
+## [35] &quot;body_subsite&quot;                      
+## [36] &quot;visit_number&quot;                      
+## [37] &quot;days_from_first_collection&quot;        
+## [38] &quot;c-peptide&quot;                         
+## [39] &quot;family&quot;                            
+## [40] &quot;cholesterol&quot;                       
+## [41] &quot;glucose&quot;                           
+## [42] &quot;mumps&quot;                             
+## [43] &quot;adiponectin&quot;                       
+## [44] &quot;insulin(cat)&quot;                      
+## [45] &quot;fgf-19&quot;                            
+## [46] &quot;hscrp&quot;                             
+## [47] &quot;leptin&quot;                            
+## [48] &quot;glutamate_decarboxylase_2_antibody&quot;
+## [49] &quot;creatinine&quot;                        
+## [50] &quot;il-1&quot;                              
+## [51] &quot;cd163&quot;                             
+## [52] &quot;glp-1&quot;                             
+## [53] &quot;hitchip_probe_class&quot;               
+## [54] &quot;hitchip_probe_number&quot;              
+## [55] &quot;protein_intake&quot;                    
+## [56] &quot;days_after_onset&quot;                  
+## [57] &quot;stec_count&quot;                        
+## [58] &quot;shigatoxin_2_elisa&quot;                
+## [59] &quot;stool_texture&quot;                     
+## [60] &quot;ferm_milk_prod_consumer&quot;           
+## [61] &quot;mgs_richness&quot;                      
+## [62] &quot;location&quot;                          
+## [63] &quot;dyastolic_p&quot;                       
+## [64] &quot;systolic_p&quot;                        
+## [65] &quot;prothrombin_time&quot;                  
+## [66] &quot;creatine&quot;                          
+## [67] &quot;inr&quot;                               
+## [68] &quot;ctp&quot;                               
+## [69] &quot;albumine&quot;                          
+## [70] &quot;bilubirin&quot;                         
+## [71] &quot;smoker&quot;                            
+## [72] &quot;ever_smoker&quot;                       
+## [73] &quot;birth_control_pil&quot;                 
+## [74] &quot;hla_drb12&quot;                         
+## [75] &quot;hla_dqa12&quot;                         
+## [76] &quot;hla_dqa11&quot;                         
+## [77] &quot;hla_drb11&quot;                         
+## [78] &quot;start_solidfood&quot;                   
+## [79] &quot;ajcc&quot;                              
+## [80] &quot;fobt&quot;</code></pre>
+<p>获取人体各部位样本概况</p>
+<pre class="r"><code>table(combined_metadata$body_site)</code></pre>
+<pre><code>## 
+##        milk nasalcavity  oralcavity        skin       stool      vagina 
+##           8          91         678         466        4810           5</code></pre>
+<p>获取包含的数据集</p>
+<pre class="r"><code>table(combined_metadata$dataset_name)</code></pre>
+<pre><code>## 
+##        AsnicarF_2017         BritoIL_2016  Castro-NallarE_2015 
+##                   24                  312                   32 
+##          ChngKR_2016           FengQ_2015      HanniganGD_2017 
+##                   78                  154                   82 
+## Heitz-BuschartA_2016             HMP_2012      KarlssonFH_2013 
+##                   53                  749                  145 
+##    LeChatelierE_2013             LiJ_2014            LiuW_2016 
+##                  292                  260                  110 
+##         LomanNJ_2013       NielsenHB_2014  Obregon-TitoAJ_2015 
+##                   43                  396                   58 
+##             OhJ_2014            QinJ_2012            QinN_2014 
+##                  291                  363                  237 
+##       RampelliS_2015        RaymondF_2016       SchirmerM_2016 
+##                   38                   72                  471 
+##          TettAJ_2016        VatanenT_2016        VincentC_2016 
+##                   97                  785                  229 
+##       VogtmannE_2016            XieH_2016             YuJ_2015 
+##                  110                  250                  128 
+##         ZellerG_2014 
+##                  199</code></pre>
+<p>下载HMP 2012（HMP I）的MetaPhlAn2分析结果</p>
+<pre class="r"><code>dat &lt;- curatedMetagenomicData(&quot;HMP_2012.metaphlan_bugs_list.*&quot;, dryrun=FALSE)</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.nasalcavity</code></pre>
+<pre><code>## snapshotDate(): 2017-10-26</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.oralcavity</code></pre>
+<pre><code>## snapshotDate(): 2017-10-26</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.stool</code></pre>
+<pre><code>## snapshotDate(): 2017-10-26</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.vagina</code></pre>
+<pre><code>## snapshotDate(): 2017-10-26</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
+<p>查看HMP I粪便数据的元数据</p>
+<pre class="r"><code>head( pData(dat[[3]]) )</code></pre>
+<pre><code>##                    subjectID body_site body_subsite
+## SRS056519 HMP_2012_765094712     stool        stool
+## SRS016335 HMP_2012_765074482     stool        stool
+## SRS011061 HMP_2012_158458797     stool        stool
+## SRS016267 HMP_2012_764669880     stool        stool
+## SRS053214 HMP_2012_159753524     stool        stool
+## SRS013521 HMP_2012_159227541     stool        stool
+##           antibiotics_current_use study_condition disease age age_category
+## SRS056519                    &lt;NA&gt;         control healthy  19    schoolage
+## SRS016335                    &lt;NA&gt;         control healthy  20        adult
+## SRS011061                    &lt;NA&gt;         control healthy  30        adult
+## SRS016267                    &lt;NA&gt;         control healthy  29        adult
+## SRS053214                    &lt;NA&gt;         control healthy  23        adult
+## SRS013521                    &lt;NA&gt;         control healthy  22        adult
+##           gender visit_number BMI country non_westernized
+## SRS056519   male           NA  NA     USA              no
+## SRS016335   male           NA  NA     USA              no
+## SRS011061 female           NA  NA     USA              no
+## SRS016267   male           NA  NA     USA              no
+## SRS053214 female           NA  NA     USA              no
+## SRS013521 female           NA  NA     USA              no
+##           DNA_extraction_kit number_reads number_bases minimum_read_length
+## SRS056519             Qiagen    125076707  12506449555                  60
+## SRS016335             Qiagen    125043127  11938455408                  60
+## SRS011061             Qiagen     90085554   8028157196                  60
+## SRS016267             Qiagen    103068446   9820433068                  60
+## SRS053214             Qiagen    103639606   9687833906                  60
+## SRS013521             Qiagen    115013916  10925100631                  60
+##           median_read_length NCBI_accession
+## SRS056519                100      SRS056519
+## SRS016335                100      SRS016335
+## SRS011061                 90      SRS011061
+## SRS016267                100      SRS016267
+## SRS053214                 95      SRS053214
+## SRS013521                 95      SRS013521</code></pre>
+<p>查看MetaPhlan相对丰度表</p>
+<pre class="r"><code>hmp_stool_metaphlan &lt;- exprs(dat[[3]])
+hmp_stool_metaphlan[1:10, 1:10]</code></pre>
+<pre><code>##                                                 SRS056519 SRS016335
+## k__Viruses                                        0.00090   0.00179
+## k__Bacteria                                      99.99910  99.96451
+## k__Viruses|p__Viruses_noname                      0.00090   0.00179
+## k__Bacteria|p__Actinobacteria                     0.25980   0.13760
+## k__Bacteria|p__Firmicutes                         9.52434  18.67835
+## k__Bacteria|p__Proteobacteria                     2.27579   2.32088
+## k__Bacteria|p__Bacteroidetes                     87.93779  77.40923
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00090   0.00179
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.25980   0.13760
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01382   0.02164
+##                                                 SRS011061 SRS016267
+## k__Viruses                                        0.00000   0.00000
+## k__Bacteria                                     100.00000 100.00000
+## k__Viruses|p__Viruses_noname                      0.00000   0.00000
+## k__Bacteria|p__Actinobacteria                     0.04200   0.11105
+## k__Bacteria|p__Firmicutes                         5.59309   3.98890
+## k__Bacteria|p__Proteobacteria                     2.98345   0.55210
+## k__Bacteria|p__Bacteroidetes                     91.07961  95.28808
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.04200   0.11105
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.04196   0.00000
+##                                                 SRS053214 SRS013521
+## k__Viruses                                        0.00000   0.00882
+## k__Bacteria                                     100.00000  99.99118
+## k__Viruses|p__Viruses_noname                      0.00000   0.00882
+## k__Bacteria|p__Actinobacteria                     0.46158   0.08515
+## k__Bacteria|p__Firmicutes                        16.03493   1.73242
+## k__Bacteria|p__Proteobacteria                     0.23830   0.49311
+## k__Bacteria|p__Bacteroidetes                     80.04580  97.68049
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00882
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.46158   0.08515
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01578   0.02924
+##                                                 SRS018817 SRS017247
+## k__Viruses                                        0.00000   0.00000
+## k__Bacteria                                     100.00000 100.00000
+## k__Viruses|p__Viruses_noname                      0.00000   0.00000
+## k__Bacteria|p__Actinobacteria                     0.08518   0.15577
+## k__Bacteria|p__Firmicutes                        11.52659   4.35400
+## k__Bacteria|p__Proteobacteria                     0.22363   0.21245
+## k__Bacteria|p__Bacteroidetes                     87.99725  95.08394
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.08518   0.15577
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.00443   0.01766
+##                                                 SRS019968 SRS064557
+## k__Viruses                                        0.00077   0.00194
+## k__Bacteria                                      99.99923  99.99806
+## k__Viruses|p__Viruses_noname                      0.00077   0.00194
+## k__Bacteria|p__Actinobacteria                     0.16129   0.03814
+## k__Bacteria|p__Firmicutes                        16.11446   2.69009
+## k__Bacteria|p__Proteobacteria                     0.17522   1.50628
+## k__Bacteria|p__Bacteroidetes                     82.54661  95.76355
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00077   0.00194
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147</code></pre>
+</div>
+</article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="/tags/r"><span class="tag">R</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This site was created with R BlogDown and HuGo by Chenhao Li.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Chenhao&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\[','\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+<script src="/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-108829179-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+  </body>
+</html>

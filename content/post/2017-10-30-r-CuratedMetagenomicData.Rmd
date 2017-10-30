@@ -1,0 +1,69 @@
+---
+title: "超大宏基因组数据集CuratedMetagenomicData"
+output: html_document
+categories: ["R"]
+tags: ["R"]
+date: 2017-10-30
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 简介
+CuratedMetagenomicData(<https://waldronlab.github.io/curatedMetagenomicData/>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录[6000余个样本](https://waldronlab.github.io/curatedMetagenomicData/datasets-included/)并在持续[扩建](https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/)当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
+
+# 完整帮助信息
+<https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html>
+
+# 安装
+通过[Bioconductor](https://bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html)安装最新版本
+```{r eval = FALSE}
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+useDevel()
+biocLite("curatedMetagenomicData")
+```
+
+# 基本使用
+
+调用
+```{r}
+suppressPackageStartupMessages(library(curatedMetagenomicData))
+```
+
+查看metadata
+```{r}
+combined_metadata
+```
+
+查看metadata参数
+```{r}
+colnames(combined_metadata)
+```
+
+获取人体各部位样本概况
+```{r}
+table(combined_metadata$body_site)
+```
+
+获取包含的数据集
+```{r}
+table(combined_metadata$dataset_name)
+```
+
+下载HMP 2012（HMP I）的MetaPhlAn2分析结果
+```{r}
+dat <- curatedMetagenomicData("HMP_2012.metaphlan_bugs_list.*", dryrun=FALSE)
+```
+
+查看HMP I粪便数据的元数据
+```{r}
+head( pData(dat[[3]]) )
+```
+
+查看MetaPhlan相对丰度表
+```{r}
+hmp_stool_metaphlan <- exprs(dat[[3]])
+hmp_stool_metaphlan[1:10, 1:10]
+```
