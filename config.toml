@@ -12,7 +12,7 @@ ignoreFiles = ["_files$", "_cache$"]
 disqusShortname = "lichenhao"
 
 # Google Analytics UA number
-googleAnalytics = "UA-XXXXXXXX-X"
+googleAnalytics = "UA-108829179-1"
 
 # Copyright of your post
 copyright = "© This site was created with R BlogDown and HuGo by Chenhao Li."
