@@ -2,7 +2,7 @@
 title: "超大宏基因组数据集CuratedMetagenomicData"
 output: html_document
 categories: ["R"]
-tags: ["R"]
+tags: ["R","Sankey"]
 date: 2017-10-30
 ---
 

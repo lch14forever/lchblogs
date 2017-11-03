@@ -194,6 +194,19 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-11-02-r-sankeyplot2/" class="post-link">桑基图（Sankey diagram）II</a></h3>
+    <p class="post-meta">@Chenhao Li (李陈浩) · Nov 2, 2017 · 3 min read</p>
+  </header>
+  
+  <p class="post-summary">使用plotly 预处理 taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE) second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;t__.*unclassified&#39;, taxtab$V1), ] ## remove strain level tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-11-02-r-sankeyplot2/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="/post/2017-10-30-r-curatedmetagenomicdata/" class="post-link">超大宏基因组数据集CuratedMetagenomicData</a></h3>
     <p class="post-meta">@Chenhao Li (李陈浩) · Oct 30, 2017 · 6 min read</p>
   </header>

@@ -2,7 +2,7 @@
 title: "桑基图（Sankey diagram）"
 output: html_document
 categories: ["R"]
-tags: ["R"]
+tags: ["R","Sankey"]
 date: 2017-10-29
 ---
 

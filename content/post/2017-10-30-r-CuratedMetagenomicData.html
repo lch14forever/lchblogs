@@ -2,29 +2,29 @@
 title: "超大宏基因组数据集CuratedMetagenomicData"
 output: html_document
 categories: ["R"]
-tags: ["R"]
+tags: ["R","Sankey"]
 date: 2017-10-30
 ---
 
 
 
-<div class="section level1">
+<section class="level1">
 <h1>简介</h1>
 <p>CuratedMetagenomicData(<a href="https://waldronlab.github.io/curatedMetagenomicData/" class="uri">https://waldronlab.github.io/curatedMetagenomicData/</a>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-included/">6000余个样本</a>并在持续<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/">扩建</a>当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。</p>
-</div>
-<div class="section level1">
+</section>
+<section class="level1">
 <h1>完整帮助信息</h1>
 <p><a href="https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html" class="uri">https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html</a></p>
-</div>
-<div class="section level1">
+</section>
+<section class="level1">
 <h1>安装</h1>
 <p>通过<a href="https://bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html">Bioconductor</a>安装最新版本</p>
 <pre class="r"><code>## try http:// if https:// URLs are not supported
 source(&quot;https://bioconductor.org/biocLite.R&quot;)
 useDevel()
 biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
-</div>
-<div class="section level1">
+</section>
+<section class="level1">
 <h1>基本使用</h1>
 <p>调用</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(curatedMetagenomicData))</code></pre>
@@ -184,21 +184,22 @@ biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
 <p>下载HMP 2012（HMP I）的MetaPhlAn2分析结果</p>
 <pre class="r"><code>dat &lt;- curatedMetagenomicData(&quot;HMP_2012.metaphlan_bugs_list.*&quot;, dryrun=FALSE)</code></pre>
 <pre><code>## Working on HMP_2012.metaphlan_bugs_list.nasalcavity</code></pre>
-<pre><code>## snapshotDate(): 2017-10-26</code></pre>
-<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
-<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;</code></pre>
-<pre><code>## Working on HMP_2012.metaphlan_bugs_list.oralcavity</code></pre>
-<pre><code>## snapshotDate(): 2017-10-26</code></pre>
-<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
-<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;</code></pre>
-<pre><code>## Working on HMP_2012.metaphlan_bugs_list.stool</code></pre>
-<pre><code>## snapshotDate(): 2017-10-26</code></pre>
-<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
-<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;</code></pre>
-<pre><code>## Working on HMP_2012.metaphlan_bugs_list.vagina</code></pre>
-<pre><code>## snapshotDate(): 2017-10-26</code></pre>
-<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
-<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
+<pre><code>## updating metadata: retrieving 1 resource
+## snapshotDate(): 2017-10-30
+## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
+## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;
+## Working on HMP_2012.metaphlan_bugs_list.oralcavity
+## snapshotDate(): 2017-10-30
+## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
+## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;
+## Working on HMP_2012.metaphlan_bugs_list.stool
+## snapshotDate(): 2017-10-30
+## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
+## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;
+## Working on HMP_2012.metaphlan_bugs_list.vagina
+## snapshotDate(): 2017-10-30
+## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
+## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
 <p>查看HMP I粪便数据的元数据</p>
 <pre class="r"><code>head( pData(dat[[3]]) )</code></pre>
 <pre><code>##                    subjectID body_site body_subsite
@@ -294,4 +295,4 @@ hmp_stool_metaphlan[1:10, 1:10]</code></pre>
 ## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00077   0.00194
 ## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
 ## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147</code></pre>
-</div>
+</section>

@@ -31,6 +31,15 @@
     </item>
     
     <item>
+      <title>桑基图（Sankey diagram）II</title>
+      <link>/post/2017-11-02-r-sankeyplot2/</link>
+      <pubDate>Thu, 02 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-02-r-sankeyplot2/</guid>
+      <description>使用plotly 预处理 taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE) second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA) taxtab &amp;lt;- taxtab[-grep(&amp;#39;t__.*unclassified&amp;#39;, taxtab$V1), ] ## remove strain level tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;) ## split into different taxonomy levels target &amp;lt;- sapply(tax_split, tail, n=1) ## target node mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &amp;lt;- mapping$id source &amp;lt;- sapply(tax_split, second_last) ## source node source_id &amp;lt;- mapping[source,] value &amp;lt;- taxtab$V2 ## width of flow links &amp;lt;- data.</description>
+    </item>
+    
+    <item>
       <title>超大宏基因组数据集CuratedMetagenomicData</title>
       <link>/post/2017-10-30-r-curatedmetagenomicdata/</link>
       <pubDate>Mon, 30 Oct 2017 00:00:00 +0000</pubDate>
