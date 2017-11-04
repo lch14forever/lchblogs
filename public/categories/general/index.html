@@ -6,7 +6,8 @@
 
   
   <title>
-  Posts
+  Category → general
+  
    | Chenhao&#39;s blog posts
 </title>
 
@@ -21,13 +22,11 @@
   <meta name="description" content="" />
 
   
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@li_chenhao" />
-    <meta name="twitter:title" content="Posts" />
-    <meta name="twitter:description" content="" />
-    <meta name="twitter:image" content="/img/avatar.jpg" />
-  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@li_chenhao" />
+  <meta name="twitter:title" content="Chenhao&#39;s blog posts" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:image" content="/img/avatar.jpg" />
 
 
 
@@ -35,7 +34,7 @@
 <meta name="generator" content="Hugo 0.30.2" />
 
 
-<link rel="canonical" href="/post/" />
+<link rel="canonical" href="/categories/general/" />
 <link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
 
 
@@ -208,53 +207,6 @@
   <p class="post-summary">General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 &#43; Miniasm ) or Canu &#43; Racon &#43; Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </p>
   <footer class="post-footer">
     <a class="read-more" href="/post/2017-11-04-nanopore-nanoporedataanalysis/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-11-02-r-sankeyplot2/" class="post-link">桑基图（Sankey diagram）II</a></h3>
-    <p class="post-meta">@Chenhao Li (李陈浩) · Nov 2, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">使用plotly 预处理 taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE) second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;t__.*unclassified&#39;, taxtab$V1), ] ## remove strain level tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.</p>
-  <footer class="post-footer">
-    <a class="read-more" href="/post/2017-11-02-r-sankeyplot2/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-10-30-r-curatedmetagenomicdata/" class="post-link">超大宏基因组数据集CuratedMetagenomicData</a></h3>
-    <p class="post-meta">@Chenhao Li (李陈浩) · Oct 30, 2017 · 6 min read</p>
-  </header>
-  
-  <p class="post-summary">简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
- 完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
- 安装 通过Bioconductor安装最新版本
-## try http:// if https:// URLs are not supported source(&#34;https://bioconductor.org/biocLite.R&#34;) useDevel() biocLite(&#34;curatedMetagenomicData&#34;)  基本使用 调用
-suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &#39;dplyr&#39; was built under R version 3.4.2 ## Warning: package &#39;BiocGenerics&#39; was built under R version 3.4.1 ## Warning: package &#39;ExperimentHub&#39; was built under R version 3.4.1 ## Warning: package &#39;AnnotationHub&#39; was built under R version 3.4.2 查看metadata
-combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &lt;NA&gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &lt;NA&gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &lt;NA&gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &lt;NA&gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &lt;NA&gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &lt;NA&gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &lt;NA&gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &lt;NA&gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &lt;NA&gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &lt;NA&gt; ## # .</p>
-  <footer class="post-footer">
-    <a class="read-more" href="/post/2017-10-30-r-curatedmetagenomicdata/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-10-29-r-sankeyplot/" class="post-link">桑基图（Sankey diagram）</a></h3>
-    <p class="post-meta">@Chenhao Li (李陈浩) · Oct 29, 2017 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
-download.file(&#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&#39;, destfile = &#39;SRS014476-Supragingival_plaque_profile.txt&#39;) taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
-library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
-second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;unclassified&#39;, taxtab$V1), ] ## remove unlassified taxa tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.</p>
-  <footer class="post-footer">
-    <a class="read-more" href="/post/2017-10-29-r-sankeyplot/">Read More →</a>
   </footer>
 </article>
 
