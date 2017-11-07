@@ -31,6 +31,21 @@
     </item>
     
     <item>
+      <title>从curatedMetagenoimcData提取健康样本的微生物组</title>
+      <link>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</link>
+      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</guid>
+      <description>简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+ 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+ 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+  当然最基础的操作，就是要从数据库中提取数据。
+ 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
+加载R package suppressMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*.</description>
+    </item>
+    
+    <item>
       <title>A collection of useful tools (Keep updating)</title>
       <link>/post/2017-11-04-nanopore-nanoporedataanalysis/</link>
       <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>

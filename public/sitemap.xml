@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</loc>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2017-11-04-nanopore-nanoporedataanalysis/</loc>
     <lastmod>2017-11-04T00:00:00+00:00</lastmod>
   </url>
@@ -56,20 +61,26 @@
   </url>
   
   <url>
+    <loc>/tags/metagenomics/</loc>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/post/</loc>
-    <lastmod>2017-11-04T00:00:00+00:00</lastmod>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/r/</loc>
-    <lastmod>2017-11-02T00:00:00+00:00</lastmod>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/categories/r/</loc>
-    <lastmod>2017-11-02T00:00:00+00:00</lastmod>
+    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

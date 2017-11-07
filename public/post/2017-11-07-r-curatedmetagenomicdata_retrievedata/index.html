@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>从curatedMetagenoimcData提取健康样本的微生物组</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Chenhao Li (李陈浩)" />
+  <meta name="description" content="简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+ 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+ 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+  当然最基础的操作，就是要从数据库中提取数据。
+ 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
+加载R package suppressMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*." />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@li_chenhao" />
+    <meta name="twitter:title" content="从curatedMetagenoimcData提取健康样本的微生物组" />
+    <meta name="twitter:description" content="简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+ 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+ 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+  当然最基础的操作，就是要从数据库中提取数据。
+ 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
+加载R package suppressMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*." />
+    <meta name="twitter:image" content="/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.30.2" />
+
+
+<link rel="canonical" href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/" />
+<link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+
+
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Chenhao&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Chenhao&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="/img/avatar.jpg" alt="Avatar">
+  
+  <h2 class="title">Chenhao&#39;s Blog</h2>
+  
+  <p class="subtitle">~ Think as a scientist &amp; Work as an engineer ~</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/lch14forever">Works</a></li>
+      
+        <li class="menu-item "><a href="/links/">Links</a></li>
+      
+        <li class="menu-item "><a href="/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:lichenhao.sg@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/lch14forever" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/li_chenhao" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.linkedin.com/in/chenhao-li-1b695b99" title="Linkedin"><span class="icon icon-linkedin"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">从curatedMetagenoimcData提取健康样本的微生物组</h1>
+      <p class="post-meta">@Chenhao Li (李陈浩) · Nov 7, 2017 · 2 min read</p>
+    </header>
+    <article class="post-content"><section class="level2">
+<h2>简介</h2>
+<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：</p>
+<ol type="1">
+<li><p>作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。</p></li>
+<li><p>用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。</p></li>
+<li><p>因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。</p></li>
+</ol>
+<p>当然最基础的操作，就是要从数据库中提取数据。</p>
+</section>
+<section class="level2">
+<h2>演示</h2>
+<p>我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。</p>
+<section id="r-package" class="level3">
+<h3>加载R package</h3>
+<pre class="r"><code>suppressMessages(library(curatedMetagenomicData))</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
+<pre><code>## Warning: package &#39;BiocGenerics&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## Warning: package &#39;ExperimentHub&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## Warning: package &#39;AnnotationHub&#39; was built under R version 3.4.2</code></pre>
+<pre class="r"><code>suppressMessages(library(foreach))</code></pre>
+</section>
+<section id=".experimenthub" class="level3">
+<h3>下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存）</h3>
+<pre class="r"><code>## download all stool samples
+stoolData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.stool&quot;, dryrun=FALSE)
+skinData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.skin&quot;, dryrun=FALSE)
+## merge
+stoolDataMerged &lt;- mergeData(stoolData)
+skinDataMerged &lt;- mergeData(skinData)</code></pre>
+</section>
+<section class="level3">
+<h3>验证元数据与样本对应关系</h3>
+<pre class="r"><code>table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged)))</code></pre>
+<pre><code>## 
+## TRUE 
+## 4810</code></pre>
+<pre class="r"><code>table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged)))</code></pre>
+<pre><code>## 
+## TRUE 
+##  466</code></pre>
+</section>
+<section class="level3">
+<h3>通过元数据来提取健康样本的数据</h3>
+<p>顺便过滤掉整行、整列为0的数据</p>
+<pre class="r"><code>stoolDataHealthy &lt;- exprs(stoolDataMerged)[, which(pData(stoolDataMerged)$disease==&#39;healthy&#39;)] %&gt;%
+  data.frame() %&gt;%
+  select(which(colSums(.)!=0)) 
+skinDataHealthy &lt;- exprs(skinDataMerged)[, which(pData(skinDataMerged)$disease==&#39;healthy&#39;)] %&gt;%
+  data.frame() %&gt;%
+  select(which(colSums(.)!=0)) </code></pre>
+</section>
+<section class="level3">
+<h3>存储数据</h3>
+<pre class="r"><code>write.table(stoolDataHealthy[rowSums(stoolDataHealthy)!=0,], &#39;~/Desktop/curatedMetagenomicData_stool_healthy.tsv&#39;, quote=F, sep=&#39;\t&#39;, col.names = FALSE, row.names = TRUE)
+write.table(skinDataHealthy[rowSums(skinDataHealthy)!=0,], &#39;~/Desktop/curatedMetagenomicData_skin_healthy.tsv&#39;, quote=F, sep=&#39;\t&#39;, col.names = FALSE, row.names = TRUE)</code></pre>
+</section>
+<section class="level3">
+<h3>最重要一点，记录版本号，记录版本号，记录版本号！</h3>
+<pre class="r"><code>sessionInfo(&#39;curatedMetagenomicData&#39;)</code></pre>
+<pre><code>## R version 3.4.0 (2017-04-21)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS Sierra 10.12.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## character(0)
+## 
+## other attached packages:
+## [1] curatedMetagenomicData_1.7.92
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.13                  BiocInstaller_1.27.8         
+##  [3] compiler_3.4.0                AnnotationHub_2.9.22         
+##  [5] bindr_0.1                     iterators_1.0.8              
+##  [7] methods_3.4.0                 utils_3.4.0                  
+##  [9] tools_3.4.0                   grDevices_3.4.0              
+## [11] digest_0.6.12                 bit_1.1-12                   
+## [13] evaluate_0.10.1               RSQLite_2.0                  
+## [15] memoise_1.1.0                 tibble_1.3.4                 
+## [17] pkgconfig_2.0.1               rlang_0.1.2                  
+## [19] foreach_1.4.3                 shiny_1.0.5                  
+## [21] DBI_0.7                       yaml_2.1.14                  
+## [23] parallel_3.4.0                blogdown_0.1                 
+## [25] bindrcpp_0.2                  dplyr_0.7.4                  
+## [27] stringr_1.2.0                 httr_1.3.1                   
+## [29] knitr_1.17                    IRanges_2.10.5               
+## [31] graphics_3.4.0                S4Vectors_0.14.7             
+## [33] datasets_3.4.0                stats_3.4.0                  
+## [35] stats4_3.4.0                  rprojroot_1.2                
+## [37] bit64_0.9-7                   glue_1.1.1                   
+## [39] base_3.4.0                    Biobase_2.37.2               
+## [41] R6_2.2.2                      AnnotationDbi_1.38.2         
+## [43] rmarkdown_1.6.0.9009          bookdown_0.5                 
+## [45] purrr_0.2.4                   tidyr_0.7.2                  
+## [47] ExperimentHub_1.3.9           blob_1.1.0                   
+## [49] magrittr_1.5                  codetools_0.2-15             
+## [51] backports_1.1.1               htmltools_0.3.6              
+## [53] BiocGenerics_0.22.1           assertthat_0.2.0             
+## [55] mime_0.5                      interactiveDisplayBase_1.14.0
+## [57] xtable_1.8-2                  httpuv_1.3.5                 
+## [59] stringi_1.1.5</code></pre>
+</section>
+</section>
+</article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="/tags/r"><span class="tag">R</span></a></li>
+        
+          <li><a href="/tags/metagenomics"><span class="tag">Metagenomics</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This site was created with R BlogDown and HuGo by Chenhao Li.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Chenhao&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\[','\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+<script src="/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-108829179-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+  </body>
+</html>
