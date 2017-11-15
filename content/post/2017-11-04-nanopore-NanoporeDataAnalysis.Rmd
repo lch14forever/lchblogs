@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # General bioinformatics
 
  - Applied genomics course from Michael Schatz <https://github.com/schatzlab/appliedgenomics>
+ - Data science from Rafael A. Irizarry (built with R bookdown) <https://rafalab.github.io/dsbook/>
  
 # Nanopore seqeuncing data analysis
 

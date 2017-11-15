@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>/post/2017-11-15-r-glv/</loc>
+    <lastmod>2017-11-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</loc>
     <lastmod>2017-11-07T00:00:00+00:00</lastmod>
   </url>
@@ -68,7 +73,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2017-11-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

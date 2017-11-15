@@ -18,7 +18,7 @@
       <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-11-04-nanopore-nanoporedataanalysis/</guid>
-      <description>General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 + Miniasm ) or Canu + Racon + Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </description>
+      <description>General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 + Miniasm ) or Canu + Racon + Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </description>
     </item>
     
   </channel>

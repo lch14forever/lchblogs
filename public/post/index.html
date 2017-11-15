@@ -201,6 +201,20 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-11-15-r-glv/" class="post-link">Generalized Lokta-Volterra model</a></h3>
+    <p class="post-meta">@Chenhao Li · Nov 15, 2017 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">The model \(\frac{dx_i}{dt}= ax_i&#43;\sum_{j=1}^pb_{ij}x_ix_j\)
+## library library(&#39;deSolve&#39;) ## GLV function lvm &lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &lt;- alpha * x &#43; x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &lt;- c(0.1, 0.2, 0.3) beta &lt;- t(matrix(c(-0.5, -0.3 , 0, 0.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-11-15-r-glv/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/" class="post-link">从curatedMetagenoimcData提取健康样本的微生物组</a></h3>
     <p class="post-meta">@Chenhao Li (李陈浩) · Nov 7, 2017 · 2 min read</p>
   </header>
@@ -224,7 +238,7 @@
     <p class="post-meta">@Chenhao Li · Nov 4, 2017 · 1 min read</p>
   </header>
   
-  <p class="post-summary">General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 &#43; Miniasm ) or Canu &#43; Racon &#43; Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </p>
+  <p class="post-summary">General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 &#43; Miniasm ) or Canu &#43; Racon &#43; Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </p>
   <footer class="post-footer">
     <a class="read-more" href="/post/2017-11-04-nanopore-nanoporedataanalysis/">Read More →</a>
   </footer>

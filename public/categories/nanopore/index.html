@@ -6,7 +6,7 @@
 
   
   <title>
-  Tag → bioinformatics
+  Category → nanopore
   
    | Chenhao&#39;s blog posts
 </title>
@@ -34,7 +34,7 @@
 <meta name="generator" content="Hugo 0.30.2" />
 
 
-<link rel="canonical" href="/tags/bioinformatics/" />
+<link rel="canonical" href="/categories/nanopore/" />
 <link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
 
 
@@ -200,13 +200,61 @@
       
         <article class="post-entry">
   <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-11-04-nanopore-nanoporedataanalysis/" class="post-link">A collection of useful tools (Keep updating)</a></h3>
-    <p class="post-meta">@Chenhao Li · Nov 4, 2017 · 1 min read</p>
+    <h3 class="post-title"><a href="/post/2017-11-13-nanopore-fast5_1/" class="post-link">Nanopore测序分析（1）--FAST5格式I</a></h3>
+    <p class="post-meta">@Chenhao Li (李陈浩) · Nov 13, 2017 · 1 min read</p>
   </header>
   
-  <p class="post-summary">General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 &#43; Miniasm ) or Canu &#43; Racon &#43; Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </p>
+  <p class="post-summary">Minion测序数据基础 MinION测序仪的分析软件MinKNOW会将测序的电流信号记录在一种叫fast5格式的文件中，每一个DNA分子为一个fast5文件（没错，一个文件只有一条read）。在Linux系统（其他系统会略有不同）上安装的MinION的数据默认存储于”/var/lib/MinKNOW/data/“目录下。该目录下存储很多日志信息，但最重要的是一个”reads”目录（/var/lib/MinKNOW/data/reads）。
+每一个测序run会产生两个目录格式为”年年年年月月时时_分分秒秒_011117_ID”
+FAST5 – Yet Another HDF5 Nanopore测序的原始数据为HDF5格式，后缀为.fast5。
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.:19.0 3rd Qu.: 56.00 ## Max. :25.0 Max. :120.00  Including Plots You can also embed plots, for example:
+Note that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
   <footer class="post-footer">
-    <a class="read-more" href="/post/2017-11-04-nanopore-nanoporedataanalysis/">Read More →</a>
+    <a class="read-more" href="/post/2017-11-13-nanopore-fast5_1/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-11-13-nanopore-fast5_1.rmkd/" class="post-link">Nanopore测序分析（1）--FAST5格式I</a></h3>
+    <p class="post-meta">@Chenhao Li (李陈浩) · Nov 13, 2017 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">Minion测序数据基础 MinION测序仪的分析软件MinKNOW会将测序的电流信号记录在一种叫fast5格式的文件中，每一个DNA分子为一个fast5文件（没错，一个文件只有一条read）。在Linux系统（其他系统会略有不同）上安装的MinION的数据默认存储于“/var/lib/MinKNOW/data/”目录下。该目录下存储很多日志信息，但最重要的是一个“reads”目录（/var/lib/MinKNOW/data/reads）。
+每一个测序run会产生两个目录格式为“年年年年月月时时_分分秒秒_011117_ID”
+ FAST5 – Yet Another HDF5 Nanopore测序的原始数据为HDF5格式，后缀为.fast5。
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.:19.0 3rd Qu.: 56.00 ## Max. :25.0 Max. :120.00  Including Plots You can also embed plots, for example:
+Note that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-11-13-nanopore-fast5_1.rmkd/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-11-11-nanopore-nanopore_assembly/" class="post-link">Nanopore测序组装</a></h3>
+    <p class="post-meta">@Chenhao Li · Nov 11, 2017 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">介绍  LICENSE: GPL-3.0 测试系统Ubuntu 16.04
+安装工具  Porechop：去除接头（adapter）或嵌合子（chimera）   git clone https://github.com/rrwick/Porechop.git cd Porechop make ./porechop-runner.py --version ## 版本号: 0.2.3  MECAT  git clone https://github.com/xiaochuanle/MECAT.git cd MECAT make   [Miniasam]() &#43; [Racon]()：组装  下载数据 ## Download data wget https://vault.melbourne.vicnode.org.au:8888/v1/AUTH_492887d00ebe482ba3b4d8e5dc5b1586/figshare_public_files/8811226/barcode01.fastq.gz ## Check the number of reads zcat &lt;barcode01.fastq.gz | paste - - - - | wc -l ## &gt;&gt; 总序列数为95,064 去接头和嵌合子 (20线程，一小时左右!!) Porechop/porechop-runner.py -i barcode01.fastq.gz -o barcode01.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-11-11-nanopore-nanopore_assembly/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-11-11-nanopore-nanopore_assembly.rmkd/" class="post-link">Nanopore测序组装</a></h3>
+    <p class="post-meta">@Chenhao Li · Nov 11, 2017 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">介绍  LICENSE: GPL-3.0 测试系统Ubuntu 16.04 # 安装工具 Porechop：去除接头（adapter）或嵌合子（chimera）  git clone https://github.com/rrwick/Porechop.git cd Porechop make ./porechop-runner.py --version ## 版本号: 0.2.3  MECAT  git clone https://github.com/xiaochuanle/MECAT.git cd MECAT make   Miniasam &#43; Racon：组装   下载数据 ## Download data wget https://vault.melbourne.vicnode.org.au:8888/v1/AUTH_492887d00ebe482ba3b4d8e5dc5b1586/figshare_public_files/8811226/barcode01.fastq.gz ## Check the number of reads zcat &lt;barcode01.fastq.gz | paste - - - - | wc -l ## &gt;&gt; 总序列数为95,064  去接头和嵌合子 (20线程，一小时左右!!) Porechop/porechop-runner.py -i barcode01.fastq.gz -o barcode01.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-11-11-nanopore-nanopore_assembly.rmkd/">Read More →</a>
   </footer>
 </article>
 
