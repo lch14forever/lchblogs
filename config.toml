@@ -3,8 +3,7 @@ languageCode = "en"
 title = "Chenhao's Blog"
 theme = "hugo-nuo"
 enableRobotsTXT = true
-pygmentsuseclasses = true
-PygmentsCodeFences = true
+
 canonifyurls = true
 ignoreFiles = ["_files$", "_cache$"]
 
@@ -89,7 +88,7 @@ copyright = "© This site was created with R BlogDown and HuGo by Chenhao Li."
 
   # Baidu Tongji (China Only)
   # https://tongji.baidu.com/
-  # baiduTongji = "e21dc1e8a592188271b615159dc88af7"
+baiduTongji = "2ed5f50c08edca2c0b923671c4ce2044"
 
   # ICP Number (China Only)
   # ICP = "苏ICP备16005986号-2"
