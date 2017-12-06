@@ -28,6 +28,12 @@ copyright = "© This site was created with R BlogDown and HuGo by Chenhao Li."
   weight = 20
   identifier = "works"
   url = "https://github.com/lch14forever"
+  
+[[menu.main]]
+  name = "Tags"
+  weight = 30
+  identifier = "tags"
+  url = "/tags/"
 
 # Add your own params here
 [params]
