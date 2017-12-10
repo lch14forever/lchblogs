@@ -22,10 +22,10 @@ output: html_document
 <div class="section level3">
 <h3>（一些推导的废话可以跳过）</h3>
 <p>成分数据会对一些列统计分析产生影响，最典型的就是计算相关系数（correlation）。其中Pearson相关系数<span class="math inline">\(\rho_{X,Y}\)</span>是由协方差矩阵算出来的，对于两个OTU的数量（由随机变量<span class="math inline">\(X\)</span>，<span class="math inline">\(Y\)</span>表示），相关系数可以按下面公式计算（详细解释见<a href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">维基百科</a>）：</p>
-<p><span class="math display">\[COV(X, Y)=E[(X-E[X])(Y-E[Y])]\]</span></p>
-<p><span class="math display">\[\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}\]</span></p>
+<p><span class="math inline">\(COV(X, Y)=E[(X-E[X])(Y-E[Y])]\)</span></p>
+<p><span class="math inline">\(\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}\)</span></p>
 <p>其中<span class="math inline">\(COV(X,X)\)</span>其实就是<span class="math inline">\(X\)</span>的方差。其中根据协方差的性质我们可以得出成分数据的协方差性质：</p>
-<p><span class="math display">\[\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)\]</span></p>
+<p><span class="math inline">\(\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)\)</span></p>
 <p>我们知道方差（<span class="math inline">\(COV(x_r, x_r)\)</span>）一定为正值，所以成分数据的协方差（同理相关系数）天然趋向于负值！</p>
 </div>
 <div class="section level3">

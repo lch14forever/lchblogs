@@ -3,7 +3,6 @@ languageCode = "en"
 title = "Chenhao's Blog"
 theme = "hugo-nuo"
 enableRobotsTXT = true
-
 canonifyurls = true
 ignoreFiles = ["_files$", "_cache$"]
 

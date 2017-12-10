@@ -23,13 +23,13 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE)
 ### （一些推导的废话可以跳过）
 成分数据会对一些列统计分析产生影响，最典型的就是计算相关系数（correlation）。其中Pearson相关系数$\rho_{X,Y}$是由协方差矩阵算出来的，对于两个OTU的数量（由随机变量$X$，$Y$表示），相关系数可以按下面公式计算（详细解释见[维基百科](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient)）：
 
- $$COV(X, Y)=E[(X-E[X])(Y-E[Y])]$$
+ $COV(X, Y)=E[(X-E[X])(Y-E[Y])]$
  
- $$\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}$$
+ $\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}$
 
 其中$COV(X,X)$其实就是$X$的方差。其中根据协方差的性质我们可以得出成分数据的协方差性质：
 
- $$\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)$$
+ $\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)$
 
 我们知道方差（$COV(x_r, x_r)$）一定为正值，所以成分数据的协方差（同理相关系数）天然趋向于负值！
 
