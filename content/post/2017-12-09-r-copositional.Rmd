@@ -1,7 +1,9 @@
 ---
 title: "成分数据对相关系数的影响"
 author: "Li Chenhao (李陈浩)"
-date: "12/9/2017"
+date: 2017-12-09
+categories: ["R"]
+tags: ["R","Microbiome"]
 output: html_document
 ---
 
@@ -11,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE)
 
 # 写在前面
 
-十分感谢刘老师的厚爱，向我约稿，本身我不是很擅长写教程之类面向多数人的东西。想了想，既然那天是由于对Co-occurence网络的讨论引起的，也正是自己课题的一部分，所以就分享一下这一部分的经验吧。本文的大部分内容都来自我们之前的一篇综述文章[Li et al, 2016](http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub)。
+本文为公众号宏基因组编写，十分感谢刘老师的厚爱，向我约稿，本身我不是很擅长写教程之类面向多数人的东西。想了想，既然那天是由于对Co-occurence网络的讨论引起的，也正是自己课题的一部分，所以就分享一下这一部分的经验吧。本文的大部分内容都来自我们之前的一篇综述文章[Li et al, 2016](http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub)。
 
 # 微生物组测序与成分数据
 
@@ -21,10 +23,14 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE)
 ### （一些推导的废话可以跳过）
 成分数据会对一些列统计分析产生影响，最典型的就是计算相关系数（correlation）。其中Pearson相关系数$\rho_{X,Y}$是由协方差矩阵算出来的，对于两个OTU的数量（由随机变量$X$，$Y$表示），相关系数可以按下面公式计算（详细解释见[维基百科](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient)）：
 
-$$COV(X, Y)=E[(X-E[X])(Y-E[Y])]$$
-$$\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}$$
+ $$COV(X, Y)=E[(X-E[X])(Y-E[Y])]$$
+ 
+ $$\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}$$
+
 其中$COV(X,X)$其实就是$X$的方差。其中根据协方差的性质我们可以得出成分数据的协方差性质：
-$$\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)$$
+
+ $$\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)$$
+
 我们知道方差（$COV(x_r, x_r)$）一定为正值，所以成分数据的协方差（同理相关系数）天然趋向于负值！
 
 ### 天然的负相关
@@ -71,7 +77,7 @@ plot_grid(p1,plot_grid(p2,p3, nrow=1), ncol=1)
 
 大佬Curtis Huttenhower的ReBoot想法很简单，对于一个OTU表，我们把每一个OTU在不同样本中的数量打乱，这样所有的OTU数量都独立而不应该相关，之后我们从新标准化到相对丰度，然后计算相关系数，所有的非0相关系数都是由于标准化导致的假阳性（False positive）。这样的过程可以重复N次，然后我们就得到了每一对OTU的相关系数的一个零分布（Null distribution）。然后我们用原始的数据计算出的相关系数跟这个零分布比较一下，就可以获得p值，显著的p值才是真正相关的（其中的bootstrap算法跟成分数据关系不大，所以在次略过）。
 
-![ReBoot算法](reboot.png)
+![ReBoot算法](/media/reboot.png)
 
 ### 使用CCREPE计算相关系数
 安装CCREPE：
@@ -80,7 +86,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("ccrepe")
 ```
 
-下载HMP [16S数据](ftp://public-ftp.ihmpdcc.org/HMQCP/otu_table_psn_v35.txt.gz)和[元数据](ftp://public-ftp.ihmpdcc.org/HMQCP/v35_map_uniquebyPSN.txt.bz2)：
+下载并解压HMP [16S数据](ftp://public-ftp.ihmpdcc.org/HMQCP/otu_table_psn_v35.txt.gz)和[元数据](ftp://public-ftp.ihmpdcc.org/HMQCP/v35_map_uniquebyPSN.txt.bz2)（以下认为保存于“~/Downloads/”），然后进行数据预处理：
 ```{r}
 ## 使用data.table包快速读取大数据
 library(data.table)
