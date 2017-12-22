@@ -1,0 +1,45 @@
+---
+title: "真的可以用成分数据做PCA？"
+author: "Chenhao Li"
+date: "12/22/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+## 也谈PCA
+
+对于PCA，我不做过多的赘述，有很多资料可以查阅。概括地说PCA就是通过旋转找到一个新的坐标系来表示高维数据，每一维独立的最大限度表示数据的变化。它与MDS一样，都是一种降维的手段。由于是通过旋转得到的PC，这就保证了数据间的**欧氏距离**不变。很显然PCA适用于我们熟识的**欧式几何空间**。
+
+## 微生物组与成分数据
+在微生物组数据处理中，为了去掉测序深度的影响，我们会把数据标准化成相对丰度，也就是所谓的成分数据。对于成分数据，其实它不是简单的**欧式几何空间**，最简单的一个特点就是它的维度比实际要少了一维。比如，二维的成分数据$x_1+x_2=1，x_1\geq0,x_2\geq0$，很显然这些数据在一条线段上；类似的，三维的成分数据，其实在一个被限制的平面上（一个三角形）。
+
+```{r tern3d}
+## 随机产生三维数据
+N <- 100000
+dat <- data.frame(
+    x1 = runif(N, 1, 10),
+    x2 = runif(N, 1, 10),
+    x3 = runif(N, 1, 10)
+)
+## 标准化到相对丰度
+dat.norm <- t(apply(dat, 1, function(x)x/sum(x)))
+## 加载plotly
+library(plotly)
+plot_ly(as.data.frame(dat.norm), x = ~x1, y = ~x2, z = ~x3, size=1, sizes=c(0.1,1))
+```
+
+
+## 成分数据对PCA的影响
+
+成分数据对PCA的影响不是很容易描述，但是由于PCA是对协方差矩阵进行特征分解得出的，成分数据的协方差矩阵是存在很大问题的（[链接]()），但是这个具体对PCA有什么直接影响，好像还是根据数据的特征来说的。下面我们使用HMP数据来测试以下。
+
+```{r pca}
+library(tidyverse)
+library(data.table)
+
+```
+
+
