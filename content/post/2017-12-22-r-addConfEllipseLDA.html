@@ -26,7 +26,7 @@ p</code></pre>
 </section>
 <section id="a-function-to-compute-confidence-ellipse" class="level2">
 <h2>A function to compute confidence ellipse</h2>
-<pre class="r"><code>get_lda_ell &lt;- function(p, ord_in, grp_in, ellipse_pro = 0.97){
+<pre class="r"><code>get_lda_ell &lt;- function(ord_in, grp_in, ellipse_pro = 0.97){
     ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
     require(plyr)
     axes = c(&#39;LD1&#39;, &#39;LD2&#39;)
@@ -52,7 +52,7 @@ p</code></pre>
 <section id="using-the-function" class="level2">
 <h2>Using the function</h2>
 <pre class="r"><code>library(ggplot2)
-anotherEll &lt;- get_lda_ell(p, ord, iris$Species, 0.97)</code></pre>
+anotherEll &lt;- get_lda_ell(ord, iris$Species, 0.97)</code></pre>
 <pre><code>## Loading required package: plyr</code></pre>
 <pre class="r"><code>p + geom_polygon(data = anotherEll, 
                  aes_string(color = &#39;Groups&#39;, group = &#39;Groups&#39;),

@@ -29,7 +29,7 @@ p
 
 ## A function to compute confidence ellipse
 ```{r}
-get_lda_ell <- function(p, ord_in, grp_in, ellipse_pro = 0.97){
+get_lda_ell <- function(ord_in, grp_in, ellipse_pro = 0.97){
     ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
     require(plyr)
     axes = c('LD1', 'LD2')
@@ -56,7 +56,7 @@ get_lda_ell <- function(p, ord_in, grp_in, ellipse_pro = 0.97){
 ## Using the function
 ```{r}
 library(ggplot2)
-anotherEll <- get_lda_ell(p, ord, iris$Species, 0.97)
+anotherEll <- get_lda_ell(ord, iris$Species, 0.97)
 
 p + geom_polygon(data = anotherEll, 
                  aes_string(color = 'Groups', group = 'Groups'),
