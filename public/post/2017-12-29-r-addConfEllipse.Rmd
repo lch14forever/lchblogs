@@ -1,0 +1,44 @@
+---
+title: "Add confidence ellipse to LDA ordination plot II"
+author: "Chenhao Li (李陈浩)"
+date: 2017-12-29
+tag: ['R']
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 加入排序图添加置信范围曲线
+
+上一篇[文章](http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/)我们利用[ggord](https://github.com/fawda123/ggord)的源代码改写了一个为LDA排序图添加置信曲线的函数，现在[Y叔](https://guangchuangyu.github.io/)已经把它改写成了一个geom添加在了他的[yyplot](https://github.com/GuangchuangYu/yyplot)包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
+
+```{r import, message=FALSE}
+library(ggord)
+library(yyplot)
+library(MASS)
+```
+
+### LDA
+
+```{r lda}
+ord <- lda(Species ~ ., iris, prior = rep(1, 3)/3)
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)
+```
+
+### PCA
+
+```{r pca}
+ord <- prcomp(iris[, 1:4])
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)
+```
+
+### MDS
+
+```{r mds}
+library(vegan)
+ord <- metaMDS(iris[, 1:4])
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)
+
+```

@@ -1,0 +1,86 @@
+---
+title: "Add confidence ellipse to LDA ordination plot II"
+author: "Chenhao Li (李陈浩)"
+date: 2017-12-29
+tag: ['R']
+output: html_document
+---
+
+
+
+<section class="level2">
+<h2>加入排序图添加置信范围曲线</h2>
+<p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/">文章</a>我们利用<a href="https://github.com/fawda123/ggord">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。</p>
+<pre class="r"><code>library(ggord)
+library(yyplot)
+library(MASS)</code></pre>
+<section id="lda" class="level3">
+<h3>LDA</h3>
+<pre class="r"><code>ord &lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3)
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)</code></pre>
+<p><img src="/post/2017-12-29-r-addConfEllipse_files/figure-html/lda-1.png" width="672" /></p>
+</section>
+<section id="pca" class="level3">
+<h3>PCA</h3>
+<pre class="r"><code>ord &lt;- prcomp(iris[, 1:4])
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)</code></pre>
+<p><img src="/post/2017-12-29-r-addConfEllipse_files/figure-html/pca-1.png" width="672" /></p>
+</section>
+<section id="mds" class="level3">
+<h3>MDS</h3>
+<pre class="r"><code>library(vegan)</code></pre>
+<pre><code>## Loading required package: permute</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## This is vegan 2.4-4</code></pre>
+<pre class="r"><code>ord &lt;- metaMDS(iris[, 1:4])</code></pre>
+<pre><code>## Run 0 stress 0.03775523 
+## Run 1 stress 0.03775531 
+## ... Procrustes: rmse 1.910431e-05  max resid 5.753203e-05 
+## ... Similar to previous best
+## Run 2 stress 0.05908394 
+## Run 3 stress 0.05898684 
+## Run 4 stress 0.05537476 
+## Run 5 stress 0.03775531 
+## ... Procrustes: rmse 1.659417e-05  max resid 4.282073e-05 
+## ... Similar to previous best
+## Run 6 stress 0.04355842 
+## Run 7 stress 0.04709622 
+## Run 8 stress 0.03775526 
+## ... Procrustes: rmse 1.165486e-05  max resid 3.332541e-05 
+## ... Similar to previous best
+## Run 9 stress 0.0552654 
+## Run 10 stress 0.04713723 
+## Run 11 stress 0.03775522 
+## ... New best solution
+## ... Procrustes: rmse 4.30164e-05  max resid 0.0002567706 
+## ... Similar to previous best
+## Run 12 stress 0.03775531 
+## ... Procrustes: rmse 5.795925e-05  max resid 0.0002507282 
+## ... Similar to previous best
+## Run 13 stress 0.03775538 
+## ... Procrustes: rmse 6.556877e-05  max resid 0.0002785118 
+## ... Similar to previous best
+## Run 14 stress 0.03775564 
+## ... Procrustes: rmse 8.986053e-05  max resid 0.0003869183 
+## ... Similar to previous best
+## Run 15 stress 0.0480404 
+## Run 16 stress 0.03775526 
+## ... Procrustes: rmse 5.238253e-05  max resid 0.0002240328 
+## ... Similar to previous best
+## Run 17 stress 0.03775529 
+## ... Procrustes: rmse 5.797007e-05  max resid 0.0002529368 
+## ... Similar to previous best
+## Run 18 stress 0.03775523 
+## ... Procrustes: rmse 4.387592e-05  max resid 0.0001957621 
+## ... Similar to previous best
+## Run 19 stress 0.03775586 
+## ... Procrustes: rmse 4.912365e-05  max resid 0.0002124333 
+## ... Similar to previous best
+## Run 20 stress 0.03775539 
+## ... Procrustes: rmse 7.348418e-05  max resid 0.000317784 
+## ... Similar to previous best
+## *** Solution reached</code></pre>
+<pre class="r"><code>ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)</code></pre>
+<p><img src="/post/2017-12-29-r-addConfEllipse_files/figure-html/mds-1.png" width="672" /></p>
+</section>
+</section>
