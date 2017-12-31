@@ -195,6 +195,25 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="/post/2017-12-31-bioinfo-docker_notes/" class="post-link">Useful commands for Docker</a></h3>
+    <p class="post-meta">@Chenhao Li (李陈浩) · Dec 31, 2017 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">一些废话 看到朋友圈刷屏的18岁，想想自己18岁的时候可能是人生中最重要的转折，从自己几乎从未离开过的家乡，到美丽的厦大（个人对厦大的几个月还是很有感情的），再到现在已经生活了8年的新加坡。为了自己的兴趣，选择跳了生物这个坑，然后扒着坑边换到了计算生物。
+很多反对不看好的声音：
+ 厦大的辅导员说，到那边（新加坡）一般会换到工科 预科的老师说，If you choose biology, you will suffer  8年过来，至少自己的内心没有动摇过——这是一条自己喜欢的路。
+感谢很多人的支持，家人，女友，朋友，厦大的朋友们，国大的老师们（特别是刘文川和Greg），现在的老板Niranjan，还有一路走来在新加坡结识的小伙伴们。
+2017年很幸运终于通过微信和国内的同行们建立联系，感谢生物医学互助平台的建哥，量化健康的赵总和Sheila，宏基因组公众号的刘老师，还有微信上志同道合的朋友们。2018年祝愿大家在学业事业都更上一层楼。
+ 改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
+ Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl&#43;p Ctrl&#43;q</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2017-12-31-bioinfo-docker_notes/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="/post/2017-12-29-r-addconfellipse/" class="post-link">Add confidence ellipse to LDA ordination plot II</a></h3>
     <p class="post-meta">@Chenhao Li (李陈浩) · Dec 29, 2017 · 2 min read</p>
   </header>
