@@ -20,7 +20,7 @@
  厦大的辅导员说，到那边（新加坡）一般会换到工科 预科的老师说，If you choose biology, you will suffer  8年过来，至少自己的内心没有动摇过——这是一条自己喜欢的路。
 感谢很多人的支持，家人，女友，朋友，厦大的朋友们，国大的老师们（特别是刘文川和Greg），现在的老板Niranjan，还有一路走来在新加坡结识的小伙伴们。
 2017年很幸运终于通过微信和国内的同行们建立联系，感谢生物医学互助平台的建哥，量化健康的赵总和Sheila，宏基因组公众号的刘老师，还有微信上志同道合的朋友们。2018年祝愿大家在学业事业都更上一层楼。
- 改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
+  改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
  Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl&#43;p Ctrl&#43;q" />
 
   
@@ -33,7 +33,7 @@
  厦大的辅导员说，到那边（新加坡）一般会换到工科 预科的老师说，If you choose biology, you will suffer  8年过来，至少自己的内心没有动摇过——这是一条自己喜欢的路。
 感谢很多人的支持，家人，女友，朋友，厦大的朋友们，国大的老师们（特别是刘文川和Greg），现在的老板Niranjan，还有一路走来在新加坡结识的小伙伴们。
 2017年很幸运终于通过微信和国内的同行们建立联系，感谢生物医学互助平台的建哥，量化健康的赵总和Sheila，宏基因组公众号的刘老师，还有微信上志同道合的朋友们。2018年祝愿大家在学业事业都更上一层楼。
- 改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
+  改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
  Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl&#43;p Ctrl&#43;q" />
     <meta name="twitter:image" content="/img/avatar.jpg" />
   
@@ -222,6 +222,7 @@
 <p>8年过来，至少自己的内心没有动摇过——这是一条自己喜欢的路。</p>
 <p>感谢很多人的支持，家人，女友，朋友，厦大的朋友们，国大的老师们（特别是刘文川和Greg），现在的老板Niranjan，还有一路走来在新加坡结识的小伙伴们。</p>
 <p>2017年很幸运终于通过微信和国内的同行们建立联系，感谢生物医学互助平台的建哥，量化健康的赵总和Sheila，宏基因组公众号的刘老师，还有微信上志同道合的朋友们。2018年祝愿大家在学业事业都更上一层楼。</p>
+<!--more-->
 </div>
 <div id="docker" class="section level2">
 <h2>改变Docker容器存储路径</h2>
@@ -309,7 +310,7 @@ docker rmi [image] # 删除镜像</code></pre>
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Chenhao&#39;s Blog</p>
+  <p>© 2017-2018 Chenhao&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>
