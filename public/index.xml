@@ -47,8 +47,8 @@
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-12-29-r-addconfellipse/</guid>
-      <description>加入排序图添加置信范围曲线 上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
-library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  PCA ord &amp;lt;- prcomp(iris[, 1:4]) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  MDS library(vegan) ## Loading required package: permute ## Loading required package: lattice ## This is vegan 2.4-4 ord &amp;lt;- metaMDS(iris[, 1:4]) ## Run 0 stress 0.03775523 ## Run 1 stress 0.03775531 ## ... Procrustes: rmse 1.910431e-05 max resid 5.753203e-05 ## .</description>
+      <description>为排序图添加置信范围曲线 上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
+library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  PCA ord &amp;lt;- prcomp(iris[, 1:4]) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  MDS library(vegan) ## Loading required package: permute ## Loading required package: lattice ## This is vegan 2.4-4 ord &amp;lt;- metaMDS(iris[, 1:4]) ## Run 0 stress 0.03775523 ## Run 1 stress 0.05618976 ## Run 2 stress 0.03775616 ## ... Procrustes: rmse 9.</description>
     </item>
     
     <item>
