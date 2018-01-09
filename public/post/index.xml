@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
-    <lastBuildDate>Sun, 31 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</title>
+      <link>/post/2018-01-09-r-ordellipsecode/</link>
+      <pubDate>Tue, 09 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-09-r-ordellipsecode/</guid>
+      <description>介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+##&amp;#39; add confidence ellipse to ordinary plot produced by ggord ##&amp;#39; ##&amp;#39; ##&amp;#39; @title geom_ord_ellipse ##&amp;#39; @param mapping aes mapping ##&amp;#39; @param ellipse_pro confidence value for the ellipse ##&amp;#39; @param fill color to fill the ellipse, NA by default ##&amp;#39; @param ... additional parameters ##&amp;#39; @return ggplot layer ##&amp;#39; @importFrom ggplot2 aes_ ##&amp;#39; @importFrom ggplot2 layer ##&amp;#39; @importFrom utils modifyList ##&amp;#39; @export ##&amp;#39; @author Guangchuang Yu ##&amp;#39; @references \url{http://lchblogs.</description>
+    </item>
     
     <item>
       <title>Useful commands for Docker</title>

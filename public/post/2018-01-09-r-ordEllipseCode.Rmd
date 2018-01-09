@@ -1,0 +1,292 @@
+---
+title: "ggplot扩展学习笔记--逐行解析Y叔的\"geom_ord_ellipse.R\""
+author: "Chenhao Li （李陈浩）"
+date: 2018-01-09
+tag: ['R']
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+## 介绍
+看到Y叔为[ggord](https://github.com/fawda123/ggord)做的添加置信椭圆的[geom_ord_ellipse.R](https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R)（用法见[上一篇文章](http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/)），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+
+以下为`geom_ord_ellipse.R`代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+
+```{r fullcode}
+##' add confidence ellipse to ordinary plot produced by ggord
+##'
+##' 
+##' @title geom_ord_ellipse 
+##' @param mapping aes mapping 
+##' @param ellipse_pro confidence value for the ellipse
+##' @param fill color to fill the ellipse, NA by default
+##' @param ... additional parameters
+##' @return ggplot layer
+##' @importFrom ggplot2 aes_
+##' @importFrom ggplot2 layer
+##' @importFrom utils modifyList
+##' @export
+##' @author Guangchuang Yu
+##' @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}
+geom_ord_ellipse <- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes <- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping <- default_aes
+    } else {
+        mapping <- modifyList(default_aes, mapping)
+    }
+    
+    layer(
+        geom = "polygon",
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = 'identity',
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}
+
+##' @importFrom ggplot2 ggproto
+##' @importFrom ggplot2 Stat
+##' @importFrom plyr ddply
+##' @importFrom grDevices chull
+StatOrdEllipse <- ggproto("StatOrdEllipse", Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              names(data)[1:2] <- c('one', 'two')
+                              theta <- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+                              circle <- cbind(cos(theta), sin(theta))
+                              ell <- ddply(data, .(group), function(x) {
+                                  if(nrow(x) <= 2) {
+                                      return(NULL)
+                                  }
+                                  sigma <- var(cbind(x$one, x$two))
+                                  mu <- c(mean(x$one), mean(x$two))
+                                  ed <- sqrt(qchisq(ellipse_pro, df = 2))
+                                  data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = '+'))
+                              })
+                              names(ell)[2:3] <- c('one', 'two')
+                              ell <- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])
+                              names(ell) <- c('Groups', 'x', 'y')
+                              return(ell)
+                          },
+                          required_aes = c("x", "y", "group")
+                          )
+
+
+## . function was from plyr package
+. <- function (..., .env = parent.frame()) {
+    structure(as.list(match.call()[-1]), env = .env, class = "quoted")
+}
+```
+
+## `roxygen`文档注释
+
+```{r roxygen}
+##' add confidence ellipse to ordinary plot produced by ggord
+##'
+##' 
+##' @title geom_ord_ellipse 
+##' @param mapping aes mapping 
+...
+##' @return ggplot layer
+##' @importFrom ggplot2 aes_
+...
+##' @export
+##' @author Guangchuang Yu
+##' @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}
+```
+
+roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入`?FunctionName`看到的帮助信息。
+
+![渲染后的帮助文档](/media/roxygen.png)
+
+其基础格式是（Y叔使用了`##'`，我觉得好像跟`#'`没有什么区别？）：
+
+```{r}
+#' @param 函数参数（对应Arguments） 函数的介绍（对应Description）
+```
+
+上面代码的注释大多可以顾名思义。比较有意思的是`#' @export`这行了，roxygen会把这个函数放在`NAMESPACE`文件中，这样用户便可以调用这个函数。我是可以调用`yyplot::geom_ord_ellipse()`这个函数的。但`yyplot:StatOrdEllipse()`这个函数是yyplot的内部函数（注意代码中此函数没有`#' @export`注释）。如果我调用就会报错：
+
+```{r eval=TRUE, error=TRUE}
+yyplot::StatOrdEllipse()
+```
+
+更多关于roxygen的介绍可以参考[这篇文章](http://kbroman.org/pkg_primer/pages/docs.html)或[官方文档](https://github.com/klutometis/roxygen)。
+
+## `ggproto`--`ggplot2`的语言
+
+[ggproto](http://ggplot2.tidyverse.org/reference/ggproto.html)是ggplot2模块化、面向对象（Object Oriented）化的核心部分。基础的格式是：
+```{r}
+ggproto(`_class` = NULL, `_inherit` = NULL, ...)
+```
+
+`ggproto`是一个很庞大的系统，我目前理解还不是很深入，提供一些参考资料：
+
+- [官方详细文档](https://www.rdocumentation.org/packages/ggplot2/versions/2.2.1/topics/ggplot2-ggproto)
+- [ggproto教程](https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html)
+
+在理解Y叔这个脚本中我们需要使用最基础的两个模块`Geom`（创建图层），`Stat`（数据处理）。
+
+### `StatOrdEllipse`内部函数--`ggplot2`中的数据处理
+
+我们在作图之前基本都是要对输入数据进行一些数据预处理，比如在做线箱图的时候需要计算中位数、IQR等。在这个脚本中，我们需要做的是计算置信区间椭圆，这一步是通过`ggplot::Stat`实现的。
+
+```{r StatOrdEllipse}
+StatOrdEllipse <- ggproto("StatOrdEllipse", Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              ## 此处省略...
+                              ## 解析见后文
+                              return(ell)
+                          },
+                          required_aes = c("x", "y", "group")
+                          )
+```
+
+- `_class`：这个类的名字为`StatOrdEllipse`
+- `_inherit`：继承`Stat`类
+- `compute_group`：核心处理数据部分，对每一组进行处理，模板为`compute_group(self, data, scales, ...)`，在这里，它主要接受置信区间（`ellipse_pro`）参数，返回值为**计算好的置信区间轮廓上的点坐标**。*另外，我认为这里`params`并不必要*。
+- `required_aes`：创建图层所需要的mapping参数
+
+
+### `geom_ord_ellipse`函数--创建`ggplot2`图层
+
+下面便是重头戏，使用上面的`Stat`来创建一个`Geom`图层。其实这就是一个普通的函数，只是为了返回一个图层`layer`。
+
+```{r geom_ord_ellipse}
+geom_ord_ellipse <- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes <- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping <- default_aes
+    } else {
+        mapping <- modifyList(default_aes, mapping)
+    }
+    layer(
+        geom = "polygon",
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = 'identity',
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}
+```
+
+#### 函数的输入值：
+
+- `mapping`：使用过ggplot2都不应该陌生，就是我们写的`aes(x=, y=)`
+- `ellipse_pro`：置信区间的概率
+- `fill`：置信区间内部的颜色，`NA`会产生透明的椭圆
+
+#### 输入预处理：
+
+这里对输入的`mapping`做了判断，如果没有输入，就会使用默认值，如果有输入，则替换默认值。
+
+- `default_aes <- aes_(color = ~Groups, group = ~Groups)`：定义了默认的aesthetics，使用`aes_`时，变量要用双引号引用或使用`~`（`~Groups`）
+- `modifyList`：根据一个`list`修改另一个`list`中的值
+
+#### 返回的`ggplot::layer`：
+
+这个函数的模板是：
+```{r}
+layer(geom = NULL, stat = NULL, data = NULL, mapping = NULL,
+  position = NULL, params = list(), inherit.aes = TRUE,
+  check.aes = TRUE, check.param = TRUE, subset = NULL, show.legend = NA)
+```
+
+对应到Y叔的函数：
+
+- `geom = "polygon"`：一个多边形（椭圆）
+- `stat = StatOrdEllipse`：使用我们定义的`Stat`
+- `mapping = mapping`：数据与图形的对应，如`x=, y=`
+- `position = 'identity'`：位置的定义
+- `data = NULL`：从上一图层继承
+- `params = list(...)`：`geom`和`stat`的参数
+
+到这里，对于一些基本的图层，我觉得完全可以套用Y叔的这个模板。在宏基因组公众号中曾经有人问，这个`ggord`包中能不能把那些向量去掉，或者加入少部分变量的向量，我想用这个模板完全可以实现，只需要用`GeomCurve`来做个图层就可以了。
+
+
+### 计算置信区间椭圆
+
+```{r}
+names(data)[1:2] <- c('one', 'two')
+theta <- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle <- cbind(cos(theta), sin(theta))
+ell <- ddply(data, .(group), function(x) {
+   if(nrow(x) <= 2) {
+       return(NULL)
+   }
+   sigma <- var(cbind(x$one, x$two))
+   mu <- c(mean(x$one), mean(x$two))
+   ed <- sqrt(qchisq(ellipse_pro, df = 2))
+   data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = '+'))
+    })
+names(ell)[2:3] <- c('one', 'two')
+ell <- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  
+names(ell) <- c('Groups', 'x', 'y')
+```
+
+这个代码是从`ggord`的源码改过来的。对于排序图来说，基本最后都会降维到一个低维的空间（2维），方便展示。所以，我们最后需要处理的问题就是根据2维上的散点，计算出这些点分布的可能范围（在2维正态分布的假设下，对协方差使用卡方检验）。其中涉及到我们要把数据分成组（不同椭圆，不同颜色标记），然后对每一组求出上述的范围。这个操作使用ddply实现的：
+
+#### 分而治之
+```{r}
+ell <- ddply(data, .(group), function(x) {
+    ## ...
+    ## 解析见后文
+    })
+```
+
+在此，把`data`根据`group`拆分成组，然后每一组套用`function`，最后再把结果组合（`rbind`）在一起。以下我们介绍每一组是如何处理的。
+
+#### 计算置信椭圆
+
+从统计上来讲这个置信椭圆是这样做的：
+
+1. 做出一个单位圆（半径为单位1）
+```{r}
+theta <- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+## should be:
+## theta <- seq(-pi, pi, length = 50)
+circle <- cbind(cos(theta), sin(theta))
+```
+
+我们知道单位圆的参数方程为$x=\cos(\theta), y=\sin(\theta),\theta\in[0,2\pi]$，在这里ggord的作者其实重复了两圈，具体的原因我也没有搞清楚，我认为*没有必要*。
+
+2. 套用公式把这个圆转换成椭圆
+
+```{r}
+sigma <- var(cbind(x$one, x$two))
+mu <- c(mean(x$one), mean(x$two))
+ed <- sqrt(qchisq(ellipse_pro, df = 2))
+data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = '+'))
+```
+
+这里的转化实际是：
+
+$\boldsymbol X_{ell}=\boldsymbol\mu + k\boldsymbol X C(\boldsymbol\Sigma)$
+
+其中$\boldsymbol\mu=(\bar x_1,\bar x_2)$，也就是数据的中心，$k$根据概率控制椭圆的大小（因为是针对2维正态分布的协方差，所以使用了卡方检验），$C(\boldsymbol\Sigma)$代表协方差矩阵的Cholesky分解，$\boldsymbol X$和$\boldsymbol X_{ell}$分别为圆和椭圆上对应点的坐标。
+
+至于为什么这么做，涉及一些线代推导，可以参见下面两篇文章（特别是第一篇）：
+
+1. <https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507>
+2. <http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/>
+
+#### 有点多余？
+
+```{r}
+names(ell)[2:3] <- c('one', 'two')
+ell <- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  
+```
+这部分的意思是对之前算出的那些椭圆上的点找出对应的凸多边形。我认为对于上述方法得到的点已经在一个凸多边形上了（椭圆）。我没有太明白这一步的必要性，*去掉之后并没有发现影响*。

@@ -73,6 +73,7 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
 
 <link rel="stylesheet" href="/css/bundle.css" />
+<link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
 
 
   
@@ -201,17 +202,16 @@
       
         <article class="post-entry">
   <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-11-13-nanopore-fast5_1..rmd/" class="post-link"></a></h3>
-    <p class="post-meta">@Chenhao Li (李陈浩) · Jan 1, 0001 · 1 min read</p>
+    <h3 class="post-title"><a href="/post/2017-10-29-r-sankeyplot/" class="post-link">桑基图（Sankey diagram）</a></h3>
+    <p class="post-meta">@Chenhao Li (李陈浩) · Oct 29, 2017 · 1 min read</p>
   </header>
   
-  <p class="post-summary">Minion测序数据基础 MinION测序仪的分析软件MinKNOW会将测序的电流信号记录在一种叫fast5格式的文件中，每一个DNA分子为一个fast5文件（没错，一个文件只有一条read）。在Linux系统（其他系统会略有不同）上安装的MinION的数据默认存储于“/var/lib/MinKNOW/data/”目录下。该目录下存储很多日志信息，但最重要的是一个“reads”目录（/var/lib/MinKNOW/data/reads）。
-每一个测序run会产生两个目录格式为“年年年年月月时时_分分秒秒_011117_ID”
- FAST5 – Yet Another HDF5 Nanopore测序的原始数据为HDF5格式，后缀为.fast5。
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.:19.0 3rd Qu.: 56.00 ## Max. :25.0 Max. :120.00  Including Plots You can also embed plots, for example:
-Note that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+  <p class="post-summary">简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
+download.file(&#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&#39;, destfile = &#39;SRS014476-Supragingival_plaque_profile.txt&#39;) taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
+library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
+second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;unclassified&#39;, taxtab$V1), ] ## remove unlassified taxa tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.</p>
   <footer class="post-footer">
-    <a class="read-more" href="/post/2017-11-13-nanopore-fast5_1..rmd/">Read More →</a>
+    <a class="read-more" href="/post/2017-10-29-r-sankeyplot/">Read More →</a>
   </footer>
 </article>
 
@@ -230,7 +230,7 @@ Note that the echo = FALSE parameter was added to the code chunk to prevent prin
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Chenhao&#39;s Blog</p>
+  <p>© 2017-2018 Chenhao&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>
@@ -238,6 +238,14 @@ Note that the echo = FALSE parameter was added to the code chunk to prevent prin
 
 
 <script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script>
+hljs.configure({languages: []});
+hljs.initHighlightingOnLoad();
+</script>
+
 <script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -272,6 +280,16 @@ ga('send', 'pageview');
 <script async src='//www.google-analytics.com/analytics.js'></script>
 
 
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2ed5f50c08edca2c0b923671c4ce2044";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 
 
 

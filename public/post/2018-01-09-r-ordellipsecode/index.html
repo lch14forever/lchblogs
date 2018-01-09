@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Chenhao Li （李陈浩）" />
+  <meta name="description" content="介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+##&amp;#39; add confidence ellipse to ordinary plot produced by ggord ##&amp;#39; ##&amp;#39; ##&amp;#39; @title geom_ord_ellipse ##&amp;#39; @param mapping aes mapping ##&amp;#39; @param ellipse_pro confidence value for the ellipse ##&amp;#39; @param fill color to fill the ellipse, NA by default ##&amp;#39; @param ... additional parameters ##&amp;#39; @return ggplot layer ##&amp;#39; @importFrom ggplot2 aes_ ##&amp;#39; @importFrom ggplot2 layer ##&amp;#39; @importFrom utils modifyList ##&amp;#39; @export ##&amp;#39; @author Guangchuang Yu ##&amp;#39; @references \url{http://lchblogs." />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@li_chenhao" />
+    <meta name="twitter:title" content="ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;" />
+    <meta name="twitter:description" content="介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+##&amp;#39; add confidence ellipse to ordinary plot produced by ggord ##&amp;#39; ##&amp;#39; ##&amp;#39; @title geom_ord_ellipse ##&amp;#39; @param mapping aes mapping ##&amp;#39; @param ellipse_pro confidence value for the ellipse ##&amp;#39; @param fill color to fill the ellipse, NA by default ##&amp;#39; @param ... additional parameters ##&amp;#39; @return ggplot layer ##&amp;#39; @importFrom ggplot2 aes_ ##&amp;#39; @importFrom ggplot2 layer ##&amp;#39; @importFrom utils modifyList ##&amp;#39; @export ##&amp;#39; @author Guangchuang Yu ##&amp;#39; @references \url{http://lchblogs." />
+    <meta name="twitter:image" content="/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.30.2" />
+
+
+<link rel="canonical" href="/post/2018-01-09-r-ordellipsecode/" />
+<link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+
+
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Chenhao&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Chenhao&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="/css/bundle.css" />
+<link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="/img/avatar.jpg" alt="Avatar">
+  
+  <h2 class="title">Chenhao&#39;s Blog</h2>
+  
+  <p class="subtitle">~ Think as a scientist &amp; Work as an engineer ~</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/lch14forever">Works</a></li>
+      
+        <li class="menu-item "><a href="/links/">Links</a></li>
+      
+        <li class="menu-item "><a href="/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:lichenhao.sg@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/lch14forever" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/li_chenhao" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.linkedin.com/in/chenhao-li-1b695b99" title="Linkedin"><span class="icon icon-linkedin"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</h1>
+      <p class="post-meta">@Chenhao Li （李陈浩） · Jan 9, 2018 · 4 min read</p>
+    </header>
+    <article class="post-content"><section class="level2">
+<h2>介绍</h2>
+<p>看到Y叔为<a href="https://github.com/fawda123/ggord">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。</p>
+<p>以下为<code>geom_ord_ellipse.R</code>代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。</p>
+<pre class="r"><code>##&#39; add confidence ellipse to ordinary plot produced by ggord
+##&#39;
+##&#39; 
+##&#39; @title geom_ord_ellipse 
+##&#39; @param mapping aes mapping 
+##&#39; @param ellipse_pro confidence value for the ellipse
+##&#39; @param fill color to fill the ellipse, NA by default
+##&#39; @param ... additional parameters
+##&#39; @return ggplot layer
+##&#39; @importFrom ggplot2 aes_
+##&#39; @importFrom ggplot2 layer
+##&#39; @importFrom utils modifyList
+##&#39; @export
+##&#39; @author Guangchuang Yu
+##&#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}
+geom_ord_ellipse &lt;- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes &lt;- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping &lt;- default_aes
+    } else {
+        mapping &lt;- modifyList(default_aes, mapping)
+    }
+    
+    layer(
+        geom = &quot;polygon&quot;,
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = &#39;identity&#39;,
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}
+
+##&#39; @importFrom ggplot2 ggproto
+##&#39; @importFrom ggplot2 Stat
+##&#39; @importFrom plyr ddply
+##&#39; @importFrom grDevices chull
+StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              names(data)[1:2] &lt;- c(&#39;one&#39;, &#39;two&#39;)
+                              theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+                              circle &lt;- cbind(cos(theta), sin(theta))
+                              ell &lt;- ddply(data, .(group), function(x) {
+                                  if(nrow(x) &lt;= 2) {
+                                      return(NULL)
+                                  }
+                                  sigma &lt;- var(cbind(x$one, x$two))
+                                  mu &lt;- c(mean(x$one), mean(x$two))
+                                  ed &lt;- sqrt(qchisq(ellipse_pro, df = 2))
+                                  data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &#39;+&#39;))
+                              })
+                              names(ell)[2:3] &lt;- c(&#39;one&#39;, &#39;two&#39;)
+                              ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])
+                              names(ell) &lt;- c(&#39;Groups&#39;, &#39;x&#39;, &#39;y&#39;)
+                              return(ell)
+                          },
+                          required_aes = c(&quot;x&quot;, &quot;y&quot;, &quot;group&quot;)
+                          )
+
+
+## . function was from plyr package
+. &lt;- function (..., .env = parent.frame()) {
+    structure(as.list(match.call()[-1]), env = .env, class = &quot;quoted&quot;)
+}</code></pre>
+</section>
+<section id="roxygen" class="level2">
+<h2><code>roxygen</code>文档注释</h2>
+<pre class="r"><code>##&#39; add confidence ellipse to ordinary plot produced by ggord
+##&#39;
+##&#39; 
+##&#39; @title geom_ord_ellipse 
+##&#39; @param mapping aes mapping 
+...
+##&#39; @return ggplot layer
+##&#39; @importFrom ggplot2 aes_
+...
+##&#39; @export
+##&#39; @author Guangchuang Yu
+##&#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}</code></pre>
+<p>roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入<code>?FunctionName</code>看到的帮助信息。</p>
+<figure>
+<img src="/media/roxygen.png" alt="渲染后的帮助文档" /><figcaption>渲染后的帮助文档</figcaption>
+</figure>
+<p>其基础格式是（Y叔使用了<code>##'</code>，我觉得好像跟<code>#'</code>没有什么区别？）：</p>
+<pre class="r"><code>#&#39; @param 函数参数（对应Arguments） 函数的介绍（对应Description）</code></pre>
+<p>上面代码的注释大多可以顾名思义。比较有意思的是<code>#' @export</code>这行了，roxygen会把这个函数放在<code>NAMESPACE</code>文件中，这样用户便可以调用这个函数。我是可以调用<code>yyplot::geom_ord_ellipse()</code>这个函数的。但<code>yyplot:StatOrdEllipse()</code>这个函数是yyplot的内部函数（注意代码中此函数没有<code>#' @export</code>注释）。如果我调用就会报错：</p>
+<pre class="r"><code>yyplot::StatOrdEllipse()</code></pre>
+<pre><code>## Error: &#39;StatOrdEllipse&#39; is not an exported object from &#39;namespace:yyplot&#39;</code></pre>
+<p>更多关于roxygen的介绍可以参考<a href="http://kbroman.org/pkg_primer/pages/docs.html">这篇文章</a>或<a href="https://github.com/klutometis/roxygen">官方文档</a>。</p>
+</section>
+<section id="ggprotoggplot2" class="level2">
+<h2><code>ggproto</code>–<code>ggplot2</code>的语言</h2>
+<p><a href="http://ggplot2.tidyverse.org/reference/ggproto.html">ggproto</a>是ggplot2模块化、面向对象（Object Oriented）化的核心部分。基础的格式是：</p>
+<pre class="r"><code>ggproto(`_class` = NULL, `_inherit` = NULL, ...)</code></pre>
+<p><code>ggproto</code>是一个很庞大的系统，我目前理解还不是很深入，提供一些参考资料：</p>
+<ul>
+<li><a href="https://www.rdocumentation.org/packages/ggplot2/versions/2.2.1/topics/ggplot2-ggproto">官方详细文档</a></li>
+<li><a href="https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html">ggproto教程</a></li>
+</ul>
+<p>在理解Y叔这个脚本中我们需要使用最基础的两个模块<code>Geom</code>（创建图层），<code>Stat</code>（数据处理）。</p>
+<section id="statordellipseggplot2" class="level3">
+<h3><code>StatOrdEllipse</code>内部函数–<code>ggplot2</code>中的数据处理</h3>
+<p>我们在作图之前基本都是要对输入数据进行一些数据预处理，比如在做线箱图的时候需要计算中位数、IQR等。在这个脚本中，我们需要做的是计算置信区间椭圆，这一步是通过<code>ggplot::Stat</code>实现的。</p>
+<pre class="r"><code>StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              ## 此处省略...
+                              ## 解析见后文
+                              return(ell)
+                          },
+                          required_aes = c(&quot;x&quot;, &quot;y&quot;, &quot;group&quot;)
+                          )</code></pre>
+<ul>
+<li><code>_class</code>：这个类的名字为<code>StatOrdEllipse</code></li>
+<li><code>_inherit</code>：继承<code>Stat</code>类</li>
+<li><code>compute_group</code>：核心处理数据部分，对每一组进行处理，模板为<code>compute_group(self, data, scales, ...)</code>，在这里，它主要接受置信区间（<code>ellipse_pro</code>）参数，返回值为<strong>计算好的置信区间轮廓上的点坐标</strong>。<em>另外，我认为这里<code>params</code>并不必要</em>。</li>
+<li><code>required_aes</code>：创建图层所需要的mapping参数</li>
+</ul>
+</section>
+<section id="geom_ord_ellipseggplot2" class="level3">
+<h3><code>geom_ord_ellipse</code>函数–创建<code>ggplot2</code>图层</h3>
+<p>下面便是重头戏，使用上面的<code>Stat</code>来创建一个<code>Geom</code>图层。其实这就是一个普通的函数，只是为了返回一个图层<code>layer</code>。</p>
+<pre class="r"><code>geom_ord_ellipse &lt;- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes &lt;- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping &lt;- default_aes
+    } else {
+        mapping &lt;- modifyList(default_aes, mapping)
+    }
+    layer(
+        geom = &quot;polygon&quot;,
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = &#39;identity&#39;,
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}</code></pre>
+<section class="level4">
+<h4>函数的输入值：</h4>
+<ul>
+<li><code>mapping</code>：使用过ggplot2都不应该陌生，就是我们写的<code>aes(x=, y=)</code></li>
+<li><code>ellipse_pro</code>：置信区间的概率</li>
+<li><code>fill</code>：置信区间内部的颜色，<code>NA</code>会产生透明的椭圆</li>
+</ul>
+</section>
+<section class="level4">
+<h4>输入预处理：</h4>
+<p>这里对输入的<code>mapping</code>做了判断，如果没有输入，就会使用默认值，如果有输入，则替换默认值。</p>
+<ul>
+<li><code>default_aes &lt;- aes_(color = ~Groups, group = ~Groups)</code>：定义了默认的aesthetics，使用<code>aes_</code>时，变量要用双引号引用或使用<code>~</code>（<code>~Groups</code>）</li>
+<li><code>modifyList</code>：根据一个<code>list</code>修改另一个<code>list</code>中的值</li>
+</ul>
+</section>
+<section id="ggplotlayer" class="level4">
+<h4>返回的<code>ggplot::layer</code>：</h4>
+<p>这个函数的模板是：</p>
+<pre class="r"><code>layer(geom = NULL, stat = NULL, data = NULL, mapping = NULL,
+  position = NULL, params = list(), inherit.aes = TRUE,
+  check.aes = TRUE, check.param = TRUE, subset = NULL, show.legend = NA)</code></pre>
+<p>对应到Y叔的函数：</p>
+<ul>
+<li><code>geom = &quot;polygon&quot;</code>：一个多边形（椭圆）</li>
+<li><code>stat = StatOrdEllipse</code>：使用我们定义的<code>Stat</code></li>
+<li><code>mapping = mapping</code>：数据与图形的对应，如<code>x=, y=</code></li>
+<li><code>position = 'identity'</code>：位置的定义</li>
+<li><code>data = NULL</code>：从上一图层继承</li>
+<li><code>params = list(...)</code>：<code>geom</code>和<code>stat</code>的参数</li>
+</ul>
+<p>到这里，对于一些基本的图层，我觉得完全可以套用Y叔的这个模板。在宏基因组公众号中曾经有人问，这个<code>ggord</code>包中能不能把那些向量去掉，或者加入少部分变量的向量，我想用这个模板完全可以实现，只需要用<code>GeomCurve</code>来做个图层就可以了。</p>
+</section>
+</section>
+<section class="level3">
+<h3>计算置信区间椭圆</h3>
+<pre class="r"><code>names(data)[1:2] &lt;- c(&#39;one&#39;, &#39;two&#39;)
+theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle &lt;- cbind(cos(theta), sin(theta))
+ell &lt;- ddply(data, .(group), function(x) {
+   if(nrow(x) &lt;= 2) {
+       return(NULL)
+   }
+   sigma &lt;- var(cbind(x$one, x$two))
+   mu &lt;- c(mean(x$one), mean(x$two))
+   ed &lt;- sqrt(qchisq(ellipse_pro, df = 2))
+   data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &#39;+&#39;))
+    })
+names(ell)[2:3] &lt;- c(&#39;one&#39;, &#39;two&#39;)
+ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  
+names(ell) &lt;- c(&#39;Groups&#39;, &#39;x&#39;, &#39;y&#39;)</code></pre>
+<p>这个代码是从<code>ggord</code>的源码改过来的。对于排序图来说，基本最后都会降维到一个低维的空间（2维），方便展示。所以，我们最后需要处理的问题就是根据2维上的散点，计算出这些点分布的可能范围（在2维正态分布的假设下，对协方差使用卡方检验）。其中涉及到我们要把数据分成组（不同椭圆，不同颜色标记），然后对每一组求出上述的范围。这个操作使用ddply实现的：</p>
+<section class="level4">
+<h4>分而治之</h4>
+<pre class="r"><code>ell &lt;- ddply(data, .(group), function(x) {
+    ## ...
+    ## 解析见后文
+    })</code></pre>
+<p>在此，把<code>data</code>根据<code>group</code>拆分成组，然后每一组套用<code>function</code>，最后再把结果组合（<code>rbind</code>）在一起。以下我们介绍每一组是如何处理的。</p>
+</section>
+<section class="level4">
+<h4>计算置信椭圆</h4>
+<p>从统计上来讲这个置信椭圆是这样做的：</p>
+<ol type="1">
+<li>做出一个单位圆（半径为单位1）</li>
+</ol>
+<pre class="r"><code>theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+## should be:
+## theta &lt;- seq(-pi, pi, length = 50)
+circle &lt;- cbind(cos(theta), sin(theta))</code></pre>
+<p>我们知道单位圆的参数方程为<span class="math inline">\(x=\cos(\theta), y=\sin(\theta),\theta\in[0,2\pi]\)</span>，在这里ggord的作者其实重复了两圈，具体的原因我也没有搞清楚，我认为<em>没有必要</em>。</p>
+<ol start="2" type="1">
+<li>套用公式把这个圆转换成椭圆</li>
+</ol>
+<pre class="r"><code>sigma &lt;- var(cbind(x$one, x$two))
+mu &lt;- c(mean(x$one), mean(x$two))
+ed &lt;- sqrt(qchisq(ellipse_pro, df = 2))
+data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &#39;+&#39;))</code></pre>
+<p>这里的转化实际是：</p>
+<p><span class="math inline">\(\boldsymbol X_{ell}=\boldsymbol\mu + k\boldsymbol X C(\boldsymbol\Sigma)\)</span></p>
+<p>其中<span class="math inline">\(\boldsymbol\mu=(\bar x_1,\bar x_2)\)</span>，也就是数据的中心，<span class="math inline">\(k\)</span>根据概率控制椭圆的大小（因为是针对2维正态分布的协方差，所以使用了卡方检验），<span class="math inline">\(C(\boldsymbol\Sigma)\)</span>代表协方差矩阵的Cholesky分解，<span class="math inline">\(\boldsymbol X\)</span>和<span class="math inline">\(\boldsymbol X_{ell}\)</span>分别为圆和椭圆上对应点的坐标。</p>
+<p>至于为什么这么做，涉及一些线代推导，可以参见下面两篇文章（特别是第一篇）：</p>
+<ol type="1">
+<li><a href="https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507" class="uri">https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507</a></li>
+<li><a href="http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/" class="uri">http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/</a></li>
+</ol>
+</section>
+<section class="level4">
+<h4>有点多余？</h4>
+<pre class="r"><code>names(ell)[2:3] &lt;- c(&#39;one&#39;, &#39;two&#39;)
+ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  </code></pre>
+<p>这部分的意思是对之前算出的那些椭圆上的点找出对应的凸多边形。我认为对于上述方法得到的点已经在一个凸多边形上了（椭圆）。我没有太明白这一步的必要性，<em>去掉之后并没有发现影响</em>。</p>
+</section>
+</section>
+</section>
+</article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © This site was created with R BlogDown and HuGo by Chenhao Li.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Chenhao&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script>
+hljs.configure({languages: []});
+hljs.initHighlightingOnLoad();
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\[','\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+<script src="/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-108829179-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2ed5f50c08edca2c0b923671c4ce2044";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>

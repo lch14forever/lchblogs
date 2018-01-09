@@ -195,6 +195,21 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="/post/2018-01-09-r-ordellipsecode/" class="post-link">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></h3>
+    <p class="post-meta">@Chenhao Li （李陈浩） · Jan 9, 2018 · 4 min read</p>
+  </header>
+  
+  <p class="post-summary">介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+##&#39; add confidence ellipse to ordinary plot produced by ggord ##&#39; ##&#39; ##&#39; @title geom_ord_ellipse ##&#39; @param mapping aes mapping ##&#39; @param ellipse_pro confidence value for the ellipse ##&#39; @param fill color to fill the ellipse, NA by default ##&#39; @param ... additional parameters ##&#39; @return ggplot layer ##&#39; @importFrom ggplot2 aes_ ##&#39; @importFrom ggplot2 layer ##&#39; @importFrom utils modifyList ##&#39; @export ##&#39; @author Guangchuang Yu ##&#39; @references \url{http://lchblogs.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="/post/2018-01-09-r-ordellipsecode/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="/post/2017-12-31-bioinfo-docker_notes/" class="post-link">Useful commands for Docker</a></h3>
     <p class="post-meta">@Chenhao Li (李陈浩) · Dec 31, 2017 · 1 min read</p>
   </header>
@@ -328,23 +343,17 @@ combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID b
 </article>
 
       
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="/post/2017-10-29-r-sankeyplot/" class="post-link">桑基图（Sankey diagram）</a></h3>
-    <p class="post-meta">@Chenhao Li (李陈浩) · Oct 29, 2017 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
-download.file(&#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&#39;, destfile = &#39;SRS014476-Supragingival_plaque_profile.txt&#39;) taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
-library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
-second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;unclassified&#39;, taxtab$V1), ] ## remove unlassified taxa tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.</p>
-  <footer class="post-footer">
-    <a class="read-more" href="/post/2017-10-29-r-sankeyplot/">Read More →</a>
-  </footer>
-</article>
-
-      
     
+    
+      <footer class="list-footer">
+        <nav class="pagination">
+          <h3 class="offscreen">Pagination</h3>
+          
+          
+            <a class="pagination-next" href="/page/2/">Older Posts →</a>
+          
+        </nav>
+      </footer>
     
   </section>
   <footer class="site-footer">
