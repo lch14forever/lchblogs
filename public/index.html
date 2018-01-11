@@ -50,7 +50,7 @@
   
   
   
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Playfair&#43;Display:400,700%7cFauna&#43;One">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
   
   <link rel="stylesheet" href="/styles.css">
   
@@ -516,6 +516,96 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
         
           
       
+          
+      
+
+      
+      
+        
+        
+
+<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
+  
+  
+  <h3 class="article-title" itemprop="headline">
+    <a href="/post/2018-01-12-r-compositional/" itemprop="url">成分之咒与ReBoot算法</a>
+  </h3>
+  
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-01-12 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 12, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+
+</div>
+
+  <div class="article-style" itemprop="articleBody">
+    
+    写在前面 本文的大部分内容都来自我们之前的一篇综述文章Li et al, 2016。
+ 微生物组测序与成分数据 微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息–微生物总量（total abundance）。
+ 成分之咒（Curse of compositionality） （一些推导的废话可以跳过） 成分数据会对一些列统计分析产生影响，最典型的就是计算相关系数（correlation）。其中Pearson相关系数\(\rho_{X,Y}\)是由协方差矩阵算出来的，对于两个OTU的数量（由随机变量\(X\)，\(Y\)表示），相关系数可以按下面公式计算（详细解释见维基百科）：
+\[COV(X, Y)=E[(X-E[X])(Y-E[Y])]\]
+\[\rho_{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}\]
+其中\(COV(X,X)\)其实就是\(X\)的方差。其中根据协方差的性质我们可以得出成分数据的协方差性质：
+\[\sum_{i=1}^px_i=1 \Rightarrow \sum_{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)\]
+我们知道方差（\(COV(x_r, x_r)\)）一定为正值，所以成分数据的协方差（同理相关系数）天然趋向于负值！
+ 天然的负相关 上面的公式推导，其实简单的想一想，因为相加为1，所以一个OTU相对丰度增加，其他OTU必然减少，所以本来不相关的OTU数量在转化为成分数据后也会有负相关的趋势，也就是我们常见的微生物组领域所说的Compositional effect或Compositional bias。以下为简单的一个实验，Species 1和Speacies 2本来不相关，但是其相对丰度负相关：
+## 加载r包 library(ggplot2) library(reshape2) library(cowplot) ## ggplot主题配置 figtheme &lt;- theme_bw() + theme(text = element_text(size=10,face=&#39;bold&#39;),panel.border = element_rect(colour = &quot;black&quot;,size=2)) theme_set(figtheme) ## 随机产生独立的5个OTU绝对数量 means &lt;- c(400,300,95,90,85) data &lt;- sapply(means, function(x) rnorm(100, x, x*0.
+    
+  </div>
+  <p class="read-more" itemprop="mainEntityOfPage">
+    <a href="/post/2018-01-12-r-compositional/" class="btn btn-primary btn-outline">
+      CONTINUE READING
+    </a>
+  </p>
+</div>
+
+      
+
+      
+
+        
+
+        
+        
+
+        
+        
+          
+      
 
       
       
@@ -821,93 +911,6 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
       
 
       
-
-        
-
-        
-        
-
-        
-        
-          
-      
-          
-      
-
-      
-      
-        
-        
-
-<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
-  
-  
-  <h3 class="article-title" itemprop="headline">
-    <a href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/" itemprop="url">从curatedMetagenoimcData提取健康样本的微生物组</a>
-  </h3>
-  
-
-<div class="article-metadata">
-
-  <span class="article-date">
-    
-    <time datetime="2017-11-07 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
-      Nov 7, 2017
-    </time>
-  </span>
-  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Chenhao Li">
-  </span>
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 min read
-  </span>
-  
-
-  
-  
-
-  
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fa fa-folder"></i>
-    
-    <a href="/categories/r">R</a
-    >
-    
-  </span>
-  
-  
-
-  
-
-</div>
-
-  <div class="article-style" itemprop="articleBody">
-    
-    <p><h2 id="简介">简介</h2>
-
-<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article" target="_blank">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
-1. 作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106" target="_blank">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
-2. 用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614" target="_blank">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
-3. 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-当然最基础的操作，就是要从数据库中提取数据。</p>
-    
-  </div>
-  <p class="read-more" itemprop="mainEntityOfPage">
-    <a href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/" class="btn btn-primary btn-outline">
-      CONTINUE READING
-    </a>
-  </p>
-</div>
-
-      
-
-      
     
 
   </div>
@@ -980,7 +983,7 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
           
           
           
-          <a href="/tags/bioinformatics" style="font-size:1.336290290535739rem">Bioinformatics</a>
+          <a href="/tags/bioinformatics" style="font-size:1.311750992628768rem">Bioinformatics</a>
         
           
           
@@ -1001,6 +1004,13 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
           
           
           
+          <a href="/tags/microbiome" style="font-size:0.8rem">Microbiome</a>
+        
+          
+          
+          
+          
+          
           <a href="/tags/ode" style="font-size:0.8rem">ODE</a>
         
           
@@ -1008,14 +1018,14 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
           
           
           
-          <a href="/tags/r" style="font-size:2.408870871607216rem">R</a>
+          <a href="/tags/r" style="font-size:2.422212266046852rem">R</a>
         
           
           
           
           
           
-          <a href="/tags/sankey" style="font-size:1.336290290535739rem">Sankey</a>
+          <a href="/tags/sankey" style="font-size:1.311750992628768rem">Sankey</a>
         
           
           

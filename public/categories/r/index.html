@@ -52,7 +52,7 @@
   
   
   
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Playfair&#43;Display:400,700%7cFauna&#43;One">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
   
   <link rel="stylesheet" href="/styles.css">
   
@@ -94,7 +94,7 @@
   <meta property="og:description" content="PhD student">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2018-01-09T00:00:00&#43;00:00">
+  <meta property="og:updated_time" content="2018-01-12T00:00:00&#43;00:00">
   
 
   
@@ -243,6 +243,26 @@
   
 
   
+  
+  <div>
+    <h2><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></h2>
+    <div class="article-style">
+      
+      写在前面 本文的大部分内容都来自我们之前的一篇综述文章Li et al, 2016。
+ 微生物组测序与成分数据 微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息–微生物总量（total abundance）。
+ 成分之咒（Curse of compositionality） （一些推导的废话可以跳过） 成分数据会对一些列统计分析产生影响，最典型的就是计算相关系数（correlation）。其中Pearson相关系数(\rho<em>{X,Y})是由协方差矩阵算出来的，对于两个OTU的数量（由随机变量(X)，(Y)表示），相关系数可以按下面公式计算（详细解释见维基百科）：
+[COV(X, Y)=E[(X-E[X])(Y-E[Y])]]
+[\rho</em>{X,Y}=\frac{COV(X,Y)}{\sqrt{COV(X,X)\times COV(Y,Y)}}]
+其中(COV(X,X))其实就是(X)的方差。其中根据协方差的性质我们可以得出成分数据的协方差性质：
+[\sum_{i=1}^px<em>i=1 \Rightarrow \sum</em>{i=1,i\neq r}^pCOV(x_i, x_r)=-COV(x_r, x_r)]
+我们知道方差（(COV(x_r, x_r))）一定为正值，所以成分数据的协方差（同理相关系数）天然趋向于负值！
+ 天然的负相关 上面的公式推导，其实简单的想一想，因为相加为1，所以一个OTU相对丰度增加，其他OTU必然减少，所以本来不相关的OTU数量在转化为成分数据后也会有负相关的趋势，也就是我们常见的微生物组领域所说的Compositional effect或Compositional bias。以下为简单的一个实验，Species 1和Speacies 2本来不相关，但是其相对丰度负相关：</p>
+
+<h2 id="加载r包-library-ggplot2-library-reshape2-library-cowplot-ggplot主题配置-figtheme-lt-theme-bw-theme-text-element-text-size-10-face-39-bold-39-panel-border-element-rect-colour-quot-black-quot-size-2-theme-set-figtheme-随机产生独立的5个otu绝对数量-means-lt-c-400-300-95-90-85-data-lt-sapply-means-function-x-rnorm-100-x-x-0">加载r包 library(ggplot2) library(reshape2) library(cowplot) ## ggplot主题配置 figtheme &lt;- theme_bw() + theme(text = element_text(size=10,face=&#39;bold&#39;),panel.border = element_rect(colour = &quot;black&quot;,size=2)) theme_set(figtheme) ## 随机产生独立的5个OTU绝对数量 means &lt;- c(400,300,95,90,85) data &lt;- sapply(means, function(x) rnorm(100, x, x*0.</h2>
+
+      
+    </div>
+  </div>
   
   <div>
     <h2><a href="/post/2018-01-09-r-ordellipsecode/">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></h2>
