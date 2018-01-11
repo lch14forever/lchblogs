@@ -106,7 +106,7 @@ StatOrdEllipse <- ggproto("StatOrdEllipse", Stat,
 
 roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入`?FunctionName`看到的帮助信息。
 
-![渲染后的帮助文档](/media/roxygen.png)
+![渲染后的帮助文档](/img/roxygen.png)
 
 其基础格式是（Y叔使用了`##'`，我觉得好像跟`#'`没有什么区别？）：
 

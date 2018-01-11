@@ -339,7 +339,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <section class="level2">
+        <div class="section level2">
 <h2>介绍</h2>
 <p>看到Y叔为<a href="https://github.com/fawda123/ggord">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。</p>
 <p>以下为<code>geom_ord_ellipse.R</code>代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。</p>
@@ -411,8 +411,8 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
 . &lt;- function (..., .env = parent.frame()) {
     structure(as.list(match.call()[-1]), env = .env, class = &quot;quoted&quot;)
 }</code></pre>
-</section>
-<section id="roxygen" class="level2">
+</div>
+<div id="roxygen" class="section level2">
 <h2><code>roxygen</code>文档注释</h2>
 <pre class="r"><code>##&#39; add confidence ellipse to ordinary plot produced by ggord
 ##&#39;
@@ -427,17 +427,18 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
 ##&#39; @author Guangchuang Yu
 ##&#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}</code></pre>
 <p>roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入<code>?FunctionName</code>看到的帮助信息。</p>
-<figure>
-<img src="/media/roxygen.png" alt="渲染后的帮助文档" /><figcaption>渲染后的帮助文档</figcaption>
-</figure>
+<div class="figure">
+<img src="/img/roxygen.png" alt="渲染后的帮助文档" />
+<p class="caption">渲染后的帮助文档</p>
+</div>
 <p>其基础格式是（Y叔使用了<code>##'</code>，我觉得好像跟<code>#'</code>没有什么区别？）：</p>
 <pre class="r"><code>#&#39; @param 函数参数（对应Arguments） 函数的介绍（对应Description）</code></pre>
 <p>上面代码的注释大多可以顾名思义。比较有意思的是<code>#' @export</code>这行了，roxygen会把这个函数放在<code>NAMESPACE</code>文件中，这样用户便可以调用这个函数。我是可以调用<code>yyplot::geom_ord_ellipse()</code>这个函数的。但<code>yyplot:StatOrdEllipse()</code>这个函数是yyplot的内部函数（注意代码中此函数没有<code>#' @export</code>注释）。如果我调用就会报错：</p>
 <pre class="r"><code>yyplot::StatOrdEllipse()</code></pre>
 <pre><code>## Error: &#39;StatOrdEllipse&#39; is not an exported object from &#39;namespace:yyplot&#39;</code></pre>
 <p>更多关于roxygen的介绍可以参考<a href="http://kbroman.org/pkg_primer/pages/docs.html">这篇文章</a>或<a href="https://github.com/klutometis/roxygen">官方文档</a>。</p>
-</section>
-<section id="ggprotoggplot2" class="level2">
+</div>
+<div id="ggprotoggplot2" class="section level2">
 <h2><code>ggproto</code>–<code>ggplot2</code>的语言</h2>
 <p><a href="http://ggplot2.tidyverse.org/reference/ggproto.html">ggproto</a>是ggplot2模块化、面向对象（Object Oriented）化的核心部分。基础的格式是：</p>
 <pre class="r"><code>ggproto(`_class` = NULL, `_inherit` = NULL, ...)</code></pre>
@@ -447,7 +448,7 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
 <li><a href="https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html">ggproto教程</a></li>
 </ul>
 <p>在理解Y叔这个脚本中我们需要使用最基础的两个模块<code>Geom</code>（创建图层），<code>Stat</code>（数据处理）。</p>
-<section id="statordellipseggplot2" class="level3">
+<div id="statordellipseggplot2" class="section level3">
 <h3><code>StatOrdEllipse</code>内部函数–<code>ggplot2</code>中的数据处理</h3>
 <p>我们在作图之前基本都是要对输入数据进行一些数据预处理，比如在做线箱图的时候需要计算中位数、IQR等。在这个脚本中，我们需要做的是计算置信区间椭圆，这一步是通过<code>ggplot::Stat</code>实现的。</p>
 <pre class="r"><code>StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
@@ -464,8 +465,8 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
 <li><code>compute_group</code>：核心处理数据部分，对每一组进行处理，模板为<code>compute_group(self, data, scales, ...)</code>，在这里，它主要接受置信区间（<code>ellipse_pro</code>）参数，返回值为<strong>计算好的置信区间轮廓上的点坐标</strong>。<em>另外，我认为这里<code>params</code>并不必要</em>。</li>
 <li><code>required_aes</code>：创建图层所需要的mapping参数</li>
 </ul>
-</section>
-<section id="geom_ord_ellipseggplot2" class="level3">
+</div>
+<div id="geom_ord_ellipseggplot2" class="section level3">
 <h3><code>geom_ord_ellipse</code>函数–创建<code>ggplot2</code>图层</h3>
 <p>下面便是重头戏，使用上面的<code>Stat</code>来创建一个<code>Geom</code>图层。其实这就是一个普通的函数，只是为了返回一个图层<code>layer</code>。</p>
 <pre class="r"><code>geom_ord_ellipse &lt;- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
@@ -488,23 +489,23 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
         )
     )
 }</code></pre>
-<section class="level4">
+<div class="section level4">
 <h4>函数的输入值：</h4>
 <ul>
 <li><code>mapping</code>：使用过ggplot2都不应该陌生，就是我们写的<code>aes(x=, y=)</code></li>
 <li><code>ellipse_pro</code>：置信区间的概率</li>
 <li><code>fill</code>：置信区间内部的颜色，<code>NA</code>会产生透明的椭圆</li>
 </ul>
-</section>
-<section class="level4">
+</div>
+<div class="section level4">
 <h4>输入预处理：</h4>
 <p>这里对输入的<code>mapping</code>做了判断，如果没有输入，就会使用默认值，如果有输入，则替换默认值。</p>
 <ul>
 <li><code>default_aes &lt;- aes_(color = ~Groups, group = ~Groups)</code>：定义了默认的aesthetics，使用<code>aes_</code>时，变量要用双引号引用或使用<code>~</code>（<code>~Groups</code>）</li>
 <li><code>modifyList</code>：根据一个<code>list</code>修改另一个<code>list</code>中的值</li>
 </ul>
-</section>
-<section id="ggplotlayer" class="level4">
+</div>
+<div id="ggplotlayer" class="section level4">
 <h4>返回的<code>ggplot::layer</code>：</h4>
 <p>这个函数的模板是：</p>
 <pre class="r"><code>layer(geom = NULL, stat = NULL, data = NULL, mapping = NULL,
@@ -520,9 +521,9 @@ StatOrdEllipse &lt;- ggproto(&quot;StatOrdEllipse&quot;, Stat,
 <li><code>params = list(...)</code>：<code>geom</code>和<code>stat</code>的参数</li>
 </ul>
 <p>到这里，对于一些基本的图层，我觉得完全可以套用Y叔的这个模板。在宏基因组公众号中曾经有人问，这个<code>ggord</code>包中能不能把那些向量去掉，或者加入少部分变量的向量，我想用这个模板完全可以实现，只需要用<code>GeomCurve</code>来做个图层就可以了。</p>
-</section>
-</section>
-<section class="level3">
+</div>
+</div>
+<div class="section level3">
 <h3>计算置信区间椭圆</h3>
 <pre class="r"><code>names(data)[1:2] &lt;- c(&#39;one&#39;, &#39;two&#39;)
 theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
@@ -540,18 +541,18 @@ names(ell)[2:3] &lt;- c(&#39;one&#39;, &#39;two&#39;)
 ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  
 names(ell) &lt;- c(&#39;Groups&#39;, &#39;x&#39;, &#39;y&#39;)</code></pre>
 <p>这个代码是从<code>ggord</code>的源码改过来的。对于排序图来说，基本最后都会降维到一个低维的空间（2维），方便展示。所以，我们最后需要处理的问题就是根据2维上的散点，计算出这些点分布的可能范围（在2维正态分布的假设下，对协方差使用卡方检验）。其中涉及到我们要把数据分成组（不同椭圆，不同颜色标记），然后对每一组求出上述的范围。这个操作使用ddply实现的：</p>
-<section class="level4">
+<div class="section level4">
 <h4>分而治之</h4>
 <pre class="r"><code>ell &lt;- ddply(data, .(group), function(x) {
     ## ...
     ## 解析见后文
     })</code></pre>
 <p>在此，把<code>data</code>根据<code>group</code>拆分成组，然后每一组套用<code>function</code>，最后再把结果组合（<code>rbind</code>）在一起。以下我们介绍每一组是如何处理的。</p>
-</section>
-<section class="level4">
+</div>
+<div class="section level4">
 <h4>计算置信椭圆</h4>
 <p>从统计上来讲这个置信椭圆是这样做的：</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>做出一个单位圆（半径为单位1）</li>
 </ol>
 <pre class="r"><code>theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
@@ -559,7 +560,7 @@ names(ell) &lt;- c(&#39;Groups&#39;, &#39;x&#39;, &#39;y&#39;)</code></pre>
 ## theta &lt;- seq(-pi, pi, length = 50)
 circle &lt;- cbind(cos(theta), sin(theta))</code></pre>
 <p>我们知道单位圆的参数方程为<span class="math inline">\(x=\cos(\theta), y=\sin(\theta),\theta\in[0,2\pi]\)</span>，在这里ggord的作者其实重复了两圈，具体的原因我也没有搞清楚，我认为<em>没有必要</em>。</p>
-<ol start="2" type="1">
+<ol start="2" style="list-style-type: decimal">
 <li>套用公式把这个圆转换成椭圆</li>
 </ol>
 <pre class="r"><code>sigma &lt;- var(cbind(x$one, x$two))
@@ -570,19 +571,19 @@ data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &#39;+&#39;))</code><
 <p><span class="math inline">\(\boldsymbol X_{ell}=\boldsymbol\mu + k\boldsymbol X C(\boldsymbol\Sigma)\)</span></p>
 <p>其中<span class="math inline">\(\boldsymbol\mu=(\bar x_1,\bar x_2)\)</span>，也就是数据的中心，<span class="math inline">\(k\)</span>根据概率控制椭圆的大小（因为是针对2维正态分布的协方差，所以使用了卡方检验），<span class="math inline">\(C(\boldsymbol\Sigma)\)</span>代表协方差矩阵的Cholesky分解，<span class="math inline">\(\boldsymbol X\)</span>和<span class="math inline">\(\boldsymbol X_{ell}\)</span>分别为圆和椭圆上对应点的坐标。</p>
 <p>至于为什么这么做，涉及一些线代推导，可以参见下面两篇文章（特别是第一篇）：</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li><a href="https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507" class="uri">https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507</a></li>
 <li><a href="http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/" class="uri">http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/</a></li>
 </ol>
-</section>
-<section class="level4">
+</div>
+<div class="section level4">
 <h4>有点多余？</h4>
 <pre class="r"><code>names(ell)[2:3] &lt;- c(&#39;one&#39;, &#39;two&#39;)
 ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  </code></pre>
 <p>这部分的意思是对之前算出的那些椭圆上的点找出对应的凸多边形。我认为对于上述方法得到的点已经在一个凸多边形上了（椭圆）。我没有太明白这一步的必要性，<em>去掉之后并没有发现影响</em>。</p>
-</section>
-</section>
-</section>
+</div>
+</div>
+</div>
 
       </div>
 
