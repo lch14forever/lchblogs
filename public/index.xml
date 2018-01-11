@@ -105,7 +105,7 @@ StatOrdEllipse &amp;lt;- ggproto(&amp;quot;StatOrdEllipse&amp;quot;, Stat,
 ##&amp;#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入&lt;code&gt;?FunctionName&lt;/code&gt;看到的帮助信息。&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/roxygen.png&#34; alt=&#34;渲染后的帮助文档&#34; /&gt;
+&lt;img src=&#34;/roxygen.png&#34; alt=&#34;渲染后的帮助文档&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;渲染后的帮助文档&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;其基础格式是（Y叔使用了&lt;code&gt;##&#39;&lt;/code&gt;，我觉得好像跟&lt;code&gt;#&#39;&lt;/code&gt;没有什么区别？）：&lt;/p&gt;
