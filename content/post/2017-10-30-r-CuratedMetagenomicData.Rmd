@@ -4,6 +4,9 @@ output: html_document
 categories: ["R"]
 tags: ["R","Sankey"]
 date: 2017-10-30
+summary: "# 简介
+
+CuratedMetagenomicData(<https://waldronlab.github.io/curatedMetagenomicData/>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录[6000余个样本](https://waldronlab.github.io/curatedMetagenomicData/datasets-included/)并在持续[扩建](https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/)当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。"
 ---
 
 ```{r setup, include=FALSE}

@@ -1,9 +1,11 @@
 ---
 title: "有了绝对定量就完了？"
 author: "Chenhao Li"
-tag: ['R','Metagenomics','Correlation network']
+tags: ['R','Metagenomics','Correlation network']
+categories: ['读文献']
 date: 2017-11-28
 output: html_document
+summary: "Jeroen Raes研究组上周在Nature发表[文章](https://www.nature.com/articles/nature24460)，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。"
 ---
 
 ```{r setup, include=FALSE}

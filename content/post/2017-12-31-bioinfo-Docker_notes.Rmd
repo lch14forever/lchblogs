@@ -4,6 +4,7 @@ author: "Chenhao Li (李陈浩)"
 date: 2017-12-31
 tags: ["Bioinformatics"]
 output: html_document
+summary: "我的Docker初学笔记"
 ---
 
 ```{r setup, include=FALSE}

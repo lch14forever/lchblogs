@@ -3,6 +3,7 @@ title: "Add confidence ellipse to LDA ordination plot"
 author: "Chenhao Li"
 date: "2017-12-22"
 output: html_document
+summary: "Add confidence ellipse to LDA plots generated with ggord"
 ---
 
 ```{r setup, include=FALSE}

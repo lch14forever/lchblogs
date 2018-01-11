@@ -5,6 +5,7 @@ output:
 categories: ["R"]
 tags: ["R"]
 date: 2017-11-02
+summary: "再次尝试桑基图"
 ---
 
 ```{r setup, include=FALSE}

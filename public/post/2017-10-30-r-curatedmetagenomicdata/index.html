@@ -1,215 +1,348 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
 
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30.2" />
+  <meta name="author" content="Chenhao Li">
 
   
-  <title>超大宏基因组数据集CuratedMetagenomicData</title>
-
   
   
-
-
-
-
   
-  <meta name="author" content="Chenhao Li (李陈浩)" />
+    
+      
+    
+  
   <meta name="description" content="简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
  完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
  安装 通过Bioconductor安装最新版本
-## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
-suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 查看metadata
-combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # ." />
+## try http:// if https:// URLs are not supported source(&quot;https://bioconductor.org/biocLite.R&quot;) useDevel() biocLite(&quot;curatedMetagenomicData&quot;)  基本使用 调用
+suppressPackageStartupMessages(library(curatedMetagenomicData)) 查看metadata
+combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &lt;NA&gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &lt;NA&gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &lt;NA&gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &lt;NA&gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &lt;NA&gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &lt;NA&gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &lt;NA&gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &lt;NA&gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &lt;NA&gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &lt;NA&gt; ## # .">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2017-10-30-r-curatedmetagenomicdata/">
+
+  
+
+
+  
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@li_chenhao" />
-    <meta name="twitter:title" content="超大宏基因组数据集CuratedMetagenomicData" />
-    <meta name="twitter:description" content="简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Playfair&#43;Display:400,700%7cFauna&#43;One">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2017-10-30-r-curatedmetagenomicdata/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:url" content="/post/2017-10-30-r-curatedmetagenomicdata/">
+  <meta property="og:title" content="超大宏基因组数据集CuratedMetagenomicData | Chenhao&#39;s Blog">
+  <meta property="og:description" content="简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
  完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
  安装 通过Bioconductor安装最新版本
-## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
-suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 查看metadata
-combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # ." />
-    <meta name="twitter:image" content="/img/avatar.jpg" />
+## try http:// if https:// URLs are not supported source(&quot;https://bioconductor.org/biocLite.R&quot;) useDevel() biocLite(&quot;curatedMetagenomicData&quot;)  基本使用 调用
+suppressPackageStartupMessages(library(curatedMetagenomicData)) 查看metadata
+combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &lt;NA&gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &lt;NA&gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &lt;NA&gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &lt;NA&gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &lt;NA&gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &lt;NA&gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &lt;NA&gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &lt;NA&gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &lt;NA&gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &lt;NA&gt; ## # .">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2017-10-30T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2017-10-30T00:00:00&#43;00:00">
   
 
-
-
-
-<meta name="generator" content="Hugo 0.30.2" />
-
-
-<link rel="canonical" href="/post/2017-10-30-r-curatedmetagenomicdata/" />
-<link rel="alternative" href="/index.xml" title="Chenhao&#39;s Blog" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-
-
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-
-
-
-
-
-
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Chenhao&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Chenhao&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5fbf5e" />
-
-
-
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
-
-<link rel="stylesheet" href="/css/bundle.css" />
-<link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-
-
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
-
+  <title>超大宏基因组数据集CuratedMetagenomicData | Chenhao&#39;s Blog</title>
 
 </head>
-  <body>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
     
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+    <div class="navbar-header">
       
-        
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
-        
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       
+      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
     </div>
+
     
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">超大宏基因组数据集CuratedMetagenomicData</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
     
-  <header class="site-header">
-  <img class="avatar" src="/img/avatar.jpg" alt="Avatar">
+    <time datetime="2017-10-30 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Oct 30, 2017
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
   
-  <h2 class="title">Chenhao&#39;s Blog</h2>
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    6 min read
+  </span>
   
-  <p class="subtitle">~ Think as a scientist &amp; Work as an engineer ~</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/lch14forever">Works</a></li>
-      
-        <li class="menu-item "><a href="/links/">Links</a></li>
-      
-        <li class="menu-item "><a href="/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
 
-      
-      <li class="social-item">
-        <a href="mailto:lichenhao.sg@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
+  
+  
 
-      
-      <li class="social-item">
-        <a href="//github.com/lch14forever" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
 
-      <li class="social-item">
-        <a href="//twitter.com/li_chenhao" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=%e8%b6%85%e5%a4%a7%e5%ae%8f%e5%9f%ba%e5%9b%a0%e7%bb%84%e6%95%b0%e6%8d%ae%e9%9b%86CuratedMetagenomicData&amp;url=%2fpost%2f2017-10-30-r-curatedmetagenomicdata%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2f2017-10-30-r-curatedmetagenomicdata%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2f2017-10-30-r-curatedmetagenomicdata%2f&amp;title=%e8%b6%85%e5%a4%a7%e5%ae%8f%e5%9f%ba%e5%9b%a0%e7%bb%84%e6%95%b0%e6%8d%ae%e9%9b%86CuratedMetagenomicData"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2f2017-10-30-r-curatedmetagenomicdata%2f&amp;title=%e8%b6%85%e5%a4%a7%e5%ae%8f%e5%9f%ba%e5%9b%a0%e7%bb%84%e6%95%b0%e6%8d%ae%e9%9b%86CuratedMetagenomicData"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=%e8%b6%85%e5%a4%a7%e5%ae%8f%e5%9f%ba%e5%9b%a0%e7%bb%84%e6%95%b0%e6%8d%ae%e9%9b%86CuratedMetagenomicData&amp;body=%2fpost%2f2017-10-30-r-curatedmetagenomicdata%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
 
-      
 
-      
+  
 
-      
+</div>
 
-      
 
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.linkedin.com/in/chenhao-li-1b695b99" title="Linkedin"><span class="icon icon-linkedin"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
-</header>
-
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">超大宏基因组数据集CuratedMetagenomicData</h1>
-      <p class="post-meta">@Chenhao Li (李陈浩) · Oct 30, 2017 · 6 min read</p>
-    </header>
-    <article class="post-content"><section class="level1">
+      <div class="article-style" itemprop="articleBody">
+        <section class="level1">
 <h1>简介</h1>
 <p>CuratedMetagenomicData(<a href="https://waldronlab.github.io/curatedMetagenomicData/" class="uri">https://waldronlab.github.io/curatedMetagenomicData/</a>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-included/">6000余个样本</a>并在持续<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/">扩建</a>当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。</p>
 </section>
@@ -229,10 +362,6 @@ biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
 <h1>基本使用</h1>
 <p>调用</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(curatedMetagenomicData))</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
-<pre><code>## Warning: package &#39;BiocGenerics&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;ExperimentHub&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;AnnotationHub&#39; was built under R version 3.4.2</code></pre>
 <p>查看metadata</p>
 <pre class="r"><code>combined_metadata</code></pre>
 <pre><code>## # A tibble: 6,058 x 80
@@ -385,22 +514,23 @@ biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
 <p>下载HMP 2012（HMP I）的MetaPhlAn2分析结果</p>
 <pre class="r"><code>dat &lt;- curatedMetagenomicData(&quot;HMP_2012.metaphlan_bugs_list.*&quot;, dryrun=FALSE)</code></pre>
 <pre><code>## Working on HMP_2012.metaphlan_bugs_list.nasalcavity</code></pre>
-<pre><code>## updating metadata: retrieving 1 resource
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;
-## Working on HMP_2012.metaphlan_bugs_list.oralcavity
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;
-## Working on HMP_2012.metaphlan_bugs_list.stool
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;
-## Working on HMP_2012.metaphlan_bugs_list.vagina
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
+<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.oralcavity</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.stool</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.vagina</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
 <p>查看HMP I粪便数据的元数据</p>
 <pre class="r"><code>head( pData(dat[[3]]) )</code></pre>
 <pre><code>##                    subjectID body_site body_subsite
@@ -497,23 +627,46 @@ hmp_stool_metaphlan[1:10, 1:10]</code></pre>
 ## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
 ## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147</code></pre>
 </section>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/sankey">Sankey</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
 </article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
-        
-          <li><a href="/tags/r"><span class="tag">R</span></a></li>
-        
-          <li><a href="/tags/sankey"><span class="tag">Sankey</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This site was created with R BlogDown and HuGo by Chenhao Li.
-      </p>
-    </footer>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
     
-      <div id="disqus_thread"></div>
+    <li><a href="/post/2017-10-29-r-sankeyplot/">桑基图（Sankey diagram）</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
 <script>
     var disqus_config = function () {
     
@@ -533,72 +686,104 @@ hmp_stool_metaphlan[1:10, 1:10]</code></pre>
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2018 Chenhao&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
 </footer>
 
 
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
+    
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
-<script>
-hljs.configure({languages: []});
-hljs.initHighlightingOnLoad();
-</script>
+    
+    
 
-<script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [['$','$'], ['\\(','\\)']],
-      displayMath: [['$$','$$'], ['\[','\]']],
-      processEscapes: true,
-      processEnvironments: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-      TeX: { equationNumbers: { autoNumber: "AMS" },
-      extensions: ["AMSmath.js", "AMSsymbols.js"] }
-    }
-  });
-</script>
-<script type="text/x-mathjax-config">
-  // Fix <code> tags after MathJax finishes running. This is a
-  // hack to overcome a shortcoming of Markdown. Discussion at
-  // https://github.com/mojombo/jekyll/issues/199
-  MathJax.Hub.Queue(() => {
-    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
-  });
-</script>
+    
 
-<script src="/js/bundle.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
 
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-108829179-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
+      
 
+      
 
+      <script>hljs.initHighlightingOnLoad();</script>
+    
 
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?2ed5f50c08edca2c0b923671c4ce2044";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-
-
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
 
   </body>
 </html>
+

@@ -1,34 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Chenhao&#39;s Blog</title>
+    <title>Chenhao&#39;s Blog on Chenhao&#39;s Blog</title>
     <link>/</link>
-    <description>Recent content on Chenhao&#39;s Blog</description>
+    <description>Recent content in Chenhao&#39;s Blog on Chenhao&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>en-us</language>
     <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
-    <lastBuildDate>Wed, 09 Apr 2014 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Links</title>
-      <link>/links/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/links/</guid>
-      <description>Ritchie and his friends.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/about/</guid>
-      <description>I am a bioinformatician and Ph.D student from Computational and System Biology Group 5 (CSB5), Genome Institute of Singapore (GIS). I graduated from Faculty of Science, National University of Singapore (NUS), majored in computational biology, after which I decided to seek after a career as a researcher. I am interested in abroad range of biological problems. I believe that all biological processes will leave some clues. By investigating such clues, we can not only identify the indicators of the biological process (i.</description>
-    </item>
+    <lastBuildDate>Sun, 15 Oct 2017 00:00:00 +0800</lastBuildDate>
+    <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</title>
@@ -36,9 +16,251 @@
       <pubDate>Tue, 09 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018-01-09-r-ordellipsecode/</guid>
-      <description>介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
-以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
-##&amp;#39; add confidence ellipse to ordinary plot produced by ggord ##&amp;#39; ##&amp;#39; ##&amp;#39; @title geom_ord_ellipse ##&amp;#39; @param mapping aes mapping ##&amp;#39; @param ellipse_pro confidence value for the ellipse ##&amp;#39; @param fill color to fill the ellipse, NA by default ##&amp;#39; @param ... additional parameters ##&amp;#39; @return ggplot layer ##&amp;#39; @importFrom ggplot2 aes_ ##&amp;#39; @importFrom ggplot2 layer ##&amp;#39; @importFrom utils modifyList ##&amp;#39; @export ##&amp;#39; @author Guangchuang Yu ##&amp;#39; @references \url{http://lchblogs.</description>
+      <description>&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;介绍&lt;/h2&gt;
+&lt;p&gt;看到Y叔为&lt;a href=&#34;https://github.com/fawda123/ggord&#34;&gt;ggord&lt;/a&gt;做的添加置信椭圆的&lt;a href=&#34;https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R&#34;&gt;geom_ord_ellipse.R&lt;/a&gt;（用法见&lt;a href=&#34;http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/&#34;&gt;上一篇文章&lt;/a&gt;），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。&lt;/p&gt;
+&lt;p&gt;以下为&lt;code&gt;geom_ord_ellipse.R&lt;/code&gt;代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##&amp;#39; add confidence ellipse to ordinary plot produced by ggord
+##&amp;#39;
+##&amp;#39; 
+##&amp;#39; @title geom_ord_ellipse 
+##&amp;#39; @param mapping aes mapping 
+##&amp;#39; @param ellipse_pro confidence value for the ellipse
+##&amp;#39; @param fill color to fill the ellipse, NA by default
+##&amp;#39; @param ... additional parameters
+##&amp;#39; @return ggplot layer
+##&amp;#39; @importFrom ggplot2 aes_
+##&amp;#39; @importFrom ggplot2 layer
+##&amp;#39; @importFrom utils modifyList
+##&amp;#39; @export
+##&amp;#39; @author Guangchuang Yu
+##&amp;#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}
+geom_ord_ellipse &amp;lt;- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes &amp;lt;- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping &amp;lt;- default_aes
+    } else {
+        mapping &amp;lt;- modifyList(default_aes, mapping)
+    }
+    
+    layer(
+        geom = &amp;quot;polygon&amp;quot;,
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = &amp;#39;identity&amp;#39;,
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}
+
+##&amp;#39; @importFrom ggplot2 ggproto
+##&amp;#39; @importFrom ggplot2 Stat
+##&amp;#39; @importFrom plyr ddply
+##&amp;#39; @importFrom grDevices chull
+StatOrdEllipse &amp;lt;- ggproto(&amp;quot;StatOrdEllipse&amp;quot;, Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              names(data)[1:2] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+                              theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+                              circle &amp;lt;- cbind(cos(theta), sin(theta))
+                              ell &amp;lt;- ddply(data, .(group), function(x) {
+                                  if(nrow(x) &amp;lt;= 2) {
+                                      return(NULL)
+                                  }
+                                  sigma &amp;lt;- var(cbind(x$one, x$two))
+                                  mu &amp;lt;- c(mean(x$one), mean(x$two))
+                                  ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2))
+                                  data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
+                              })
+                              names(ell)[2:3] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+                              ell &amp;lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])
+                              names(ell) &amp;lt;- c(&amp;#39;Groups&amp;#39;, &amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;)
+                              return(ell)
+                          },
+                          required_aes = c(&amp;quot;x&amp;quot;, &amp;quot;y&amp;quot;, &amp;quot;group&amp;quot;)
+                          )
+
+
+## . function was from plyr package
+. &amp;lt;- function (..., .env = parent.frame()) {
+    structure(as.list(match.call()[-1]), env = .env, class = &amp;quot;quoted&amp;quot;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;roxygen&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;roxygen&lt;/code&gt;文档注释&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##&amp;#39; add confidence ellipse to ordinary plot produced by ggord
+##&amp;#39;
+##&amp;#39; 
+##&amp;#39; @title geom_ord_ellipse 
+##&amp;#39; @param mapping aes mapping 
+...
+##&amp;#39; @return ggplot layer
+##&amp;#39; @importFrom ggplot2 aes_
+...
+##&amp;#39; @export
+##&amp;#39; @author Guangchuang Yu
+##&amp;#39; @references \url{http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;roxygen会根据这一部分对单一函数生成帮助文档，也就是我们在R命令行中输入&lt;code&gt;?FunctionName&lt;/code&gt;看到的帮助信息。&lt;/p&gt;
+&lt;figure&gt;
+&lt;img src=&#34;/media/roxygen.png&#34; alt=&#34;渲染后的帮助文档&#34; /&gt;&lt;figcaption&gt;渲染后的帮助文档&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;其基础格式是（Y叔使用了&lt;code&gt;##&#39;&lt;/code&gt;，我觉得好像跟&lt;code&gt;#&#39;&lt;/code&gt;没有什么区别？）：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#&amp;#39; @param 函数参数（对应Arguments） 函数的介绍（对应Description）&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;上面代码的注释大多可以顾名思义。比较有意思的是&lt;code&gt;#&#39; @export&lt;/code&gt;这行了，roxygen会把这个函数放在&lt;code&gt;NAMESPACE&lt;/code&gt;文件中，这样用户便可以调用这个函数。我是可以调用&lt;code&gt;yyplot::geom_ord_ellipse()&lt;/code&gt;这个函数的。但&lt;code&gt;yyplot:StatOrdEllipse()&lt;/code&gt;这个函数是yyplot的内部函数（注意代码中此函数没有&lt;code&gt;#&#39; @export&lt;/code&gt;注释）。如果我调用就会报错：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;yyplot::StatOrdEllipse()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Error: &amp;#39;StatOrdEllipse&amp;#39; is not an exported object from &amp;#39;namespace:yyplot&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;更多关于roxygen的介绍可以参考&lt;a href=&#34;http://kbroman.org/pkg_primer/pages/docs.html&#34;&gt;这篇文章&lt;/a&gt;或&lt;a href=&#34;https://github.com/klutometis/roxygen&#34;&gt;官方文档&lt;/a&gt;。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;ggprotoggplot2&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;ggproto&lt;/code&gt;–&lt;code&gt;ggplot2&lt;/code&gt;的语言&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://ggplot2.tidyverse.org/reference/ggproto.html&#34;&gt;ggproto&lt;/a&gt;是ggplot2模块化、面向对象（Object Oriented）化的核心部分。基础的格式是：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggproto(`_class` = NULL, `_inherit` = NULL, ...)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;ggproto&lt;/code&gt;是一个很庞大的系统，我目前理解还不是很深入，提供一些参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rdocumentation.org/packages/ggplot2/versions/2.2.1/topics/ggplot2-ggproto&#34;&gt;官方详细文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html&#34;&gt;ggproto教程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在理解Y叔这个脚本中我们需要使用最基础的两个模块&lt;code&gt;Geom&lt;/code&gt;（创建图层），&lt;code&gt;Stat&lt;/code&gt;（数据处理）。&lt;/p&gt;
+&lt;section id=&#34;statordellipseggplot2&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;&lt;code&gt;StatOrdEllipse&lt;/code&gt;内部函数–&lt;code&gt;ggplot2&lt;/code&gt;中的数据处理&lt;/h3&gt;
+&lt;p&gt;我们在作图之前基本都是要对输入数据进行一些数据预处理，比如在做线箱图的时候需要计算中位数、IQR等。在这个脚本中，我们需要做的是计算置信区间椭圆，这一步是通过&lt;code&gt;ggplot::Stat&lt;/code&gt;实现的。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;StatOrdEllipse &amp;lt;- ggproto(&amp;quot;StatOrdEllipse&amp;quot;, Stat,
+                          compute_group = function(self, data, scales, params, ellipse_pro) {
+                              ## 此处省略...
+                              ## 解析见后文
+                              return(ell)
+                          },
+                          required_aes = c(&amp;quot;x&amp;quot;, &amp;quot;y&amp;quot;, &amp;quot;group&amp;quot;)
+                          )&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;_class&lt;/code&gt;：这个类的名字为&lt;code&gt;StatOrdEllipse&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;_inherit&lt;/code&gt;：继承&lt;code&gt;Stat&lt;/code&gt;类&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compute_group&lt;/code&gt;：核心处理数据部分，对每一组进行处理，模板为&lt;code&gt;compute_group(self, data, scales, ...)&lt;/code&gt;，在这里，它主要接受置信区间（&lt;code&gt;ellipse_pro&lt;/code&gt;）参数，返回值为&lt;strong&gt;计算好的置信区间轮廓上的点坐标&lt;/strong&gt;。&lt;em&gt;另外，我认为这里&lt;code&gt;params&lt;/code&gt;并不必要&lt;/em&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;required_aes&lt;/code&gt;：创建图层所需要的mapping参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section id=&#34;geom_ord_ellipseggplot2&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;&lt;code&gt;geom_ord_ellipse&lt;/code&gt;函数–创建&lt;code&gt;ggplot2&lt;/code&gt;图层&lt;/h3&gt;
+&lt;p&gt;下面便是重头戏，使用上面的&lt;code&gt;Stat&lt;/code&gt;来创建一个&lt;code&gt;Geom&lt;/code&gt;图层。其实这就是一个普通的函数，只是为了返回一个图层&lt;code&gt;layer&lt;/code&gt;。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;geom_ord_ellipse &amp;lt;- function(mapping = NULL, ellipse_pro = 0.97, fill = NA, ...) {
+    default_aes &amp;lt;- aes_(color = ~Groups, group = ~Groups)
+    if (is.null(mapping)) {
+        mapping &amp;lt;- default_aes
+    } else {
+        mapping &amp;lt;- modifyList(default_aes, mapping)
+    }
+    layer(
+        geom = &amp;quot;polygon&amp;quot;,
+        stat = StatOrdEllipse,
+        mapping = mapping,
+        position = &amp;#39;identity&amp;#39;,
+        data = NULL,
+        params = list(
+            ellipse_pro = ellipse_pro,
+            fill = fill,
+            ...
+        )
+    )
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;函数的输入值：&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;mapping&lt;/code&gt;：使用过ggplot2都不应该陌生，就是我们写的&lt;code&gt;aes(x=, y=)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ellipse_pro&lt;/code&gt;：置信区间的概率&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fill&lt;/code&gt;：置信区间内部的颜色，&lt;code&gt;NA&lt;/code&gt;会产生透明的椭圆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;输入预处理：&lt;/h4&gt;
+&lt;p&gt;这里对输入的&lt;code&gt;mapping&lt;/code&gt;做了判断，如果没有输入，就会使用默认值，如果有输入，则替换默认值。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;default_aes &amp;lt;- aes_(color = ~Groups, group = ~Groups)&lt;/code&gt;：定义了默认的aesthetics，使用&lt;code&gt;aes_&lt;/code&gt;时，变量要用双引号引用或使用&lt;code&gt;~&lt;/code&gt;（&lt;code&gt;~Groups&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;modifyList&lt;/code&gt;：根据一个&lt;code&gt;list&lt;/code&gt;修改另一个&lt;code&gt;list&lt;/code&gt;中的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section id=&#34;ggplotlayer&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;返回的&lt;code&gt;ggplot::layer&lt;/code&gt;：&lt;/h4&gt;
+&lt;p&gt;这个函数的模板是：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;layer(geom = NULL, stat = NULL, data = NULL, mapping = NULL,
+  position = NULL, params = list(), inherit.aes = TRUE,
+  check.aes = TRUE, check.param = TRUE, subset = NULL, show.legend = NA)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;对应到Y叔的函数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;geom = &amp;quot;polygon&amp;quot;&lt;/code&gt;：一个多边形（椭圆）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;stat = StatOrdEllipse&lt;/code&gt;：使用我们定义的&lt;code&gt;Stat&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mapping = mapping&lt;/code&gt;：数据与图形的对应，如&lt;code&gt;x=, y=&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;position = &#39;identity&#39;&lt;/code&gt;：位置的定义&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data = NULL&lt;/code&gt;：从上一图层继承&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;params = list(...)&lt;/code&gt;：&lt;code&gt;geom&lt;/code&gt;和&lt;code&gt;stat&lt;/code&gt;的参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;到这里，对于一些基本的图层，我觉得完全可以套用Y叔的这个模板。在宏基因组公众号中曾经有人问，这个&lt;code&gt;ggord&lt;/code&gt;包中能不能把那些向量去掉，或者加入少部分变量的向量，我想用这个模板完全可以实现，只需要用&lt;code&gt;GeomCurve&lt;/code&gt;来做个图层就可以了。&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;计算置信区间椭圆&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(data)[1:2] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle &amp;lt;- cbind(cos(theta), sin(theta))
+ell &amp;lt;- ddply(data, .(group), function(x) {
+   if(nrow(x) &amp;lt;= 2) {
+       return(NULL)
+   }
+   sigma &amp;lt;- var(cbind(x$one, x$two))
+   mu &amp;lt;- c(mean(x$one), mean(x$two))
+   ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2))
+   data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
+    })
+names(ell)[2:3] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+ell &amp;lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  
+names(ell) &amp;lt;- c(&amp;#39;Groups&amp;#39;, &amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个代码是从&lt;code&gt;ggord&lt;/code&gt;的源码改过来的。对于排序图来说，基本最后都会降维到一个低维的空间（2维），方便展示。所以，我们最后需要处理的问题就是根据2维上的散点，计算出这些点分布的可能范围（在2维正态分布的假设下，对协方差使用卡方检验）。其中涉及到我们要把数据分成组（不同椭圆，不同颜色标记），然后对每一组求出上述的范围。这个操作使用ddply实现的：&lt;/p&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;分而治之&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ell &amp;lt;- ddply(data, .(group), function(x) {
+    ## ...
+    ## 解析见后文
+    })&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在此，把&lt;code&gt;data&lt;/code&gt;根据&lt;code&gt;group&lt;/code&gt;拆分成组，然后每一组套用&lt;code&gt;function&lt;/code&gt;，最后再把结果组合（&lt;code&gt;rbind&lt;/code&gt;）在一起。以下我们介绍每一组是如何处理的。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;计算置信椭圆&lt;/h4&gt;
+&lt;p&gt;从统计上来讲这个置信椭圆是这样做的：&lt;/p&gt;
+&lt;ol type=&#34;1&#34;&gt;
+&lt;li&gt;做出一个单位圆（半径为单位1）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+## should be:
+## theta &amp;lt;- seq(-pi, pi, length = 50)
+circle &amp;lt;- cbind(cos(theta), sin(theta))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;我们知道单位圆的参数方程为&lt;span class=&#34;math inline&#34;&gt;\(x=\cos(\theta), y=\sin(\theta),\theta\in[0,2\pi]\)&lt;/span&gt;，在这里ggord的作者其实重复了两圈，具体的原因我也没有搞清楚，我认为&lt;em&gt;没有必要&lt;/em&gt;。&lt;/p&gt;
+&lt;ol start=&#34;2&#34; type=&#34;1&#34;&gt;
+&lt;li&gt;套用公式把这个圆转换成椭圆&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sigma &amp;lt;- var(cbind(x$one, x$two))
+mu &amp;lt;- c(mean(x$one), mean(x$two))
+ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2))
+data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这里的转化实际是：&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\boldsymbol X_{ell}=\boldsymbol\mu + k\boldsymbol X C(\boldsymbol\Sigma)\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;其中&lt;span class=&#34;math inline&#34;&gt;\(\boldsymbol\mu=(\bar x_1,\bar x_2)\)&lt;/span&gt;，也就是数据的中心，&lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;根据概率控制椭圆的大小（因为是针对2维正态分布的协方差，所以使用了卡方检验），&lt;span class=&#34;math inline&#34;&gt;\(C(\boldsymbol\Sigma)\)&lt;/span&gt;代表协方差矩阵的Cholesky分解，&lt;span class=&#34;math inline&#34;&gt;\(\boldsymbol X\)&lt;/span&gt;和&lt;span class=&#34;math inline&#34;&gt;\(\boldsymbol X_{ell}\)&lt;/span&gt;分别为圆和椭圆上对应点的坐标。&lt;/p&gt;
+&lt;p&gt;至于为什么这么做，涉及一些线代推导，可以参见下面两篇文章（特别是第一篇）：&lt;/p&gt;
+&lt;ol type=&#34;1&#34;&gt;
+&lt;li&gt;&lt;a href=&#34;https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507&#34; class=&#34;uri&#34;&gt;https://jellymatter.wordpress.com/2011/03/31/drawing-confidence-ellipses-and-ellipsoids/#more-507&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/&#34; class=&#34;uri&#34;&gt;http://www.visiondummy.com/2014/04/draw-error-ellipse-representing-covariance-matrix/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;有点多余？&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(ell)[2:3] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+ell &amp;lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这部分的意思是对之前算出的那些椭圆上的点找出对应的凸多边形。我认为对于上述方法得到的点已经在一个凸多边形上了（椭圆）。我没有太明白这一步的必要性，&lt;em&gt;去掉之后并没有发现影响&lt;/em&gt;。&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -47,9 +269,55 @@
       <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-12-31-bioinfo-docker_notes/</guid>
-      <description>改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
- Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl+p Ctrl+q
- 列出所有容器（包括未在运行中的）  docker ps -a docker rm [container] # 删除容器  列出所有镜像  docker images docker rmi [image] # 删除镜像  host和容器文件转移  docker cp [source] [target] # use container hash id or name   Commit  docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]  </description>
+      <description>&lt;section id=&#34;docker&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;改变Docker容器存储路径&lt;/h2&gt;
+&lt;p&gt;Linux下Docker的默认存储目录为&lt;code&gt;/var/lib/docker&lt;/code&gt;。显然这个目录属于&lt;code&gt;root&lt;/code&gt;分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于&lt;code&gt;/home&lt;/code&gt;下。我根据这篇博客进行了更改&lt;a href=&#34;https://sanenthusiast.com/change-default-image-container-location-docker/&#34; class=&#34;uri&#34;&gt;https://sanenthusiast.com/change-default-image-container-location-docker/&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;docker&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Docker常用操作&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;加载镜像：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;gunzip -c [docker.img.tar.gz] | docker load
+
+docker pull [docker_image_name]
+
+cat [docker_file] | docker build -t [image_name] -&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;启动容器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;# 基本命令
+docker run -it [image_name] 
+# 退出时删除容器，加载host的文件路径
+docker run -it --rm -v /host/directory:/container/directory [image_name]&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;attach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker attach [container_name/container_hash_ID]&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;detach（容器在后台运行）：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ctrl+p Ctrl+q&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;列出所有容器（包括未在运行中的）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker ps -a 
+docker rm [container] # 删除容器&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;列出所有镜像&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker images
+docker rmi [image] # 删除镜像&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;host和容器文件转移&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker cp [source] [target] # use container hash id or name &lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Commit&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -58,8 +326,72 @@
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-12-29-r-addconfellipse/</guid>
-      <description>为排序图添加置信范围曲线 上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
-library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  PCA ord &amp;lt;- prcomp(iris[, 1:4]) ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)  MDS library(vegan) ## Loading required package: permute ## Loading required package: lattice ## This is vegan 2.4-4 ord &amp;lt;- metaMDS(iris[, 1:4]) ## Run 0 stress 0.03775523 ## Run 1 stress 0.05618976 ## Run 2 stress 0.03775616 ## ... Procrustes: rmse 9.</description>
+      <description>&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;为排序图添加置信范围曲线&lt;/h2&gt;
+&lt;p&gt;上一篇&lt;a href=&#34;http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/&#34;&gt;文章&lt;/a&gt;我们利用&lt;a href=&#34;https://github.com/fawda123/ggord&#34;&gt;ggord&lt;/a&gt;的源代码改写了一个为LDA排序图添加置信曲线的函数，现在&lt;a href=&#34;https://guangchuangyu.github.io/&#34;&gt;Y叔&lt;/a&gt;已经把它改写成了一个geom添加在了他的&lt;a href=&#34;https://github.com/GuangchuangYu/yyplot&#34;&gt;yyplot&lt;/a&gt;包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggord)
+library(yyplot)
+library(MASS)&lt;/code&gt;&lt;/pre&gt;
+&lt;section id=&#34;lda&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;LDA&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3)
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/lda-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;pca&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;PCA&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- prcomp(iris[, 1:4])
+ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/pca-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;mds&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;MDS&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: permute&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: lattice&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## This is vegan 2.4-4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- metaMDS(iris[, 1:4])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Run 0 stress 0.03775523 
+## Run 1 stress 0.05879963 
+## Run 2 stress 0.05771902 
+## Run 3 stress 0.03775576 
+## ... Procrustes: rmse 6.70624e-05  max resid 0.0002355622 
+## ... Similar to previous best
+## Run 4 stress 0.0599531 
+## Run 5 stress 0.04367524 
+## Run 6 stress 0.05537389 
+## Run 7 stress 0.03775524 
+## ... Procrustes: rmse 9.47124e-06  max resid 4.820747e-05 
+## ... Similar to previous best
+## Run 8 stress 0.03775578 
+## ... Procrustes: rmse 2.073778e-05  max resid 0.000125111 
+## ... Similar to previous best
+## Run 9 stress 0.04367554 
+## Run 10 stress 0.03775534 
+## ... Procrustes: rmse 1.898558e-05  max resid 5.211088e-05 
+## ... Similar to previous best
+## Run 11 stress 0.04367546 
+## Run 12 stress 0.06174009 
+## Run 13 stress 0.04367526 
+## Run 14 stress 0.0377554 
+## ... Procrustes: rmse 3.074059e-05  max resid 0.0001171343 
+## ... Similar to previous best
+## Run 15 stress 0.05093855 
+## Run 16 stress 0.05398536 
+## Run 17 stress 0.03775584 
+## ... Procrustes: rmse 7.169048e-05  max resid 0.0002630254 
+## ... Similar to previous best
+## Run 18 stress 0.03775551 
+## ... Procrustes: rmse 4.556503e-05  max resid 0.0001590274 
+## ... Similar to previous best
+## Run 19 stress 0.04804016 
+## Run 20 stress 0.04355825 
+## *** Solution reached&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/mds-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -68,7 +400,59 @@ library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., 
       <pubDate>Fri, 22 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-12-22-r-addconfellipselda/</guid>
-      <description>Use ggord to plot LDA ordination plot Installation devtools::install_github(&amp;#39;fawda123/ggord&amp;#39;)  Basic LDA ordination biplot library(MASS) ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) library(ggord) p &amp;lt;- ggord(ord, iris$Species) p   A function to compute confidence ellipse get_lda_ell &amp;lt;- function(ord_in, grp_in, ellipse_pro = 0.97){ ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R require(plyr) axes = c(&amp;#39;LD1&amp;#39;, &amp;#39;LD2&amp;#39;) obs &amp;lt;- data.frame(predict(ord_in)$x[, axes]) obs$Groups &amp;lt;- grp_in names(obs)[1:2] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;) theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50)) circle &amp;lt;- cbind(cos(theta), sin(theta)) ell &amp;lt;- ddply(obs, &amp;#39;Groups&amp;#39;, function(x) { if(nrow(x) &amp;lt;= 2) { return(NULL) } sigma &amp;lt;- var(cbind(x$one, x$two)) mu &amp;lt;- c(mean(x$one), mean(x$two)) ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2)) data.</description>
+      <description>&lt;section id=&#34;use-ggord-to-plot-lda-ordination-plot&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Use ggord to plot LDA ordination plot&lt;/h2&gt;
+&lt;section id=&#34;installation&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Installation&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;#39;fawda123/ggord&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;basic-lda-ordination-biplot&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Basic LDA ordination biplot&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(MASS)
+ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3)
+
+library(ggord)
+p &amp;lt;- ggord(ord, iris$Species)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-22-r-addConfEllipseLDA_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section id=&#34;a-function-to-compute-confidence-ellipse&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;A function to compute confidence ellipse&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;get_lda_ell &amp;lt;- function(ord_in, grp_in, ellipse_pro = 0.97){
+    ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
+    require(plyr)
+    axes = c(&amp;#39;LD1&amp;#39;, &amp;#39;LD2&amp;#39;)
+    obs &amp;lt;- data.frame(predict(ord_in)$x[, axes])
+    obs$Groups &amp;lt;- grp_in
+    names(obs)[1:2] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+    theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+    circle &amp;lt;- cbind(cos(theta), sin(theta))
+    ell &amp;lt;- ddply(obs, &amp;#39;Groups&amp;#39;, function(x) {
+        if(nrow(x) &amp;lt;= 2) {
+            return(NULL)
+        }
+        sigma &amp;lt;- var(cbind(x$one, x$two))
+        mu &amp;lt;- c(mean(x$one), mean(x$two))
+        ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2))
+        data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
+    })
+    names(ell)[2:3] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
+    ell &amp;lt;- ddply(ell, .(Groups), function(x) x[chull(x$one, x$two), ])
+    ell
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;using-the-function&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Using the function&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)
+anotherEll &amp;lt;- get_lda_ell(ord, iris$Species, 0.97)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: plyr&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + geom_polygon(data = anotherEll, 
+                 aes_string(color = &amp;#39;Groups&amp;#39;, group = &amp;#39;Groups&amp;#39;),
+                 lty=2, fill = NA)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-12-22-r-addConfEllipseLDA_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -77,20 +461,307 @@ library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., 
       <pubDate>Tue, 28 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-11-18-r-absolute/</guid>
-      <description>微生物组研究走向绝对定量 Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算\(\beta\) -diversity，然后进行基于距离矩阵的分析（PCoA）。
-似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。
- 使用Flow cytometry测定的肠道微生物总量的variation有多大？ 下载Nature文章中的Supplementary Table，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。
-加载R包，ggplot2主题 library(tidyverse) ## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.3.4 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.2.0 ## ✔ readr 1.1.1 ✔ forcats 0.2.0 ## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() library(data.</description>
+      <description>&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;微生物组研究走向绝对定量&lt;/h2&gt;
+&lt;p&gt;Jeroen Raes研究组上周在Nature发表&lt;a href=&#34;https://www.nature.com/articles/nature24460&#34;&gt;文章&lt;/a&gt;，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; -diversity，然后进行基于距离矩阵的分析（PCoA）。&lt;/p&gt;
+&lt;p&gt;似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;flow-cytometryvariation&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;使用Flow cytometry测定的肠道微生物总量的variation有多大？&lt;/h2&gt;
+&lt;p&gt;下载Nature文章中的&lt;a href=&#34;https://images.nature.com/original/nature-assets/nature/journal/vaop/ncurrent/extref/nature24460-s2.xlsx&#34;&gt;Supplementary Table&lt;/a&gt;，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。&lt;/p&gt;
+&lt;section id=&#34;rggplot2&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;加载R包，ggplot2主题&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.2.1 ──&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.3.4     ✔ dplyr   0.7.4
+## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
+## ✔ readr   1.1.1     ✔ forcats 0.2.0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(data.table)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;data.table&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:
+## 
+##     between, first, last&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:purrr&amp;#39;:
+## 
+##     transpose&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cowplot)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;cowplot&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
+## 
+##     ggsave&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(readxl)
+
+figtheme &amp;lt;- theme_bw() + 
+  theme(text = element_text(size=10,face=&amp;#39;bold&amp;#39;),panel.border  = element_rect(colour = &amp;quot;black&amp;quot;,size=2),
+        axis.title.y=element_text(margin=margin(0,15,0,0)),axis.title.x=element_text(margin=margin(15,0,0,0)),
+        plot.margin = unit(c(1,1,1,1), &amp;quot;cm&amp;quot;),
+        plot.title = element_text(margin=margin(0,0,15,0)))
+theme_set(figtheme)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;6&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;读取表6，并预处理&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cell_counts_dat &amp;lt;- read_excel(&amp;#39;~/nature24460-s2.xlsx&amp;#39;, sheet=6) %&amp;gt;%
+  mutate(Cohort=gsub(&amp;#39;[0-9]+&amp;#39;,&amp;#39;&amp;#39;,Individual)) %&amp;gt;%
+  mutate(Cell_count_avg=`Average cell count (per gram of frozen feces)`)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = tz): unknown timezone &amp;#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cell_counts_dat&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 321 x 10
+##    Individual Cohort   Day `Health status`
+##         &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;           &amp;lt;chr&amp;gt;
+##  1       SC01     SC     1         Healthy
+##  2       SC02     SC     1         Healthy
+##  3       SC03     SC     1         Healthy
+##  4       SC04     SC     1         Healthy
+##  5       SC05     SC     1         Healthy
+##  6       SC06     SC     1         Healthy
+##  7       SC07     SC     1         Healthy
+##  8       SC08     SC     1         Healthy
+##  9       SC09     SC     1         Healthy
+## 10       SC10     SC     1         Healthy
+## # ... with 311 more rows, and 6 more variables: `Average cell count (per
+## #   gram of fresh feces)` &amp;lt;chr&amp;gt;, `STDEV cell count (per gram of fresh
+## #   feces)` &amp;lt;chr&amp;gt;, `Average cell count (per gram of frozen feces)` &amp;lt;dbl&amp;gt;,
+## #   `STDEV cell count (per gram of frozen feces)` &amp;lt;chr&amp;gt;, Enterotype &amp;lt;chr&amp;gt;,
+## #   Cell_count_avg &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;微生物总量差异&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;个体差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aggregate(data=cell_counts_dat, Cell_count_avg~Cohort, function(x) c(Mean=mean(x), SD=sd(x), CV=sd(x)/mean(x)) )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   Cohort Cell_count_avg.Mean Cell_count_avg.SD Cell_count_avg.CV
+## 1     DC        9.092967e+10      6.344747e+10      6.977642e-01
+## 2     LC        1.249278e+11      5.406697e+10      4.327858e-01
+## 3     SC        1.528339e+11      7.018824e+10      4.592451e-01
+## 4     VC        1.447904e+11      7.630896e+10      5.270304e-01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(cell_counts_dat, aes(x=Cohort, y=Cell_count_avg)) + geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;个体内差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aggregate(data=cell_counts_dat[cell_counts_dat$Cohort==&amp;#39;LC&amp;#39;,], Cell_count_avg~Individual, function(x) c(Mean=mean(x), SD=sd(x), CV=sd(x)/mean(x)) )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##    Individual Cell_count_avg.Mean Cell_count_avg.SD Cell_count_avg.CV
+## 1        LC01        1.121069e+11      3.062958e+10      2.732175e-01
+## 2        LC02        1.057725e+11      1.457955e+10      1.378387e-01
+## 3        LC03        6.998669e+10      3.207140e+10      4.582500e-01
+## 4        LC04        6.433548e+10      1.478855e+10      2.298661e-01
+## 5        LC05        2.198245e+11      2.726579e+10      1.240343e-01
+## 6        LC06        2.054927e+11      4.951278e+10      2.409466e-01
+## 7        LC07        1.197242e+11      3.438372e+10      2.871911e-01
+## 8        LC08        1.162890e+11      3.286685e+10      2.826307e-01
+## 9        LC09        1.501435e+11      6.018554e+10      4.008535e-01
+## 10       LC10        1.790086e+11      8.293900e+10      4.633241e-01
+## 11       LC11        1.565348e+11      4.038210e+10      2.579752e-01
+## 12       LC12        1.247153e+11      2.494971e+10      2.000533e-01
+## 13       LC13        9.804859e+10      2.625298e+10      2.677548e-01
+## 14       LC14        1.037225e+11      4.329933e+10      4.174534e-01
+## 15       LC15        1.592359e+11      2.337419e+10      1.467897e-01
+## 16       LC16        1.171450e+11      6.207212e+10      5.298741e-01
+## 17       LC17        1.215423e+11      3.782074e+10      3.111736e-01
+## 18       LC18        1.042144e+11      4.236728e+10      4.065395e-01
+## 19       LC19        7.013542e+10      2.326036e+10      3.316492e-01
+## 20       LC20        1.465100e+11      2.763866e+10      1.886470e-01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(cell_counts_dat[cell_counts_dat$Cohort==&amp;#39;LC&amp;#39;,], aes(x=Day, y=Cell_count_avg)) + geom_line() + facet_wrap(~Individual)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;容易看出，疾病组（DC）的微生物总量最低，其他几个健康组微生物总量差异不大，而个人的微生物总量在一周内的变化要小一些（CV~30%），但其实比起个体间差异不是小很多。&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section id=&#34;variation&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;人的肠道微生物相对丰度的variation有多大？&lt;/h2&gt;
+&lt;section id=&#34;hmp&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;下载人类微生物组项目（HMP）数据&lt;/h3&gt;
+&lt;p&gt;我们使用HMPv35的16S的&lt;a href=&#34;ftp://public-ftp.ihmpdcc.org/HMQCP/otu_table_psn_v35.txt.gz&#34;&gt;OTU table&lt;/a&gt;和元数据表(&lt;a href=&#34;ftp://public-ftp.ihmpdcc.org/HMQCP/v35_map_uniquebyPSN.txt.bz2&#34;&gt;mapping file&lt;/a&gt;)。下载之后解压。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;0otu&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;清洗数据，保留肠道数据并去掉整行为0的OTU&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;metadata &amp;lt;- fread(&amp;#39;~/v35_map_uniquebyPSN.txt&amp;#39;)
+stoolIDs &amp;lt;- as.character((metadata %&amp;gt;% filter(HMPbodysubsite==&amp;#39;Stool&amp;#39;))[,1])
+
+otutab &amp;lt;- fread(&amp;#39;~/otu_table_psn_v35.txt&amp;#39;,head=TRUE, select=stoolIDs,sep=&amp;#39;\t&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
+## stoolIDs, : Starting data input on line 2 and discarding line 1 because it
+## has too few or too many items to be column names or data: # QIIME v1.3.0-
+## dev OTU table&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
+## stoolIDs, : Column name &amp;#39;700107040&amp;#39; not found in column name header (case
+## sensitive), skipping.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
+## stoolIDs, : Column name &amp;#39;700114489&amp;#39; not found in column name header (case
+## sensitive), skipping.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+Read 44.1% of 45383 rows
+Read 45383 rows and 319 (of 4790) columns from 0.409 GB file in 00:00:04&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## keep samples with counts &amp;gt; 2000
+otutab &amp;lt;- otutab %&amp;gt;% select(which(colSums(otutab)&amp;gt; 2000 ))
+## we down sample (rarefy) the samples to have 2000 counts in total
+otutab_rare &amp;lt;- apply(otutab, 2, function(x) rmultinom(1,size=2000, prob=x))
+## remove OTUs not present at all and normalize to proportions
+otutab_rel &amp;lt;- apply(otutab_rare[rowSums(otutab_rare)!=0,], 2, function(x)x/sum(x))&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;sd-cv-mean&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;SD, CV, Mean&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;SD &amp;lt;- apply(otutab_rel,1,sd)
+Mean &amp;lt;- apply(otutab_rel, 1, mean)
+tmp &amp;lt;- data.frame(CV=SD/Mean, Mean, SD)
+g1 &amp;lt;- ggplot(tmp, aes(y=SD, x=Mean)) + 
+  geom_point(alpha=0.1) + 
+  scale_x_log10()  + scale_y_log10() + 
+  annotation_logticks(sides = &amp;#39;lb&amp;#39;)
+g2 &amp;lt;- ggplot(tmp, aes(y=CV, x=Mean)) + 
+  geom_point(alpha=0.1) + 
+  scale_x_log10()   + 
+  annotation_logticks(sides = &amp;#39;b&amp;#39;)
+plot_grid(g1, g2, nrow=1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;从CV来看，HMP的数据相对丰度其实在个体间差距比较大（特别是低丰度的OTU，可以想象这是跟0的数量多有关），所以可能大多数情况下，我们不会受到总量变化（CV~50%）的影响。&lt;strong&gt;Note: &lt;/strong&gt;还是需要注意在我们的研究数据中会不会&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section id=&#34;a-thought-experiment&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;绝对定量的分析，A thought experiment&lt;/h2&gt;
+&lt;p&gt;正态分布的随机变量（&lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;，&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;）分别代表微生物总量（&lt;span class=&#34;math inline&#34;&gt;\(M\sim|Normal(10^{11},CV_m\times10^{11}|)\)&lt;/span&gt;），微生物&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;的相对丰度（&lt;span class=&#34;math inline&#34;&gt;\(X\sim| Normal(10^{-1},CV_x \times10^{-1})|\)&lt;/span&gt;），那么绝对数量&lt;span class=&#34;math inline&#34;&gt;\(MX\)&lt;/span&gt;会与&lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;相关吗？&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M &amp;lt;- abs(rnorm(1000, 1e11, 0.5e11)) ## CV=0.5
+X &amp;lt;- sapply(c(0.1,0.5,1,5,10), function(x)abs(rnorm(1000, 0.1, x*0.1)))   
+colnames(X) &amp;lt;- c(&amp;#39;X_cv0.1&amp;#39;,&amp;#39;X_cv0.5&amp;#39;,&amp;#39;X_cv1&amp;#39;, &amp;#39;X_cv5&amp;#39;, &amp;#39;X_cv10&amp;#39;)
+dat &amp;lt;- melt(X)%&amp;gt;% mutate(MX=value*M) %&amp;gt;% mutate(M=rep(M,5))
+
+dat %&amp;gt;% group_by(Var2) %&amp;gt;% summarise(cor(MX, M, method=&amp;#39;spearman&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 2
+##      Var2 `cor(MX, M, method = &amp;quot;spearman&amp;quot;)`
+##    &amp;lt;fctr&amp;gt;                             &amp;lt;dbl&amp;gt;
+## 1 X_cv0.1                         0.9745780
+## 2 X_cv0.5                         0.6241846
+## 3   X_cv1                         0.4850720
+## 4   X_cv5                         0.5014045
+## 5  X_cv10                         0.4692217&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat,aes(x=M,y=MX)) + 
+  geom_point(alpha=0.4) + 
+  facet_wrap(~Var2, nrow=2, scale=&amp;#39;free_y&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;所以不难看出来微生物的绝对数量与微生物总量相关，特别是当相对丰度差异不大的时候。So what？记得correlation有传递性吗？所以如果有两个不相关的微生物，它们的绝对数量会不会因为总量而变得相关呢？我们根据&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;的分布生成另一个独立的随机变量&lt;span class=&#34;math inline&#34;&gt;\(Y\)&lt;/span&gt;，让我们来看下他们的correlation是怎样的。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;Y &amp;lt;- sapply(c(0.1,0.5,1,5,10), function(x)abs(rnorm(1000, 0.1, x*0.1))) 
+colnames(Y) &amp;lt;- c(&amp;#39;Y_cv0.1&amp;#39;,&amp;#39;Y_cv0.5&amp;#39;,&amp;#39;Y_cv1&amp;#39;, &amp;#39;Y_cv5&amp;#39;, &amp;#39;Y_cv10&amp;#39;)
+dat &amp;lt;- dat %&amp;gt;% mutate(Y=melt(Y)$value) %&amp;gt;% mutate(MY=M*Y)&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;毫无关联的&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;,&lt;span class=&#34;math inline&#34;&gt;\(Y\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat %&amp;gt;% group_by(Var2) %&amp;gt;% summarise(cor(value, Y, method=&amp;#39;spearman&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 2
+##      Var2 `cor(value, Y, method = &amp;quot;spearman&amp;quot;)`
+##    &amp;lt;fctr&amp;gt;                                &amp;lt;dbl&amp;gt;
+## 1 X_cv0.1                          0.039534460
+## 2 X_cv0.5                          0.025382017
+## 3   X_cv1                          0.039640060
+## 4   X_cv5                          0.015882484
+## 5  X_cv10                          0.002462222&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;转化成绝对数量后&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat %&amp;gt;% group_by(Var2) %&amp;gt;% 
+  summarise(Spearman_rho=cor(MX, MY, method=&amp;#39;spearman&amp;#39;),
+            p_value=cor.test(MX, MY, method=&amp;#39;spearman&amp;#39;)$p.value)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 3
+##      Var2 Spearman_rho      p_value
+##    &amp;lt;fctr&amp;gt;        &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;
+## 1 X_cv0.1    0.9509044 0.000000e+00
+## 2 X_cv0.5    0.4455341 0.000000e+00
+## 3   X_cv1    0.3194627 0.000000e+00
+## 4   X_cv5    0.2866312 2.842296e-20
+## 5  X_cv10    0.2930657 3.241526e-21&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;散点图&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat,aes(x=MX,y=MY)) + 
+  geom_point(alpha=0.4) + 
+  facet_wrap(~Var2, nrow=2, scale=&amp;#39;free&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;相关性？为什么相关？&lt;/h2&gt;
+&lt;p&gt;所以在以上的实验当中，不难看出即使不相关的两个OTU，因为个体差异不大，转化为绝对数量之后很有可能呈现相关性，而这样的相关性跟生态意义毫无关系，只是因为latent variable微生物总量而已（Nature文章的Figure 3）。&lt;/p&gt;
+&lt;p&gt;延展开来，当你发现某些微生物的绝对数量和某种表征相关的时候，也需要考虑一下，它们是否只是因为微生物总量的不同呢（Nature文章的Figure 4）？&lt;/p&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
-      <title>Generalized Lokta-Volterra model</title>
+      <title>Generalized Lotka-Volterra model</title>
       <link>/post/2017-11-15-r-glv/</link>
       <pubDate>Wed, 15 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-11-15-r-glv/</guid>
-      <description>The model \(\frac{dx_i}{dt}= ax_i+\sum_{j=1}^pb_{ij}x_ix_j\)
-## library library(&amp;#39;deSolve&amp;#39;) ## GLV function lvm &amp;lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &amp;lt;- alpha * x + x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &amp;lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &amp;lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &amp;lt;- c(0.1, 0.2, 0.3) beta &amp;lt;- t(matrix(c(-0.5, -0.3 , 0, 0.</description>
+      <description>&lt;section id=&#34;the-model&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;The model&lt;/h2&gt;
+&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\frac{dx_i}{dt}= ax_i+\sum_{j=1}^pb_{ij}x_ix_j\)&lt;/span&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## library
+library(&amp;#39;deSolve&amp;#39;)
+## GLV function
+lvm &amp;lt;- function(t, x, params){
+  with(as.list(params, c(x)), {
+    dx &amp;lt;- alpha * x + x * (beta %*% x)
+    list(dx)
+  })
+}
+
+## numerical integration
+n.integrate &amp;lt;- function(time, init.x, model, params){
+    as.data.frame(ode(init.x, time, model, params))
+}
+## normalizations
+TSS &amp;lt;- function(x){
+  apply(x, 1, function(x)x/sum(x))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;glv-with-3-species&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;GLV with 3 species&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;alpha &amp;lt;- c(0.1, 0.2, 0.3)
+beta &amp;lt;- t(matrix(c(-0.5, -0.3 ,   0, 
+                    0.1, -0.5 ,   0,
+                     0 ,   0  , -0.5), 
+                 3,3 ))
+
+init.x &amp;lt;- c(0.6, 1, 0.4)
+
+dat &amp;lt;- n.integrate(0:10, init.x, lvm, list(alpha=alpha, beta=beta))
+dat.norm &amp;lt;- t(TSS(dat[,-1]))
+
+par(mfrow=c(1,2))
+matplot(x=dat$time, y=dat[,-1], typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Absolute abundance&amp;#39;) ## absolute abundance
+matplot(x=dat$time, y=dat.norm, typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Relative abundance&amp;#39;) ## relative abundance&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/sample_data-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;scale-parameters&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Scale parameters&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;init.x.scaled &amp;lt;- init.x/sum(init.x)
+beta.scaled &amp;lt;- beta * sum(init.x)
+
+dat.w_scaled_beta &amp;lt;- n.integrate(0:10, init.x.scaled, lvm, list(alpha=alpha, beta=beta.scaled))
+dat.norm.w_scaled_beta &amp;lt;- t(TSS(dat.w_scaled_beta[,-1]))
+
+par(mfrow=c(1,2))
+matplot(x=dat.w_scaled_beta$time, y=dat.w_scaled_beta[,-1], typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Absolute abundance&amp;#39;) ## absolute abundance
+matplot(x=dat.w_scaled_beta$time, y=dat.norm.w_scaled_beta, typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Relative abundance&amp;#39;) ## relative abundance&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/scaled_data-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;compare&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Compare&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;par(mfrow=c(1,2))
+matplot(dat.w_scaled_beta[,-1]/dat[,-1], type=&amp;#39;b&amp;#39;, ylab=&amp;#39;Ratio of abundance trajectories&amp;#39;)
+matplot(dat.norm.w_scaled_beta - dat.norm, type=&amp;#39;b&amp;#39;, ylab=&amp;#39;Absolute Error in Relative Abundances&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/compare-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;conclusion&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;It turned out that the GLV model could be scaled as long as the abundances and the interaction matrix were compatible (scale abundances by a factor of &lt;span class=&#34;math inline&#34;&gt;\(c\)&lt;/span&gt;, then interaction matrix scaled by a factor of &lt;span class=&#34;math inline&#34;&gt;\(1/c\)&lt;/span&gt;).&lt;/p&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -99,22 +770,154 @@ library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., 
       <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</guid>
-      <description>简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
-作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
- 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
- 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-  当然最基础的操作，就是要从数据库中提取数据。
- 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
-加载R package suppressMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*.</description>
+      <description>&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;简介&lt;/h2&gt;
+&lt;p&gt;有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见&lt;a href=&#34;http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article&#34;&gt;NEJM社论&lt;/a&gt;)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：&lt;/p&gt;
+&lt;ol type=&#34;1&#34;&gt;
+&lt;li&gt;&lt;p&gt;作为validation cohort来验证已发现的结论。如我们的&lt;a href=&#34;https://www.nature.com/articles/nmicrobiol2016106&#34;&gt;这篇文章&lt;/a&gt;都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;用来测试新方法，发现新的生物问题。如&lt;a href=&#34;http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614&#34;&gt;这篇文章&lt;/a&gt;中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当然最基础的操作，就是要从数据库中提取数据。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;演示&lt;/h2&gt;
+&lt;p&gt;我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。&lt;/p&gt;
+&lt;section id=&#34;r-package&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;加载R package&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressMessages(library(curatedMetagenomicData))
+suppressMessages(library(foreach))&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;.experimenthub&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存）&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## download all stool samples
+stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.stool&amp;quot;, dryrun=FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;skinData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.skin&amp;quot;, dryrun=FALSE)
+## merge
+stoolDataMerged &amp;lt;- mergeData(stoolData)
+skinDataMerged &amp;lt;- mergeData(skinData)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;验证元数据与样本对应关系&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## TRUE 
+## 4810&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## TRUE 
+##  466&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;通过元数据来提取健康样本的数据&lt;/h3&gt;
+&lt;p&gt;顺便过滤掉整行、整列为0的数据&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stoolDataHealthy &amp;lt;- exprs(stoolDataMerged)[, which(pData(stoolDataMerged)$disease==&amp;#39;healthy&amp;#39;)] %&amp;gt;%
+  data.frame() %&amp;gt;%
+  select(which(colSums(.)!=0)) 
+skinDataHealthy &amp;lt;- exprs(skinDataMerged)[, which(pData(skinDataMerged)$disease==&amp;#39;healthy&amp;#39;)] %&amp;gt;%
+  data.frame() %&amp;gt;%
+  select(which(colSums(.)!=0)) &lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;存储数据&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write.table(stoolDataHealthy[rowSums(stoolDataHealthy)!=0,], &amp;#39;~/Desktop/curatedMetagenomicData_stool_healthy.tsv&amp;#39;, quote=F, sep=&amp;#39;\t&amp;#39;, col.names = FALSE, row.names = TRUE)
+write.table(skinDataHealthy[rowSums(skinDataHealthy)!=0,], &amp;#39;~/Desktop/curatedMetagenomicData_skin_healthy.tsv&amp;#39;, quote=F, sep=&amp;#39;\t&amp;#39;, col.names = FALSE, row.names = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;最重要一点，记录版本号，记录版本号，记录版本号！&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo(&amp;#39;curatedMetagenomicData&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 3.4.2 (2017-09-28)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.2
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## character(0)
+## 
+## other attached packages:
+## [1] curatedMetagenomicData_1.7.92
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.14                  BiocInstaller_1.28.0         
+##  [3] compiler_3.4.2                AnnotationHub_2.9.22         
+##  [5] bindr_0.1                     iterators_1.0.8              
+##  [7] methods_3.4.2                 utils_3.4.2                  
+##  [9] tools_3.4.2                   grDevices_3.4.2              
+## [11] digest_0.6.13                 bit_1.1-12                   
+## [13] evaluate_0.10.1               RSQLite_2.0                  
+## [15] memoise_1.1.0                 tibble_1.3.4                 
+## [17] pkgconfig_2.0.1               rlang_0.1.4                  
+## [19] foreach_1.4.3                 shiny_1.0.5                  
+## [21] DBI_0.7                       yaml_2.1.16                  
+## [23] parallel_3.4.2                blogdown_0.3                 
+## [25] bindrcpp_0.2                  dplyr_0.7.4                  
+## [27] stringr_1.2.0                 httr_1.3.1                   
+## [29] knitr_1.18                    IRanges_2.10.5               
+## [31] graphics_3.4.2                S4Vectors_0.14.7             
+## [33] datasets_3.4.2                stats_3.4.2                  
+## [35] stats4_3.4.2                  rprojroot_1.2                
+## [37] bit64_0.9-7                   glue_1.2.0                   
+## [39] base_3.4.2                    Biobase_2.37.2               
+## [41] R6_2.2.2                      AnnotationDbi_1.38.2         
+## [43] rmarkdown_1.7                 bookdown_0.5                 
+## [45] purrr_0.2.4                   tidyr_0.7.2                  
+## [47] ExperimentHub_1.3.9           blob_1.1.0                   
+## [49] magrittr_1.5                  codetools_0.2-15             
+## [51] backports_1.1.1               htmltools_0.3.6              
+## [53] BiocGenerics_0.22.1           assertthat_0.2.0             
+## [55] mime_0.5                      interactiveDisplayBase_1.14.0
+## [57] xtable_1.8-2                  httpuv_1.3.5                 
+## [59] stringi_1.1.5&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
       <title>A collection of useful tools (Keep updating)</title>
-      <link>/post/2017-11-04-nanopore-nanoporedataanalysis/</link>
+      <link>/post/2017-11-04-bioinfo-bioinforcollections/</link>
       <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/2017-11-04-nanopore-nanoporedataanalysis/</guid>
-      <description>General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 + Miniasm ) or Canu + Racon + Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </description>
+      <guid>/post/2017-11-04-bioinfo-bioinforcollections/</guid>
+      <description>&lt;section id=&#34;general-bioinformatics&#34; class=&#34;level1&#34;&gt;
+&lt;h1&gt;General bioinformatics&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Applied genomics course from Michael Schatz &lt;a href=&#34;https://github.com/schatzlab/appliedgenomics&#34; class=&#34;uri&#34;&gt;https://github.com/schatzlab/appliedgenomics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Data science from Rafael A. Irizarry (built with R bookdown) &lt;a href=&#34;https://rafalab.github.io/dsbook/&#34; class=&#34;uri&#34;&gt;https://rafalab.github.io/dsbook/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section id=&#34;nanopore-seqeuncing-data-analysis&#34; class=&#34;level1&#34;&gt;
+&lt;h1&gt;Nanopore seqeuncing data analysis&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Assembly best practice
+&lt;ol type=&#34;1&#34;&gt;
+&lt;li&gt;QC&lt;/li&gt;
+&lt;li&gt;Adaptor removal with &lt;a href=&#34;https://github.com/rrwick/Porechop&#34;&gt;Porechop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(&lt;a href=&#34;https://github.com/lh3/minimap2&#34;&gt;Minimap2&lt;/a&gt; + &lt;a href=&#34;https://github.com/lh3/miniasm&#34;&gt;Miniasm&lt;/a&gt; ) or &lt;a href=&#34;https://github.com/marbl/canu&#34;&gt;Canu&lt;/a&gt; + &lt;a href=&#34;https://github.com/isovic/racon&#34;&gt;Racon&lt;/a&gt; + &lt;a href=&#34;https://github.com/jts/nanopolish&#34;&gt;Nanopolish&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section id=&#34;metagenomics&#34; class=&#34;level1&#34;&gt;
+&lt;h1&gt;Metagenomics&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Coming soon …&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+&lt;section id=&#34;single-cell-analysis&#34; class=&#34;level1&#34;&gt;
+&lt;h1&gt;Single cell analysis&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Tool collection for SC data &lt;a href=&#34;https://github.com/seandavi/awesome-single-cell&#34; class=&#34;uri&#34;&gt;https://github.com/seandavi/awesome-single-cell&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -123,7 +926,102 @@ library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., 
       <pubDate>Thu, 02 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-11-02-r-sankeyplot2/</guid>
-      <description>使用plotly 预处理 taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE) second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA) taxtab &amp;lt;- taxtab[-grep(&amp;#39;t__.*unclassified&amp;#39;, taxtab$V1), ] ## remove strain level tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;) ## split into different taxonomy levels target &amp;lt;- sapply(tax_split, tail, n=1) ## target node mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &amp;lt;- mapping$id source &amp;lt;- sapply(tax_split, second_last) ## source node source_id &amp;lt;- mapping[source,] value &amp;lt;- taxtab$V2 ## width of flow links &amp;lt;- data.</description>
+      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/plotlyjs/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/plotlyjs/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;section id=&#34;plotly&#34; class=&#34;level1&#34;&gt;
+&lt;h1&gt;使用plotly&lt;/h1&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;预处理&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)
+
+second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA)
+
+taxtab &amp;lt;- taxtab[-grep(&amp;#39;t__.*unclassified&amp;#39;, taxtab$V1), ]   ## remove strain level
+ 
+tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;)                ## split into different taxonomy levels
+target &amp;lt;- sapply(tax_split, tail, n=1)                 ## target node
+mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target)
+target_id &amp;lt;- mapping$id
+source &amp;lt;- sapply(tax_split, second_last)               ## source node
+source_id &amp;lt;- mapping[source,]
+value &amp;lt;- taxtab$V2                                     ## width of flow
+
+links &amp;lt;- data.frame(source=source_id, target=target_id, value) ## links
+links &amp;lt;- links[!is.na(links$source), ]                 ## root of the tree has no parent (source)
+nodes &amp;lt;- data.frame(do.call(rbind, strsplit(target,&amp;#39;__&amp;#39;)))
+colnames(nodes)=c(&amp;#39;tax&amp;#39;, &amp;#39;name&amp;#39;)
+nodes$tax &amp;lt;- factor(as.character(nodes$tax), levels=c(&amp;#39;k&amp;#39;,&amp;#39;p&amp;#39;,&amp;#39;c&amp;#39;,&amp;#39;o&amp;#39;,&amp;#39;f&amp;#39;,&amp;#39;g&amp;#39;,&amp;#39;s&amp;#39;))
+nodes$colors &amp;lt;- rainbow(length(levels(nodes$tax)))[as.numeric(nodes$tax)]
+##links$colors &amp;lt;- nodes[links$source+1,3]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(plotly)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: ggplot2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;plotly&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
+## 
+##     last_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:graphics&amp;#39;:
+## 
+##     layout&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;packageVersion(&amp;#39;plotly&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;#39;4.7.1&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- plot_ly(
+    type = &amp;quot;sankey&amp;quot;,
+    domain = c(
+      x =  c(0,1),
+      y =  c(0,1)
+    ),
+    orientation = &amp;quot;h&amp;quot;,
+    valueformat = &amp;quot;.0f&amp;quot;,
+    valuesuffix = &amp;quot;TWh&amp;quot;,
+  width = 800, height = 200,
+    node = list(
+      label = nodes$name,
+      color = nodes$colors,
+      pad = 40,
+      thickness = 15,
+      line = list(
+        color = &amp;quot;black&amp;quot;,
+        width = 0.5
+      )
+    ),
+
+    link = list(
+      source = links$source,
+      target = links$target,
+      value =  links$value,
+      label =  links$value
+    )
+  ) %&amp;gt;% 
+  layout(
+    title = &amp;quot;Sankey Diagram of Relative Abundances&amp;quot;,
+    font = list(
+      size = 7
+    ),
+    xaxis = list(showgrid = F, zeroline = F,tickmode=&amp;#39;array&amp;#39;,
+                 tickvals=c(-1,0.25,1.375,2.5,3.625,4.75, 5.875),
+                 tickfont=list(size=10),
+                 ticktext=c(&amp;#39;Kindom&amp;#39;,&amp;#39;Phylum&amp;#39;,&amp;#39;Class&amp;#39;,&amp;#39;Order&amp;#39;,&amp;#39;Family&amp;#39;,&amp;#39;Genus&amp;#39;,&amp;#39;Species&amp;#39;)),
+    yaxis = list(showgrid = F, zeroline = F, showticklabels =F)
+)
+
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;40f01f6aa4a7&#34; style=&#34;width:800px;height:200px;&#34; class=&#34;plotly html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;40f01f6aa4a7&#34;&gt;{&#34;x&#34;:{&#34;visdat&#34;:{&#34;40f01f99a23e&#34;:[&#34;function () &#34;,&#34;plotlyVisDat&#34;]},&#34;cur_data&#34;:&#34;40f01f99a23e&#34;,&#34;attrs&#34;:{&#34;40f01f99a23e&#34;:{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;alpha&#34;:1,&#34;sizes&#34;:[10,100],&#34;type&#34;:&#34;sankey&#34;}},&#34;layout&#34;:{&#34;width&#34;:800,&#34;height&#34;:200,&#34;margin&#34;:{&#34;b&#34;:40,&#34;l&#34;:60,&#34;t&#34;:25,&#34;r&#34;:10},&#34;title&#34;:&#34;Sankey Diagram of Relative Abundances&#34;,&#34;font&#34;:{&#34;size&#34;:7},&#34;xaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;tickmode&#34;:&#34;array&#34;,&#34;tickvals&#34;:[-1,0.25,1.375,2.5,3.625,4.75,5.875],&#34;tickfont&#34;:{&#34;size&#34;:10},&#34;ticktext&#34;:[&#34;Kindom&#34;,&#34;Phylum&#34;,&#34;Class&#34;,&#34;Order&#34;,&#34;Family&#34;,&#34;Genus&#34;,&#34;Species&#34;]},&#34;yaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;showticklabels&#34;:false},&#34;hovermode&#34;:&#34;closest&#34;,&#34;showlegend&#34;:false},&#34;source&#34;:&#34;A&#34;,&#34;config&#34;:{&#34;modeBarButtonsToAdd&#34;:[{&#34;name&#34;:&#34;Collaborate&#34;,&#34;icon&#34;:{&#34;width&#34;:1000,&#34;ascent&#34;:500,&#34;descent&#34;:-50,&#34;path&#34;:&#34;M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z&#34;},&#34;click&#34;:&#34;function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == &#39;?viewer_pane=1&#39;) {\n          alert(&#39;To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;);\n        } else {\n          window.open(&#39;https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;, &#39;_blank&#39;);\n        }\n      }&#34;}],&#34;cloud&#34;:false},&#34;data&#34;:[{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;type&#34;:&#34;sankey&#34;,&#34;textfont&#34;:{&#34;fillcolor&#34;:&#34;rgba(31,119,180,1)&#34;,&#34;color&#34;:&#34;rgba(31,119,180,1)&#34;},&#34;frame&#34;:null}],&#34;highlight&#34;:{&#34;on&#34;:&#34;plotly_click&#34;,&#34;persistent&#34;:false,&#34;dynamic&#34;:false,&#34;selectize&#34;:false,&#34;opacityDim&#34;:0.2,&#34;selected&#34;:{&#34;opacity&#34;:1}},&#34;base_url&#34;:&#34;https://plot.ly&#34;},&#34;evals&#34;:[&#34;config.modeBarButtonsToAdd.0.click&#34;],&#34;jsHooks&#34;:{&#34;render&#34;:[{&#34;code&#34;:&#34;function(el, x) { var ctConfig = crosstalk.var(&#39;plotlyCrosstalkOpts&#39;).set({\&#34;on\&#34;:\&#34;plotly_click\&#34;,\&#34;persistent\&#34;:false,\&#34;dynamic\&#34;:false,\&#34;selectize\&#34;:false,\&#34;opacityDim\&#34;:0.2,\&#34;selected\&#34;:{\&#34;opacity\&#34;:1}}); }&#34;,&#34;data&#34;:null}]}}&lt;/script&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -132,12 +1030,292 @@ library(ggord) library(yyplot) library(MASS) LDA ord &amp;lt;- lda(Species ~ ., 
       <pubDate>Mon, 30 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-10-30-r-curatedmetagenomicdata/</guid>
-      <description>简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
- 完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
- 安装 通过Bioconductor安装最新版本
-## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
-suppressPackageStartupMessages(library(curatedMetagenomicData)) ## Warning: package &amp;#39;dplyr&amp;#39; was built under R version 3.4.2 ## Warning: package &amp;#39;BiocGenerics&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;ExperimentHub&amp;#39; was built under R version 3.4.1 ## Warning: package &amp;#39;AnnotationHub&amp;#39; was built under R version 3.4.2 查看metadata
-combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # .</description>
+      <description>&lt;section class=&#34;level1&#34;&gt;
+&lt;h1&gt;简介&lt;/h1&gt;
+&lt;p&gt;CuratedMetagenomicData(&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/&#34; class=&#34;uri&#34;&gt;https://waldronlab.github.io/curatedMetagenomicData/&lt;/a&gt;)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/datasets-included/&#34;&gt;6000余个样本&lt;/a&gt;并在持续&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/&#34;&gt;扩建&lt;/a&gt;当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level1&#34;&gt;
+&lt;h1&gt;完整帮助信息&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html&#34; class=&#34;uri&#34;&gt;https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level1&#34;&gt;
+&lt;h1&gt;安装&lt;/h1&gt;
+&lt;p&gt;通过&lt;a href=&#34;https://bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html&#34;&gt;Bioconductor&lt;/a&gt;安装最新版本&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## try http:// if https:// URLs are not supported
+source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;)
+useDevel()
+biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level1&#34;&gt;
+&lt;h1&gt;基本使用&lt;/h1&gt;
+&lt;p&gt;调用&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressPackageStartupMessages(library(curatedMetagenomicData))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看metadata&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;combined_metadata&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6,058 x 80
+##     dataset_name      sampleID subjectID body_site antibiotics_current_use
+##            &amp;lt;chr&amp;gt;         &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;                   &amp;lt;chr&amp;gt;
+##  1 AsnicarF_2017 MV_FEI1_t1Q14   MV_FEI1     stool                    &amp;lt;NA&amp;gt;
+##  2 AsnicarF_2017 MV_FEI2_t1Q14   MV_FEI2     stool                    &amp;lt;NA&amp;gt;
+##  3 AsnicarF_2017 MV_FEI3_t1Q14   MV_FEI3     stool                    &amp;lt;NA&amp;gt;
+##  4 AsnicarF_2017 MV_FEI4_t1Q14   MV_FEI4     stool                    &amp;lt;NA&amp;gt;
+##  5 AsnicarF_2017 MV_FEI4_t2Q15   MV_FEI4     stool                    &amp;lt;NA&amp;gt;
+##  6 AsnicarF_2017 MV_FEI5_t1Q14   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
+##  7 AsnicarF_2017 MV_FEI5_t2Q14   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
+##  8 AsnicarF_2017 MV_FEI5_t3Q15   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
+##  9 AsnicarF_2017 MV_FEM1_t1Q14   MV_FEM1     stool                    &amp;lt;NA&amp;gt;
+## 10 AsnicarF_2017 MV_FEM2_t1Q14   MV_FEM2     stool                    &amp;lt;NA&amp;gt;
+## # ... with 6,048 more rows, and 75 more variables: study_condition &amp;lt;chr&amp;gt;,
+## #   disease &amp;lt;chr&amp;gt;, age &amp;lt;int&amp;gt;, infant_age &amp;lt;int&amp;gt;, age_category &amp;lt;chr&amp;gt;,
+## #   gender &amp;lt;chr&amp;gt;, country &amp;lt;chr&amp;gt;, non_westernized &amp;lt;chr&amp;gt;,
+## #   sequencing_platform &amp;lt;chr&amp;gt;, DNA_extraction_kit &amp;lt;chr&amp;gt;, PMID &amp;lt;chr&amp;gt;,
+## #   number_reads &amp;lt;int&amp;gt;, number_bases &amp;lt;dbl&amp;gt;, minimum_read_length &amp;lt;int&amp;gt;,
+## #   median_read_length &amp;lt;dbl&amp;gt;, pregnant &amp;lt;chr&amp;gt;, lactating &amp;lt;chr&amp;gt;,
+## #   NCBI_accession &amp;lt;chr&amp;gt;, BMI &amp;lt;dbl&amp;gt;, antibiotics_family &amp;lt;chr&amp;gt;,
+## #   momeducat &amp;lt;int&amp;gt;, alcohol &amp;lt;chr&amp;gt;, `flg-genotype` &amp;lt;chr&amp;gt;,
+## #   disease_subtype &amp;lt;chr&amp;gt;, hdl &amp;lt;dbl&amp;gt;, triglycerides &amp;lt;dbl&amp;gt;, hba1c &amp;lt;dbl&amp;gt;,
+## #   ldl &amp;lt;dbl&amp;gt;, tnm &amp;lt;chr&amp;gt;, body_subsite &amp;lt;chr&amp;gt;, visit_number &amp;lt;int&amp;gt;,
+## #   days_from_first_collection &amp;lt;int&amp;gt;, `c-peptide` &amp;lt;dbl&amp;gt;, family &amp;lt;int&amp;gt;,
+## #   cholesterol &amp;lt;dbl&amp;gt;, glucose &amp;lt;dbl&amp;gt;, mumps &amp;lt;chr&amp;gt;, adiponectin &amp;lt;dbl&amp;gt;,
+## #   `insulin(cat)` &amp;lt;chr&amp;gt;, `fgf-19` &amp;lt;dbl&amp;gt;, hscrp &amp;lt;dbl&amp;gt;, leptin &amp;lt;dbl&amp;gt;,
+## #   glutamate_decarboxylase_2_antibody &amp;lt;dbl&amp;gt;, creatinine &amp;lt;dbl&amp;gt;,
+## #   `il-1` &amp;lt;dbl&amp;gt;, cd163 &amp;lt;dbl&amp;gt;, `glp-1` &amp;lt;dbl&amp;gt;, hitchip_probe_class &amp;lt;chr&amp;gt;,
+## #   hitchip_probe_number &amp;lt;int&amp;gt;, protein_intake &amp;lt;dbl&amp;gt;,
+## #   days_after_onset &amp;lt;int&amp;gt;, stec_count &amp;lt;chr&amp;gt;, shigatoxin_2_elisa &amp;lt;chr&amp;gt;,
+## #   stool_texture &amp;lt;chr&amp;gt;, ferm_milk_prod_consumer &amp;lt;chr&amp;gt;,
+## #   mgs_richness &amp;lt;dbl&amp;gt;, location &amp;lt;chr&amp;gt;, dyastolic_p &amp;lt;dbl&amp;gt;,
+## #   systolic_p &amp;lt;dbl&amp;gt;, prothrombin_time &amp;lt;int&amp;gt;, creatine &amp;lt;dbl&amp;gt;, inr &amp;lt;dbl&amp;gt;,
+## #   ctp &amp;lt;int&amp;gt;, albumine &amp;lt;dbl&amp;gt;, bilubirin &amp;lt;dbl&amp;gt;, smoker &amp;lt;chr&amp;gt;,
+## #   ever_smoker &amp;lt;chr&amp;gt;, birth_control_pil &amp;lt;chr&amp;gt;, hla_drb12 &amp;lt;int&amp;gt;,
+## #   hla_dqa12 &amp;lt;int&amp;gt;, hla_dqa11 &amp;lt;int&amp;gt;, hla_drb11 &amp;lt;int&amp;gt;,
+## #   start_solidfood &amp;lt;int&amp;gt;, ajcc &amp;lt;chr&amp;gt;, fobt &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看metadata参数&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colnames(combined_metadata)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;dataset_name&amp;quot;                      
+##  [2] &amp;quot;sampleID&amp;quot;                          
+##  [3] &amp;quot;subjectID&amp;quot;                         
+##  [4] &amp;quot;body_site&amp;quot;                         
+##  [5] &amp;quot;antibiotics_current_use&amp;quot;           
+##  [6] &amp;quot;study_condition&amp;quot;                   
+##  [7] &amp;quot;disease&amp;quot;                           
+##  [8] &amp;quot;age&amp;quot;                               
+##  [9] &amp;quot;infant_age&amp;quot;                        
+## [10] &amp;quot;age_category&amp;quot;                      
+## [11] &amp;quot;gender&amp;quot;                            
+## [12] &amp;quot;country&amp;quot;                           
+## [13] &amp;quot;non_westernized&amp;quot;                   
+## [14] &amp;quot;sequencing_platform&amp;quot;               
+## [15] &amp;quot;DNA_extraction_kit&amp;quot;                
+## [16] &amp;quot;PMID&amp;quot;                              
+## [17] &amp;quot;number_reads&amp;quot;                      
+## [18] &amp;quot;number_bases&amp;quot;                      
+## [19] &amp;quot;minimum_read_length&amp;quot;               
+## [20] &amp;quot;median_read_length&amp;quot;                
+## [21] &amp;quot;pregnant&amp;quot;                          
+## [22] &amp;quot;lactating&amp;quot;                         
+## [23] &amp;quot;NCBI_accession&amp;quot;                    
+## [24] &amp;quot;BMI&amp;quot;                               
+## [25] &amp;quot;antibiotics_family&amp;quot;                
+## [26] &amp;quot;momeducat&amp;quot;                         
+## [27] &amp;quot;alcohol&amp;quot;                           
+## [28] &amp;quot;flg-genotype&amp;quot;                      
+## [29] &amp;quot;disease_subtype&amp;quot;                   
+## [30] &amp;quot;hdl&amp;quot;                               
+## [31] &amp;quot;triglycerides&amp;quot;                     
+## [32] &amp;quot;hba1c&amp;quot;                             
+## [33] &amp;quot;ldl&amp;quot;                               
+## [34] &amp;quot;tnm&amp;quot;                               
+## [35] &amp;quot;body_subsite&amp;quot;                      
+## [36] &amp;quot;visit_number&amp;quot;                      
+## [37] &amp;quot;days_from_first_collection&amp;quot;        
+## [38] &amp;quot;c-peptide&amp;quot;                         
+## [39] &amp;quot;family&amp;quot;                            
+## [40] &amp;quot;cholesterol&amp;quot;                       
+## [41] &amp;quot;glucose&amp;quot;                           
+## [42] &amp;quot;mumps&amp;quot;                             
+## [43] &amp;quot;adiponectin&amp;quot;                       
+## [44] &amp;quot;insulin(cat)&amp;quot;                      
+## [45] &amp;quot;fgf-19&amp;quot;                            
+## [46] &amp;quot;hscrp&amp;quot;                             
+## [47] &amp;quot;leptin&amp;quot;                            
+## [48] &amp;quot;glutamate_decarboxylase_2_antibody&amp;quot;
+## [49] &amp;quot;creatinine&amp;quot;                        
+## [50] &amp;quot;il-1&amp;quot;                              
+## [51] &amp;quot;cd163&amp;quot;                             
+## [52] &amp;quot;glp-1&amp;quot;                             
+## [53] &amp;quot;hitchip_probe_class&amp;quot;               
+## [54] &amp;quot;hitchip_probe_number&amp;quot;              
+## [55] &amp;quot;protein_intake&amp;quot;                    
+## [56] &amp;quot;days_after_onset&amp;quot;                  
+## [57] &amp;quot;stec_count&amp;quot;                        
+## [58] &amp;quot;shigatoxin_2_elisa&amp;quot;                
+## [59] &amp;quot;stool_texture&amp;quot;                     
+## [60] &amp;quot;ferm_milk_prod_consumer&amp;quot;           
+## [61] &amp;quot;mgs_richness&amp;quot;                      
+## [62] &amp;quot;location&amp;quot;                          
+## [63] &amp;quot;dyastolic_p&amp;quot;                       
+## [64] &amp;quot;systolic_p&amp;quot;                        
+## [65] &amp;quot;prothrombin_time&amp;quot;                  
+## [66] &amp;quot;creatine&amp;quot;                          
+## [67] &amp;quot;inr&amp;quot;                               
+## [68] &amp;quot;ctp&amp;quot;                               
+## [69] &amp;quot;albumine&amp;quot;                          
+## [70] &amp;quot;bilubirin&amp;quot;                         
+## [71] &amp;quot;smoker&amp;quot;                            
+## [72] &amp;quot;ever_smoker&amp;quot;                       
+## [73] &amp;quot;birth_control_pil&amp;quot;                 
+## [74] &amp;quot;hla_drb12&amp;quot;                         
+## [75] &amp;quot;hla_dqa12&amp;quot;                         
+## [76] &amp;quot;hla_dqa11&amp;quot;                         
+## [77] &amp;quot;hla_drb11&amp;quot;                         
+## [78] &amp;quot;start_solidfood&amp;quot;                   
+## [79] &amp;quot;ajcc&amp;quot;                              
+## [80] &amp;quot;fobt&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;获取人体各部位样本概况&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(combined_metadata$body_site)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+##        milk nasalcavity  oralcavity        skin       stool      vagina 
+##           8          91         678         466        4810           5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;获取包含的数据集&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(combined_metadata$dataset_name)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+##        AsnicarF_2017         BritoIL_2016  Castro-NallarE_2015 
+##                   24                  312                   32 
+##          ChngKR_2016           FengQ_2015      HanniganGD_2017 
+##                   78                  154                   82 
+## Heitz-BuschartA_2016             HMP_2012      KarlssonFH_2013 
+##                   53                  749                  145 
+##    LeChatelierE_2013             LiJ_2014            LiuW_2016 
+##                  292                  260                  110 
+##         LomanNJ_2013       NielsenHB_2014  Obregon-TitoAJ_2015 
+##                   43                  396                   58 
+##             OhJ_2014            QinJ_2012            QinN_2014 
+##                  291                  363                  237 
+##       RampelliS_2015        RaymondF_2016       SchirmerM_2016 
+##                   38                   72                  471 
+##          TettAJ_2016        VatanenT_2016        VincentC_2016 
+##                   97                  785                  229 
+##       VogtmannE_2016            XieH_2016             YuJ_2015 
+##                  110                  250                  128 
+##         ZellerG_2014 
+##                  199&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下载HMP 2012（HMP I）的MetaPhlAn2分析结果&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat &amp;lt;- curatedMetagenomicData(&amp;quot;HMP_2012.metaphlan_bugs_list.*&amp;quot;, dryrun=FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.nasalcavity&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/424&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.oralcavity&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/425&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.stool&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/426&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.vagina&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/427&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看HMP I粪便数据的元数据&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;head( pData(dat[[3]]) )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                    subjectID body_site body_subsite
+## SRS056519 HMP_2012_765094712     stool        stool
+## SRS016335 HMP_2012_765074482     stool        stool
+## SRS011061 HMP_2012_158458797     stool        stool
+## SRS016267 HMP_2012_764669880     stool        stool
+## SRS053214 HMP_2012_159753524     stool        stool
+## SRS013521 HMP_2012_159227541     stool        stool
+##           antibiotics_current_use study_condition disease age age_category
+## SRS056519                    &amp;lt;NA&amp;gt;         control healthy  19    schoolage
+## SRS016335                    &amp;lt;NA&amp;gt;         control healthy  20        adult
+## SRS011061                    &amp;lt;NA&amp;gt;         control healthy  30        adult
+## SRS016267                    &amp;lt;NA&amp;gt;         control healthy  29        adult
+## SRS053214                    &amp;lt;NA&amp;gt;         control healthy  23        adult
+## SRS013521                    &amp;lt;NA&amp;gt;         control healthy  22        adult
+##           gender visit_number BMI country non_westernized
+## SRS056519   male           NA  NA     USA              no
+## SRS016335   male           NA  NA     USA              no
+## SRS011061 female           NA  NA     USA              no
+## SRS016267   male           NA  NA     USA              no
+## SRS053214 female           NA  NA     USA              no
+## SRS013521 female           NA  NA     USA              no
+##           DNA_extraction_kit number_reads number_bases minimum_read_length
+## SRS056519             Qiagen    125076707  12506449555                  60
+## SRS016335             Qiagen    125043127  11938455408                  60
+## SRS011061             Qiagen     90085554   8028157196                  60
+## SRS016267             Qiagen    103068446   9820433068                  60
+## SRS053214             Qiagen    103639606   9687833906                  60
+## SRS013521             Qiagen    115013916  10925100631                  60
+##           median_read_length NCBI_accession
+## SRS056519                100      SRS056519
+## SRS016335                100      SRS016335
+## SRS011061                 90      SRS011061
+## SRS016267                100      SRS016267
+## SRS053214                 95      SRS053214
+## SRS013521                 95      SRS013521&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看MetaPhlan相对丰度表&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hmp_stool_metaphlan &amp;lt;- exprs(dat[[3]])
+hmp_stool_metaphlan[1:10, 1:10]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                                                 SRS056519 SRS016335
+## k__Viruses                                        0.00090   0.00179
+## k__Bacteria                                      99.99910  99.96451
+## k__Viruses|p__Viruses_noname                      0.00090   0.00179
+## k__Bacteria|p__Actinobacteria                     0.25980   0.13760
+## k__Bacteria|p__Firmicutes                         9.52434  18.67835
+## k__Bacteria|p__Proteobacteria                     2.27579   2.32088
+## k__Bacteria|p__Bacteroidetes                     87.93779  77.40923
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00090   0.00179
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.25980   0.13760
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01382   0.02164
+##                                                 SRS011061 SRS016267
+## k__Viruses                                        0.00000   0.00000
+## k__Bacteria                                     100.00000 100.00000
+## k__Viruses|p__Viruses_noname                      0.00000   0.00000
+## k__Bacteria|p__Actinobacteria                     0.04200   0.11105
+## k__Bacteria|p__Firmicutes                         5.59309   3.98890
+## k__Bacteria|p__Proteobacteria                     2.98345   0.55210
+## k__Bacteria|p__Bacteroidetes                     91.07961  95.28808
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.04200   0.11105
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.04196   0.00000
+##                                                 SRS053214 SRS013521
+## k__Viruses                                        0.00000   0.00882
+## k__Bacteria                                     100.00000  99.99118
+## k__Viruses|p__Viruses_noname                      0.00000   0.00882
+## k__Bacteria|p__Actinobacteria                     0.46158   0.08515
+## k__Bacteria|p__Firmicutes                        16.03493   1.73242
+## k__Bacteria|p__Proteobacteria                     0.23830   0.49311
+## k__Bacteria|p__Bacteroidetes                     80.04580  97.68049
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00882
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.46158   0.08515
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01578   0.02924
+##                                                 SRS018817 SRS017247
+## k__Viruses                                        0.00000   0.00000
+## k__Bacteria                                     100.00000 100.00000
+## k__Viruses|p__Viruses_noname                      0.00000   0.00000
+## k__Bacteria|p__Actinobacteria                     0.08518   0.15577
+## k__Bacteria|p__Firmicutes                        11.52659   4.35400
+## k__Bacteria|p__Proteobacteria                     0.22363   0.21245
+## k__Bacteria|p__Bacteroidetes                     87.99725  95.08394
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.08518   0.15577
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.00443   0.01766
+##                                                 SRS019968 SRS064557
+## k__Viruses                                        0.00077   0.00194
+## k__Bacteria                                      99.99923  99.99806
+## k__Viruses|p__Viruses_noname                      0.00077   0.00194
+## k__Bacteria|p__Actinobacteria                     0.16129   0.03814
+## k__Bacteria|p__Firmicutes                        16.11446   2.69009
+## k__Bacteria|p__Proteobacteria                     0.17522   1.50628
+## k__Bacteria|p__Bacteroidetes                     82.54661  95.76355
+## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00077   0.00194
+## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
+## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+</description>
     </item>
     
     <item>
@@ -146,10 +1324,113 @@ combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID b
       <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017-10-29-r-sankeyplot/</guid>
-      <description>简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
-download.file(&amp;#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&amp;#39;, destfile = &amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;) taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
-library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
-second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA) taxtab &amp;lt;- taxtab[-grep(&amp;#39;unclassified&amp;#39;, taxtab$V1), ] ## remove unlassified taxa tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;) ## split into different taxonomy levels target &amp;lt;- sapply(tax_split, tail, n=1) ## target node mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &amp;lt;- mapping$id source &amp;lt;- sapply(tax_split, second_last) ## source node source_id &amp;lt;- mapping[source,] value &amp;lt;- taxtab$V2 ## width of flow links &amp;lt;- data.</description>
+      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/d3/d3.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/sankey/sankey.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/sankeyNetwork-binding/sankeyNetwork.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;简介&lt;/h2&gt;
+&lt;p&gt;桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图： &lt;img src=&#34;https://user-images.githubusercontent.com/13619847/30794024-6e688e3a-a1f8-11e7-894a-4c2924890bb6.png&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;数据准备&lt;/h2&gt;
+&lt;p&gt;此处我们使用&lt;a href=&#34;https://bitbucket.org/biobakery/biobakery/wiki/metaphlan2&#34;&gt;Metaphlan2 tutorial&lt;/a&gt;中的数据，来源于牙龈菌斑的宏基因组测序：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download.file(&amp;#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&amp;#39;, destfile = &amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;)
+taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;networkdd3&#34; class=&#34;level2&#34;&gt;
+&lt;h2&gt;加载networkdD3包&lt;/h2&gt;
+&lt;p&gt;该包使用D3.js实现数据的交互式可视化，具体一些例子参见&lt;a href=&#34;https://christophergandrud.github.io/networkD3/&#34;&gt;这里&lt;/a&gt;：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(networkD3)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;数据预处理&lt;/h2&gt;
+&lt;p&gt;函数&lt;a href=&#34;https://www.rdocumentation.org/packages/networkD3/versions/0.4/topics/sankeyNetwork&#34;&gt;sankeyNetwork&lt;/a&gt;主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从&lt;strong&gt;0&lt;/strong&gt;开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA)
+
+taxtab &amp;lt;- taxtab[-grep(&amp;#39;unclassified&amp;#39;, taxtab$V1), ]   ## remove unlassified taxa
+ 
+tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;)                ## split into different taxonomy levels
+target &amp;lt;- sapply(tax_split, tail, n=1)                 ## target node
+mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target)
+target_id &amp;lt;- mapping$id
+source &amp;lt;- sapply(tax_split, second_last)               ## source node
+source_id &amp;lt;- mapping[source,]
+value &amp;lt;- taxtab$V2                                     ## width of flow
+
+links &amp;lt;- data.frame(source=source_id, target=target_id, value) ## links
+links &amp;lt;- links[!is.na(links$source), ]                 ## root of the tree has no parent (source)
+nodes &amp;lt;- data.frame(do.call(rbind, strsplit(target,&amp;#39;__&amp;#39;)))
+colnames(nodes)=c(&amp;#39;tax&amp;#39;, &amp;#39;name&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;绘图&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sankeyNetwork(Links = links, Nodes = nodes, 
+              Source = &amp;quot;source&amp;quot;, Target = &amp;quot;target&amp;quot;, 
+              Value = &amp;quot;value&amp;quot;, NodeID = &amp;quot;name&amp;quot;, NodeGroup = &amp;#39;tax&amp;#39;,
+              sinksRight=FALSE, fontSize = 10, nodeWidth = 20, nodePadding=40, 
+              height =200, width = 900)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:900px;height:200px;&#34; class=&#34;sankeyNetwork html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;links&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966]},&#34;nodes&#34;:{&#34;name&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;],&#34;group&#34;:[&#34;k&#34;,&#34;p&#34;,&#34;p&#34;,&#34;c&#34;,&#34;c&#34;,&#34;o&#34;,&#34;o&#34;,&#34;f&#34;,&#34;f&#34;,&#34;f&#34;,&#34;g&#34;,&#34;g&#34;,&#34;g&#34;,&#34;s&#34;,&#34;s&#34;]},&#34;options&#34;:{&#34;NodeID&#34;:&#34;name&#34;,&#34;NodeGroup&#34;:&#34;tax&#34;,&#34;LinkGroup&#34;:null,&#34;colourScale&#34;:&#34;d3.scaleOrdinal(d3.schemeCategory20);&#34;,&#34;fontSize&#34;:10,&#34;fontFamily&#34;:null,&#34;nodeWidth&#34;:20,&#34;nodePadding&#34;:40,&#34;units&#34;:&#34;&#34;,&#34;margin&#34;:{&#34;top&#34;:null,&#34;right&#34;:null,&#34;bottom&#34;:null,&#34;left&#34;:null},&#34;iterations&#34;:32,&#34;sinksRight&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt; 在此图中，不同颜色代表不同的taxonomy level，连接的宽度代表相对丰度。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level2&#34;&gt;
+&lt;h2&gt;桑基图工具的其他选择&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;用于生成第一张图的&lt;a href=&#34;https://github.com/BetaCollins/Sankey&#34;&gt;源代码&lt;/a&gt;基于Cairo，操作更加复杂&lt;/li&gt;
+&lt;li&gt;最新发布于&lt;a href=&#34;https://www.biorxiv.org/content/early/2017/09/20/191767&#34;&gt;bioRxiv&lt;/a&gt;的BioSankey：&lt;a href=&#34;https://github.com/nthomasCUBE/BioSankey&#34; class=&#34;uri&#34;&gt;https://github.com/nthomasCUBE/BioSankey&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;拥有图形界面的Pavian: &lt;a href=&#34;https://github.com/fbreitwieser/pavian&#34; class=&#34;uri&#34;&gt;https://github.com/fbreitwieser/pavian&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Example Talk</title>
+      <link>/talk/example-talk/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0800</pubDate>
+      
+      <guid>/talk/example-talk/</guid>
+      <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>INC-Seq: accurate single molecule reads using nanopore sequencing</title>
+      <link>/publication/incseq/</link>
+      <pubDate>Tue, 02 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/incseq/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deep Learning</title>
+      <link>/project/deep-learning/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/project/deep-learning/</guid>
+      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
+
+&lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
+
+&lt;p&gt;Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p&gt;
+
+&lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
+
+&lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>External Project</title>
+      <link>/project/example-external-project/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/project/example-external-project/</guid>
+      <description></description>
     </item>
     
   </channel>

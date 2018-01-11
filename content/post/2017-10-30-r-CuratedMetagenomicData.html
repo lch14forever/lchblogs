@@ -4,6 +4,9 @@ output: html_document
 categories: ["R"]
 tags: ["R","Sankey"]
 date: 2017-10-30
+summary: "# 简介
+
+CuratedMetagenomicData(<https://waldronlab.github.io/curatedMetagenomicData/>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录[6000余个样本](https://waldronlab.github.io/curatedMetagenomicData/datasets-included/)并在持续[扩建](https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/)当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。"
 ---
 
 
@@ -28,10 +31,6 @@ biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
 <h1>基本使用</h1>
 <p>调用</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(curatedMetagenomicData))</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
-<pre><code>## Warning: package &#39;BiocGenerics&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;ExperimentHub&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;AnnotationHub&#39; was built under R version 3.4.2</code></pre>
 <p>查看metadata</p>
 <pre class="r"><code>combined_metadata</code></pre>
 <pre><code>## # A tibble: 6,058 x 80
@@ -184,22 +183,23 @@ biocLite(&quot;curatedMetagenomicData&quot;)</code></pre>
 <p>下载HMP 2012（HMP I）的MetaPhlAn2分析结果</p>
 <pre class="r"><code>dat &lt;- curatedMetagenomicData(&quot;HMP_2012.metaphlan_bugs_list.*&quot;, dryrun=FALSE)</code></pre>
 <pre><code>## Working on HMP_2012.metaphlan_bugs_list.nasalcavity</code></pre>
-<pre><code>## updating metadata: retrieving 1 resource
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;
-## Working on HMP_2012.metaphlan_bugs_list.oralcavity
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;
-## Working on HMP_2012.metaphlan_bugs_list.stool
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;
-## Working on HMP_2012.metaphlan_bugs_list.vagina
-## snapshotDate(): 2017-10-30
-## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation
-## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
+<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/424&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.oralcavity</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/425&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.stool</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/426&#39;</code></pre>
+<pre><code>## Working on HMP_2012.metaphlan_bugs_list.vagina</code></pre>
+<pre><code>## snapshotDate(): 2017-10-30</code></pre>
+<pre><code>## see ?curatedMetagenomicData and browseVignettes(&#39;curatedMetagenomicData&#39;) for documentation</code></pre>
+<pre><code>## loading from cache &#39;/Users/mayuan//.ExperimentHub/427&#39;</code></pre>
 <p>查看HMP I粪便数据的元数据</p>
 <pre class="r"><code>head( pData(dat[[3]]) )</code></pre>
 <pre><code>##                    subjectID body_site body_subsite

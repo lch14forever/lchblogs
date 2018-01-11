@@ -4,6 +4,7 @@ output: html_document
 categories: ["R"]
 tags: ["R","Sankey"]
 date: 2017-10-29
+summary: "桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图"
 ---
 
 ```{r setup, include=FALSE}

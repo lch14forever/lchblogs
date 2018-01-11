@@ -1,0 +1,33 @@
+---
+title: "A collection of useful tools (Keep updating)"
+author: "Chenhao Li"
+categories: ["General"]
+tags: ["Bioinformatics"]
+date: 2017-11-04
+output: html_document
+summary: "A collection of bioinformatics resources"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# General bioinformatics
+
+ - Applied genomics course from Michael Schatz <https://github.com/schatzlab/appliedgenomics>
+ - Data science from Rafael A. Irizarry (built with R bookdown) <https://rafalab.github.io/dsbook/>
+ 
+# Nanopore seqeuncing data analysis
+
+ - Assembly best practice
+    1.  QC
+    2. Adaptor removal with [Porechop](https://github.com/rrwick/Porechop)
+    3. ([Minimap2](https://github.com/lh3/minimap2) + [Miniasm](https://github.com/lh3/miniasm) ) or [Canu](https://github.com/marbl/canu) + [Racon](https://github.com/isovic/racon) + [Nanopolish](https://github.com/jts/nanopolish)
+ 
+# Metagenomics
+
+ - Coming soon ...
+ 
+# Single cell analysis
+ - Tool collection for SC data <https://github.com/seandavi/awesome-single-cell>
+ 
+ 

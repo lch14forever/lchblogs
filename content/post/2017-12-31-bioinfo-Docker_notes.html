@@ -4,15 +4,16 @@ author: "Chenhao Li (李陈浩)"
 date: 2017-12-31
 tags: ["Bioinformatics"]
 output: html_document
+summary: "我的Docker初学笔记"
 ---
 
 
 
-<div id="docker" class="section level2">
+<section id="docker" class="level2">
 <h2>改变Docker容器存储路径</h2>
 <p>Linux下Docker的默认存储目录为<code>/var/lib/docker</code>。显然这个目录属于<code>root</code>分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于<code>/home</code>下。我根据这篇博客进行了更改<a href="https://sanenthusiast.com/change-default-image-container-location-docker/" class="uri">https://sanenthusiast.com/change-default-image-container-location-docker/</a></p>
-</div>
-<div id="docker" class="section level2">
+</section>
+<section id="docker" class="level2">
 <h2>Docker常用操作</h2>
 <ul>
 <li>加载镜像：</li>
@@ -55,4 +56,4 @@ docker rmi [image] # 删除镜像</code></pre>
 <li>Commit</li>
 </ul>
 <pre class="sh"><code>docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]</code></pre>
-</div>
+</section>
