@@ -40,9 +40,7 @@
   
     
     
-      
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-      
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
     
   
   
@@ -76,8 +74,8 @@
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -91,9 +89,9 @@
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:site_name" content="Chenhao Li">
   <meta property="og:url" content="/post/2017-11-15-r-glv/">
-  <meta property="og:title" content="Generalized Lotka-Volterra model | Chenhao&#39;s Blog">
+  <meta property="og:title" content="Generalized Lotka-Volterra model | Chenhao Li">
   <meta property="og:description" content="The model \(\frac{dx_i}{dt}= ax_i&#43;\sum_{j=1}^pb_{ij}x_ix_j\)
 ## library library(&#39;deSolve&#39;) ## GLV function lvm &lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &lt;- alpha * x &#43; x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &lt;- c(0.1, 0.2, 0.3) beta &lt;- t(matrix(c(-0.5, -0.3 , 0, 0.">
   <meta property="og:locale" content="en-us">
@@ -105,7 +103,7 @@
 
   
 
-  <title>Generalized Lotka-Volterra model | Chenhao&#39;s Blog</title>
+  <title>Generalized Lotka-Volterra model | Chenhao Li</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -124,7 +122,7 @@
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
+      <a class="navbar-brand" href="/">Chenhao Li</a>
     </div>
 
     
@@ -288,45 +286,6 @@
 
   
   
-<div class="share-box" aria-hidden="true">
-  <ul class="share">
-    <li>
-      <a class="twitter"
-         href="https://twitter.com/intent/tweet?text=Generalized%20Lotka-Volterra%20model&amp;url=%2fpost%2f2017-11-15-r-glv%2f"
-         target="_blank" rel="noopener">
-        <i class="fa fa-twitter"></i>
-      </a>
-    </li>
-    <li>
-      <a class="facebook"
-         href="https://www.facebook.com/sharer.php?u=%2fpost%2f2017-11-15-r-glv%2f"
-         target="_blank" rel="noopener">
-        <i class="fa fa-facebook"></i>
-      </a>
-    </li>
-    <li>
-      <a class="linkedin"
-         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2f2017-11-15-r-glv%2f&amp;title=Generalized%20Lotka-Volterra%20model"
-         target="_blank" rel="noopener">
-        <i class="fa fa-linkedin"></i>
-      </a>
-    </li>
-    <li>
-      <a class="weibo"
-         href="http://service.weibo.com/share/share.php?url=%2fpost%2f2017-11-15-r-glv%2f&amp;title=Generalized%20Lotka-Volterra%20model"
-         target="_blank" rel="noopener">
-        <i class="fa fa-weibo"></i>
-      </a>
-    </li>
-    <li>
-      <a class="email"
-         href="mailto:?subject=Generalized%20Lotka-Volterra%20model&amp;body=%2fpost%2f2017-11-15-r-glv%2f">
-        <i class="fa fa-envelope"></i>
-      </a>
-    </li>
-  </ul>
-</div>
-
 
   
 
@@ -542,8 +501,6 @@ matplot(dat.norm.w_scaled_beta - dat.norm, type=&#39;b&#39;, ylab=&#39;Absolute 
 
       
       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
-      
-      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
       
 
       
