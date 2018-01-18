@@ -572,12 +572,7 @@ You can find a copy of my CV <a href="https://github.com/lch14forever/lch14forev
 
   <div class="article-style" itemprop="articleBody">
     
-    为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：
-download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
-官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
-跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
- MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）： https://github.com/lch14forever/microbiomeViz
- MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.
+    <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics" target="_blank">pipeline</a>使用MetaPhlan，Kraken等profiler。一直觉得<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home" target="_blank">GraPhlAn</a>的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
