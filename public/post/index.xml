@@ -11,6 +11,123 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>microbiomeViz--人生第一个R包</title>
+      <link>/post/2018-01-18-r-metagenomeviz/</link>
+      <pubDate>Thu, 18 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-18-r-metagenomeviz/</guid>
+      <description>&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;为啥写这个&lt;/h3&gt;
+&lt;p&gt;平日经常会分析shotgun宏基因组的数据，我们的&lt;a href=&#34;https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics&#34;&gt;pipeline&lt;/a&gt;使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download.file(&amp;quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&amp;quot;, &amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)
+knitr::kable(head(read.table(&amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th style=&#34;text-align: left;&#34;&gt;V1&lt;/th&gt;
+&lt;th style=&#34;text-align: right;&#34;&gt;V2&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;100.00000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria|p__Firmicutes&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;64.91753&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria|p__Bacteroidetes&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;35.08247&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria|p__Firmicutes|c__Clostridia&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;64.91753&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria|p__Bacteroidetes|c__Bacteroidia&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;35.08247&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td style=&#34;text-align: left;&#34;&gt;k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales&lt;/td&gt;
+&lt;td style=&#34;text-align: right;&#34;&gt;64.91753&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是&lt;a href=&#34;https://bitbucket.org/nsegata/graphlan/wiki/Home&#34;&gt;GraPhlAn&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。&lt;a href=&#34;https://github.com/marbl/Krona/wiki&#34;&gt;Krona&lt;/a&gt;可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包&lt;a href=&#34;http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404&#34;&gt;Metacoder&lt;/a&gt;，画出的图个人真心不是很喜欢：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;amp;id=info:doi/10.1371/journal.pcbi.1005404.g002&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;microbiomeviz&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;MicrobiomeViz–千里之行，始于足下&lt;/h3&gt;
+&lt;p&gt;其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）： &lt;a href=&#34;https://github.com/lch14forever/microbiomeViz&#34; class=&#34;uri&#34;&gt;https://github.com/lch14forever/microbiomeViz&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;metaphlanparser&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;MetaPhlan结果的parser&lt;/h3&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;安装&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;lch14forever/microbiomeViz&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Skipping install of &amp;#39;microbiomeViz&amp;#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.
+##   Use `force = TRUE` to force installation&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level4&#34;&gt;
+&lt;h4&gt;使用&lt;/h4&gt;
+&lt;p&gt;这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了ape的phylo类：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(microbiomeViz)
+tree &amp;lt;- parseMetaphlanTSV(&amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;ggtree&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;ggtree的大戏&lt;/h4&gt;
+&lt;p&gt;画出主干&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggtree)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;ggtree&amp;#39; was built under R version 3.4.3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: ggplot2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: treeio&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ggtree v1.10.2  For help: https://guangchuangyu.github.io/ggtree
+## 
+## If you use ggtree in published research, please cite:
+## Guangchuang Yu, David Smith, Huachen Zhu, Yi Guan, Tommy Tsan-Yuk Lam. ggtree: an R package for visualization and annotation of phylogenetic trees with their covariates and other associated data. Methods in Ecology and Evolution 2017, 8(1):28-36, doi:10.1111/2041-210X.12628&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t &amp;lt;- ggtree(tree, size=2, col=&amp;#39;grey&amp;#39;, layout = &amp;#39;circular&amp;#39;) + 
+    geom_point(size=tree$nodeSize, shape=21, fill=&amp;#39;white&amp;#39;)
+t&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;比如说我做了一个检验，发现Bacteroides属在疾病组显著增高，那么我们可以像GraPhlAn那样把它高亮出来：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t &amp;lt;- t + geom_hilight(node=22, fill = &amp;#39;red&amp;#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==22), label=label, vjust=-0.5))
+t&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;其中B. ovatus也是在疾病组显著高：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t &amp;lt;- t + geom_hilight(node=7, fill = &amp;#39;red&amp;#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==7), label=label, vjust=1))
+t&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;还想标注Clostridias在疾病组显著低：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t &amp;lt;- t + geom_hilight(node=13, fill = &amp;#39;darkgreen&amp;#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==13), label=label))
+t&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section class=&#34;level3&#34;&gt;
+&lt;h3&gt;希望有更多的拓展&lt;/h3&gt;
+&lt;p&gt;肯定是不满足于只有这么个parser而已，其实有好多功能都想去实现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;[ ] 多个MetaPhlan表，节点大小取平均&lt;/li&gt;
+&lt;li&gt;[ ] 根据统计检验结果自动添加高亮&lt;/li&gt;
+&lt;li&gt;[ ] 和heatmap结合&lt;/li&gt;
+&lt;li&gt;[ ] …&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这一切成为可能，都是因为有了ggtree这样一个灵活的框架。&lt;/p&gt;
+&lt;/section&gt;
+</description>
+    </item>
+    
+    <item>
       <title>成分之咒与ReBoot算法</title>
       <link>/post/2018-01-12-r-compositional/</link>
       <pubDate>Fri, 12 Jan 2018 00:00:00 +0000</pubDate>

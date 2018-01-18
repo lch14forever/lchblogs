@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2018-01-18-r-metagenomeviz/</loc>
+      <lastmod>2018-01-18T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/2018-01-12-r-compositional/</loc>
       <lastmod>2018-01-12T00:00:00+00:00</lastmod>
     </url>
@@ -277,7 +286,7 @@
     <url>
     
       <loc>/tags/metagenomics/</loc>
-      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
+      <lastmod>2017-11-07T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -287,7 +296,7 @@
     <url>
     
       <loc>/tags/metagenomics/</loc>
-      <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -339,7 +348,7 @@
       <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
     
       <loc>/tags/r/</loc>
-      <lastmod>2018-01-12T00:00:00+00:00</lastmod>
+      <lastmod>2018-01-18T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

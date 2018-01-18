@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30.2" />
+  <meta name="author" content="Chenhao Li">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：
+download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）： https://github.com/lch14forever/microbiomeViz
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2018-01-18-r-metagenomeviz/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2018-01-18-r-metagenomeviz/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao Li">
+  <meta property="og:url" content="/post/2018-01-18-r-metagenomeviz/">
+  <meta property="og:title" content="microbiomeViz--人生第一个R包 | Chenhao Li">
+  <meta property="og:description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：
+download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）： https://github.com/lch14forever/microbiomeViz
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-01-18T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-01-18T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>microbiomeViz--人生第一个R包 | Chenhao Li</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Chenhao Li</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">microbiomeViz--人生第一个R包</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-01-18 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 18, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 min read
+  </span>
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <section class="level3">
+<h3>为啥写这个</h3>
+<p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
+<pre class="r"><code>download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
+knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">V1</th>
+<th style="text-align: right;">V2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">k__Bacteria</td>
+<td style="text-align: right;">100.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k__Bacteria|p__Firmicutes</td>
+<td style="text-align: right;">64.91753</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k__Bacteria|p__Bacteroidetes</td>
+<td style="text-align: right;">35.08247</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k__Bacteria|p__Firmicutes|c__Clostridia</td>
+<td style="text-align: right;">64.91753</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k__Bacteria|p__Bacteroidetes|c__Bacteroidia</td>
+<td style="text-align: right;">35.08247</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales</td>
+<td style="text-align: right;">64.91753</td>
+</tr>
+</tbody>
+</table>
+<p>第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home">GraPhlAn</a>:</p>
+<p><img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" /></p>
+<p>官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。<a href="https://github.com/marbl/Krona/wiki">Krona</a>可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404">Metacoder</a>，画出的图个人真心不是很喜欢：</p>
+<p><img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" /></p>
+<p>跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。</p>
+</section>
+<section id="microbiomeviz" class="level3">
+<h3>MicrobiomeViz–千里之行，始于足下</h3>
+<p>其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）： <a href="https://github.com/lch14forever/microbiomeViz" class="uri">https://github.com/lch14forever/microbiomeViz</a></p>
+</section>
+<section id="metaphlanparser" class="level3">
+<h3>MetaPhlan结果的parser</h3>
+<section class="level4">
+<h4>安装</h4>
+<pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;)</code></pre>
+<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
+## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
+<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.
+##   Use `force = TRUE` to force installation</code></pre>
+</section>
+<section class="level4">
+<h4>使用</h4>
+<p>这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了ape的phylo类：</p>
+<pre class="r"><code>library(microbiomeViz)
+tree &lt;- parseMetaphlanTSV(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)</code></pre>
+</section>
+<section id="ggtree" class="level4">
+<h4>ggtree的大戏</h4>
+<p>画出主干</p>
+<pre class="r"><code>library(ggtree)</code></pre>
+<pre><code>## Warning: package &#39;ggtree&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## Loading required package: treeio</code></pre>
+<pre><code>## ggtree v1.10.2  For help: https://guangchuangyu.github.io/ggtree
+## 
+## If you use ggtree in published research, please cite:
+## Guangchuang Yu, David Smith, Huachen Zhu, Yi Guan, Tommy Tsan-Yuk Lam. ggtree: an R package for visualization and annotation of phylogenetic trees with their covariates and other associated data. Methods in Ecology and Evolution 2017, 8(1):28-36, doi:10.1111/2041-210X.12628</code></pre>
+<pre class="r"><code>t &lt;- ggtree(tree, size=2, col=&#39;grey&#39;, layout = &#39;circular&#39;) + 
+    geom_point(size=tree$nodeSize, shape=21, fill=&#39;white&#39;)
+t</code></pre>
+<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>比如说我做了一个检验，发现Bacteroides属在疾病组显著增高，那么我们可以像GraPhlAn那样把它高亮出来：</p>
+<pre class="r"><code>t &lt;- t + geom_hilight(node=22, fill = &#39;red&#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==22), label=label, vjust=-0.5))
+t</code></pre>
+<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>其中B. ovatus也是在疾病组显著高：</p>
+<pre class="r"><code>t &lt;- t + geom_hilight(node=7, fill = &#39;red&#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==7), label=label, vjust=1))
+t</code></pre>
+<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>还想标注Clostridias在疾病组显著低：</p>
+<pre class="r"><code>t &lt;- t + geom_hilight(node=13, fill = &#39;darkgreen&#39;, alpha = 0.3, extend = 1) +
+   geom_text2(aes(subset=(node==13), label=label))
+t</code></pre>
+<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</section>
+</section>
+<section class="level3">
+<h3>希望有更多的拓展</h3>
+<p>肯定是不满足于只有这么个parser而已，其实有好多功能都想去实现：</p>
+<ul>
+<li>[ ] 多个MetaPhlan表，节点大小取平均</li>
+<li>[ ] 根据统计检验结果自动添加高亮</li>
+<li>[ ] 和heatmap结合</li>
+<li>[ ] …</li>
+</ul>
+<p>这一切成为可能，都是因为有了ggtree这样一个灵活的框架。</p>
+</section>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></li>
+    
+    <li><a href="/post/2018-01-09-r-ordellipsecode/">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></li>
+    
+    <li><a href="/post/2017-12-29-r-addconfellipse/">Add confidence ellipse to LDA ordination plot II</a></li>
+    
+    <li><a href="/post/2017-11-18-r-absolute/">有了绝对定量就完了？</a></li>
+    
+    <li><a href="/post/2017-11-15-r-glv/">Generalized Lotka-Volterra model</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
