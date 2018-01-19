@@ -32,7 +32,7 @@ knitr::kable(head(read.table('~/Downloads/SRS014459-Stool_profile.txt')))
 
 ### MicrobiomeViz--千里之行，始于足下
 
-其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（其实还是只有一个函数：P）：
+其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）：
 https://github.com/lch14forever/microbiomeViz
 
 
@@ -45,56 +45,47 @@ devtools::install_github("lch14forever/microbiomeViz")
 
 #### 使用
 
+目前有三个函数：
+
+- `parseMetaphlanTSV`: 将MetaPhlAn的表格转换成tree格式
+- `tree.backbone`: 做出树的骨架
+- `clade.anno`: 高亮一个节点及其下属所有节点
+
 这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了phylobase的phylo4d类：
 
 ```{r}
 library(microbiomeViz)
-tree <- parseMetaphlanTSV('~/Downloads/SRS014459-Stool_profile.txt')
+data("SRS014459_Stool_profile")                    ## 上面的示例数据已经加如microbiomeViz
+tr <- parseMetaphlanTSV(SRS014459_Stool_profile)   ## parsing
 ```
 
-#### ggtree的大戏
+#### 基于ggtree的大戏
 
-画出主干
+做出树的骨架
 ```{r}
-library(ggtree)
-t <- ggtree(tree, size=2, col='grey', layout = 'circular') + 
-    geom_point(aes(size=I(nodeSize)), shape=21, fill='white')
-t
+p <- tree.backbone(tr)
+p
 ```
 
-比如说我做了一个检验，发现Bacteroides属在疾病组显著增高，那么我们可以像GraPhlAn那样把它高亮出来：
+微生物组常见的操作就是组间比较，我们可以向GraPhlAn那样把显著的节点高亮出来：
 
 ```{r}
-t <- t + geom_hilight(node=22, fill = 'red', alpha = 0.3, extend = 1) +
-   geom_text2(aes(subset=(node==22), label=label, vjust=-0.5))
-t
+## 假设以下taxa在疾病组显著
+anno.data <- data.frame(node=c("g__Roseburia", "c__Clostridia", "s__Bacteroides_ovatus"),
+                       color='red', stringsAsFactors = FALSE)
+p <- clade.anno(p, anno.data)
+p
 ```
 
-其中B. ovatus也是在疾病组显著高：
-```{r}
-t <- t + geom_hilight(node=7, fill = 'red', alpha = 0.3, extend = 1) +
-   geom_text2(aes(subset=(node==7), label=label, vjust=1))
-t
-
-```
-
-还想标注Clostridias在疾病组显著低：
-```{r}
-t <- t + geom_hilight(node=13, fill = 'darkgreen', alpha = 0.3, extend = 1) +
-   geom_text2(aes(subset=(node==13), label=label))
-t
-
-```
 
 ### 希望有更多的拓展
 
-肯定是不满足于只有这么个parser而已，其实有好多功能都想去实现：
+所有的操作均基于`treedata`和`ggtree`，正因为有了这些灵活的框架，上面的几个例子可拓展性还是很强的。
 
 - [ ] 多个MetaPhlan表，节点大小取平均
 - [ ] Biom数据支持
-- [ ] 根据统计检验结果自动添加高亮
 - [ ] 和heatmap结合
 - [ ] ...
  
-这一切成为可能，都是因为有了ggtree这样一个灵活的框架。
+
  
