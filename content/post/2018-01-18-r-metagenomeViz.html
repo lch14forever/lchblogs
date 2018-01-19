@@ -4,14 +4,14 @@ author: "Chenhao Li （李陈浩）"
 date: 2018-01-18
 tags: ['R']
 output: html_document
-summary: "平日经常会分析shotgun宏基因组的数据，我们的[pipeline](https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics)使用MetaPhlan，Kraken等profiler。一直觉得[GraPhlAn](https://bitbucket.org/nsegata/graphlan/wiki/Home)的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。"
+summary: "平日经常会分析shotgun宏基因组的数据，我们的[pipeline](https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics)使用MetaPhlAn，Kraken等profiler。一直觉得[GraPhlAn](https://bitbucket.org/nsegata/graphlan/wiki/Home)的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。"
 ---
 
 
 
 <section class="level3">
 <h3>为啥写这个</h3>
-<p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlan，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
+<p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
 <pre class="r"><code>download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
 knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))</code></pre>
 <table>
@@ -65,14 +65,24 @@ knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;))
 <pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;)</code></pre>
 <pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
 ## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
-<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (cf21e9f4) has not changed since last install.
-##   Use `force = TRUE` to force installation</code></pre>
+<pre><code>## Downloading GitHub repo lch14forever/microbiomeViz@master
+## from URL https://api.github.com/repos/lch14forever/microbiomeViz/zipball/master</code></pre>
+<pre><code>## Installing microbiomeViz</code></pre>
+<pre><code>## &#39;/Library/Frameworks/R.framework/Resources/bin/R&#39; --no-site-file  \
+##   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
+##   &#39;/private/var/folders/zv/0bnmcthx17q24t21qm4fd7wr0000gn/T/RtmpaELuDY/devtools9801fd44368/lch14forever-microbiomeViz-885e33f&#39;  \
+##   --library=&#39;/Library/Frameworks/R.framework/Versions/3.4/Resources/library&#39;  \
+##   --install-tests</code></pre>
+<pre><code>## </code></pre>
 </section>
 <section class="level4">
 <h4>使用</h4>
-<p>这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了ape的phylo类：</p>
+<p>这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了phylobase的phylo4d类：</p>
 <pre class="r"><code>library(microbiomeViz)
 tree &lt;- parseMetaphlanTSV(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)</code></pre>
+<pre><code>## Warning in checkTree(object): Tree contains singleton nodes.
+
+## Warning in checkTree(object): Tree contains singleton nodes.</code></pre>
 </section>
 <section id="ggtree" class="level4">
 <h4>ggtree的大戏</h4>
@@ -86,7 +96,7 @@ tree &lt;- parseMetaphlanTSV(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)<
 ## If you use ggtree in published research, please cite:
 ## Guangchuang Yu, David Smith, Huachen Zhu, Yi Guan, Tommy Tsan-Yuk Lam. ggtree: an R package for visualization and annotation of phylogenetic trees with their covariates and other associated data. Methods in Ecology and Evolution 2017, 8(1):28-36, doi:10.1111/2041-210X.12628</code></pre>
 <pre class="r"><code>t &lt;- ggtree(tree, size=2, col=&#39;grey&#39;, layout = &#39;circular&#39;) + 
-    geom_point(size=tree$nodeSize, shape=21, fill=&#39;white&#39;)
+    geom_point(aes(size=I(nodeSize)), shape=21, fill=&#39;white&#39;)
 t</code></pre>
 <p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>比如说我做了一个检验，发现Bacteroides属在疾病组显著增高，那么我们可以像GraPhlAn那样把它高亮出来：</p>
@@ -111,6 +121,7 @@ t</code></pre>
 <p>肯定是不满足于只有这么个parser而已，其实有好多功能都想去实现：</p>
 <ul>
 <li>[ ] 多个MetaPhlan表，节点大小取平均</li>
+<li>[ ] Biom数据支持</li>
 <li>[ ] 根据统计检验结果自动添加高亮</li>
 <li>[ ] 和heatmap结合</li>
 <li>[ ] …</li>
