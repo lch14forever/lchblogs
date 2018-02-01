@@ -76,8 +76,8 @@ second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab 
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -91,9 +91,9 @@ second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab 
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao Li">
+  <meta property="og:site_name" content="Chenhao&#39;s Blog">
   <meta property="og:url" content="/post/2017-10-29-r-sankeyplot/">
-  <meta property="og:title" content="桑基图（Sankey diagram） | Chenhao Li">
+  <meta property="og:title" content="桑基图（Sankey diagram） | Chenhao&#39;s Blog">
   <meta property="og:description" content="简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
 download.file(&#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&#39;, destfile = &#39;SRS014476-Supragingival_plaque_profile.txt&#39;) taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
 library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
@@ -107,7 +107,7 @@ second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab 
 
   
 
-  <title>桑基图（Sankey diagram） | Chenhao Li</title>
+  <title>桑基图（Sankey diagram） | Chenhao&#39;s Blog</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -126,7 +126,7 @@ second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab 
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao Li</a>
+      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
     </div>
 
     

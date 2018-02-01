@@ -19,10 +19,10 @@
   
   <meta name="description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
 download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
-官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
-跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ 官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+ 跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
  MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
- MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (c9d34c06) has not changed since last install.">
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2018-01-18-r-metagenomeviz/">
@@ -78,8 +78,8 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao Li">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -93,15 +93,15 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao Li">
+  <meta property="og:site_name" content="Chenhao&#39;s Blog">
   <meta property="og:url" content="/post/2018-01-18-r-metagenomeviz/">
-  <meta property="og:title" content="microbiomeViz--人生第一个R包 | Chenhao Li">
+  <meta property="og:title" content="microbiomeViz--人生第一个R包 | Chenhao&#39;s Blog">
   <meta property="og:description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
 download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
-官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
-跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ 官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+ 跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
  MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
- MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (c9d34c06) has not changed since last install.">
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-01-18T00:00:00&#43;00:00">
@@ -111,7 +111,7 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
 
   
 
-  <title>microbiomeViz--人生第一个R包 | Chenhao Li</title>
+  <title>microbiomeViz--人生第一个R包 | Chenhao&#39;s Blog</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -130,7 +130,7 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao Li</a>
+      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
     </div>
 
     
@@ -289,7 +289,7 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
 
 
       <div class="article-style" itemprop="articleBody">
-        <section class="level3">
+        <div class="section level3">
 <h3>为啥写这个</h3>
 <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
 <pre class="r"><code>download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
@@ -297,58 +297,64 @@ knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;))
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: left;">V1</th>
-<th style="text-align: right;">V2</th>
+<th align="left">V1</th>
+<th align="right">V2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">k__Bacteria</td>
-<td style="text-align: right;">100.00000</td>
+<td align="left">k__Bacteria</td>
+<td align="right">100.00000</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k__Bacteria|p__Firmicutes</td>
-<td style="text-align: right;">64.91753</td>
+<td align="left">k__Bacteria|p__Firmicutes</td>
+<td align="right">64.91753</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k__Bacteria|p__Bacteroidetes</td>
-<td style="text-align: right;">35.08247</td>
+<td align="left">k__Bacteria|p__Bacteroidetes</td>
+<td align="right">35.08247</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k__Bacteria|p__Firmicutes|c__Clostridia</td>
-<td style="text-align: right;">64.91753</td>
+<td align="left">k__Bacteria|p__Firmicutes|c__Clostridia</td>
+<td align="right">64.91753</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k__Bacteria|p__Bacteroidetes|c__Bacteroidia</td>
-<td style="text-align: right;">35.08247</td>
+<td align="left">k__Bacteria|p__Bacteroidetes|c__Bacteroidia</td>
+<td align="right">35.08247</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales</td>
-<td style="text-align: right;">64.91753</td>
+<td align="left">k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales</td>
+<td align="right">64.91753</td>
 </tr>
 </tbody>
 </table>
 <p>第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home">GraPhlAn</a>:</p>
-<p><img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" /></p>
+<div class="figure">
+<img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" />
+
+</div>
 <p>官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。<a href="https://github.com/marbl/Krona/wiki">Krona</a>可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404">Metacoder</a>，画出的图个人真心不是很喜欢：</p>
-<p><img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" /></p>
+<div class="figure">
+<img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" />
+
+</div>
 <p>跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。</p>
-</section>
-<section id="microbiomeviz" class="level3">
+</div>
+<div id="microbiomeviz" class="section level3">
 <h3>MicrobiomeViz–千里之行，始于足下</h3>
 <p>其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： <a href="https://github.com/lch14forever/microbiomeViz" class="uri">https://github.com/lch14forever/microbiomeViz</a></p>
-</section>
-<section id="metaphlanparser" class="level3">
+</div>
+<div id="metaphlanparser" class="section level3">
 <h3>MetaPhlan结果的parser</h3>
-<section class="level4">
+<div class="section level4">
 <h4>安装</h4>
 <pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;)</code></pre>
 <pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
 ## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
-<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (c9d34c06) has not changed since last install.
+<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.
 ##   Use `force = TRUE` to force installation</code></pre>
-</section>
-<section class="level4">
+</div>
+<div class="section level4">
 <h4>使用</h4>
 <p>目前有三个函数：</p>
 <ul>
@@ -362,8 +368,8 @@ knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;))
 ## loading &#39;microbiomeViz&#39;</code></pre>
 <pre class="r"><code>data(&quot;SRS014459_Stool_profile&quot;)                    ## 上面的示例数据已经加如microbiomeViz
 tr &lt;- parseMetaphlanTSV(SRS014459_Stool_profile)   ## parsing</code></pre>
-</section>
-<section id="ggtree" class="level4">
+</div>
+<div id="ggtree" class="section level4">
 <h4>基于ggtree的大戏</h4>
 <p>做出树的骨架</p>
 <pre class="r"><code>p &lt;- tree.backbone(tr)
@@ -376,9 +382,9 @@ anno.data &lt;- data.frame(node=c(&quot;g__Roseburia&quot;, &quot;c__Clostridia&
 p &lt;- clade.anno(p, anno.data)
 p</code></pre>
 <p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-</section>
-</section>
-<section class="level3">
+</div>
+</div>
+<div class="section level3">
 <h3>希望有更多的拓展</h3>
 <p>所有的操作均基于<code>treedata</code>和<code>ggtree</code>，正因为有了这些灵活的框架，上面的几个例子可拓展性还是很强的。</p>
 <ul>
@@ -387,7 +393,7 @@ p</code></pre>
 <li>[ ] 和heatmap结合</li>
 <li>[ ] …</li>
 </ul>
-</section>
+</div>
 
       </div>
 
@@ -397,6 +403,8 @@ p</code></pre>
 <div class="article-tags">
   
   <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/microbiomeviz">microbiomeViz</a>
   
 </div>
 

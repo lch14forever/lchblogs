@@ -1,0 +1,25 @@
+---
+title: "microbiomeViz--斜体显示taxon name"
+author: "Chenhao Li （李陈浩）"
+date: 2018-02-01
+tags: ['R', 'microbiomeViz']
+output: html_document
+summary: "微生物种名属名经常需要*`斜体`*表示，现在microbiomeViz添加了一个生成`expression`的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+微生物种名属名经常需要*`斜体`*表示，现在microbiomeViz添加了一个生成`expression`的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。
+
+```{r}
+library(microbiomeViz)
+library(ggplot2)
+ggplot(SRS014459_Stool_profile, aes(x=V2)) + 
+  geom_histogram(col='black') + theme_bw() + theme(axis.title = element_text(size=23)) +
+  labs(x=formatPhrase("Hello E. coli! Good-bye!","E. coli"))
+```
+
+
+

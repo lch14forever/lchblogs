@@ -1,0 +1,21 @@
+---
+title: "microbiomeViz--斜体显示taxon name"
+author: "Chenhao Li （李陈浩）"
+date: 2018-02-01
+tags: ['R', 'microbiomeViz']
+output: html_document
+summary: "微生物种名属名经常需要*`斜体`*表示，现在microbiomeViz添加了一个生成`expression`的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。"
+---
+
+
+
+<p>微生物种名属名经常需要<em><code>斜体</code></em>表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的<strong>一个</strong>（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</p>
+<pre class="r"><code>library(microbiomeViz)</code></pre>
+<pre><code>## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when
+## loading &#39;microbiomeViz&#39;</code></pre>
+<pre class="r"><code>library(ggplot2)
+ggplot(SRS014459_Stool_profile, aes(x=V2)) + 
+  geom_histogram(col=&#39;black&#39;) + theme_bw() + theme(axis.title = element_text(size=23)) +
+  labs(x=formatPhrase(&quot;Hello E. coli! Good-bye!&quot;,&quot;E. coli&quot;))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="/post/2018-02-01-r-metagenomeViz-italicTaxon_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
