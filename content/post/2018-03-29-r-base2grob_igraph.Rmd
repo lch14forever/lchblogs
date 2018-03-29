@@ -1,0 +1,33 @@
+---
+title: "Y叔的新包base2grob"
+author: "Chenhao Li (李陈浩)"
+date: 2018-03-29
+tags: ['R']
+output: html_document
+summary: "测试了一下Y叔的新包[base2grob](https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html)。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+测试了一下Y叔的新包[base2grob](https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html)。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。
+
+```{r}
+library(base2grob)
+library(igraph)
+library(cowplot)
+
+g1 <- erdos.renyi.game(10, 0.2)
+g2 <- erdos.renyi.game(10, 0.5)
+
+E(g1)$width <- E(g2)$width <- 5
+E(g1)$label.cex <- E(g2)$label.cex <- 1e-16 ## 这个我承认有点傻，但是没有找到更好的方法
+V(g1)$color <- 'cyan'
+V(g2)$color <- 'green'
+
+p1 <- base2grob(~plot(g1))
+p2 <- base2grob(~plot(g2))
+
+plot_grid(p1, p2, labels=LETTERS[1:2])
+```

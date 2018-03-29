@@ -11,6 +11,46 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Y叔的新包base2grob</title>
+      <link>/post/2018-03-29-r-base2grob_igraph/</link>
+      <pubDate>Thu, 29 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-03-29-r-base2grob_igraph/</guid>
+      <description>&lt;p&gt;测试了一下Y叔的新包&lt;a href=&#34;https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html&#34;&gt;base2grob&lt;/a&gt;。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(base2grob)
+library(igraph)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;igraph&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     decompose, spectrum&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:base&amp;#39;:
+## 
+##     union&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cowplot)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: ggplot2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;cowplot&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
+## 
+##     ggsave&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;g1 &amp;lt;- erdos.renyi.game(10, 0.2)
+g2 &amp;lt;- erdos.renyi.game(10, 0.5)
+
+E(g1)$width &amp;lt;- E(g2)$width &amp;lt;- 5
+E(g1)$label.cex &amp;lt;- E(g2)$label.cex &amp;lt;- 1e-16 ## 这个我承认有点傻，但是没有找到更好的方法
+V(g1)$color &amp;lt;- &amp;#39;cyan&amp;#39;
+V(g2)$color &amp;lt;- &amp;#39;green&amp;#39;
+
+p1 &amp;lt;- base2grob(~plot(g1))
+p2 &amp;lt;- base2grob(~plot(g2))
+
+plot_grid(p1, p2, labels=LETTERS[1:2])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-03-29-r-base2grob_igraph_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>microbiomeViz--斜体显示taxon name</title>
       <link>/post/2018-02-01-r-metagenomeviz-italictaxon/</link>
       <pubDate>Thu, 01 Feb 2018 00:00:00 +0000</pubDate>
@@ -1657,16 +1697,6 @@ colnames(nodes)=c(&amp;#39;tax&amp;#39;, &amp;#39;name&amp;#39;)&lt;/code&gt;&lt
 &lt;li&gt;拥有图形界面的Pavian: &lt;a href=&#34;https://github.com/fbreitwieser/pavian&#34; class=&#34;uri&#34;&gt;https://github.com/fbreitwieser/pavian&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Example Talk</title>
-      <link>/talk/example-talk/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0800</pubDate>
-      
-      <guid>/talk/example-talk/</guid>
-      <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
