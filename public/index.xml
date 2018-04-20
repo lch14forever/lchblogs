@@ -11,6 +11,66 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
+      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
+      <description>&lt;section id=&#34;data-downloading-and-preprocessing&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Data downloading and preprocessing&lt;/h3&gt;
+&lt;p&gt;Now let’s try to generate a figure like this:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Sample processed by MetaPhlAn:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Script to merge samples:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Merge files into a single table&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;python merge_metaphlan_tables.py profiled_samples/*.txt &amp;gt; profiled_samples/merged_abundance_table.txt&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;now-switch-to-r&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Now switch to R&lt;/h3&gt;
+&lt;section id=&#34;load-data-and-library&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Load data and library&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- read.table(&amp;quot;~/Downloads/profiled_samples/merged_abundance_table.txt&amp;quot;, head=TRUE, stringsAsFactors = FALSE)
+df &amp;lt;- df[,-ncol(df)]
+## Use row means as a proxy for node size
+dat &amp;lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE)
+
+library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
+## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;parse-data-and-create-a-backbone&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Parse data and create a backbone&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tr &amp;lt;- parseMetaphlanTSV(dat, node.size.offset=2, node.size.scale=0.8)
+p &amp;lt;- tree.backbone(tr, size=0.5)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;hard-coded-lefse-results&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Hard-coded lefse results&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lefse_lists = data.frame(node=c(&amp;#39;s__Haemophilus_parainfluenzae&amp;#39;,&amp;#39;p__Proteobacteria&amp;#39;,
+                              &amp;#39;f__Veillonellaceae&amp;#39;,&amp;#39;o__Selenomonadales&amp;#39;,
+                              &amp;#39;c__Negativicutes&amp;#39;, &amp;#39;s__Streptococcus_parasanguinis&amp;#39;,
+
+                              &amp;#39;p__Firmicutes&amp;#39;,&amp;#39;f__Streptococcaceae&amp;#39;,
+                              &amp;#39;g__Streptococcus&amp;#39;,&amp;#39;o__Lactobacillales&amp;#39;,
+                              &amp;#39;c__Bacilli&amp;#39;,&amp;#39;s__Streptococcus_mitis&amp;#39;),
+                         color=c(rep(&amp;#39;darkgreen&amp;#39;,6), rep(&amp;#39;red&amp;#39;,&amp;#39;6&amp;#39;)),
+                         stringsAsFactors = FALSE
+                         )&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;annotate-the-tree&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Annotate the tree&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- clade.anno(p, lefse_lists, alpha=0.3)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;960&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Y叔的新包base2grob</title>
       <link>/post/2018-03-29-r-base2grob_igraph/</link>
       <pubDate>Thu, 29 Mar 2018 00:00:00 +0000</pubDate>
@@ -1628,74 +1688,6 @@ hmp_stool_metaphlan[1:10, 1:10]&lt;/code&gt;&lt;/pre&gt;
 ## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00077   0.00194
 ## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
 ## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>桑基图（Sankey diagram）</title>
-      <link>/post/2017-10-29-r-sankeyplot/</link>
-      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-10-29-r-sankeyplot/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/d3/d3.min.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/sankey/sankey.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/sankeyNetwork-binding/sankeyNetwork.js&#34;&gt;&lt;/script&gt;
-
-
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;简介&lt;/h2&gt;
-&lt;p&gt;桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图： &lt;img src=&#34;https://user-images.githubusercontent.com/13619847/30794024-6e688e3a-a1f8-11e7-894a-4c2924890bb6.png&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;数据准备&lt;/h2&gt;
-&lt;p&gt;此处我们使用&lt;a href=&#34;https://bitbucket.org/biobakery/biobakery/wiki/metaphlan2&#34;&gt;Metaphlan2 tutorial&lt;/a&gt;中的数据，来源于牙龈菌斑的宏基因组测序：&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download.file(&amp;#39;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&amp;#39;, destfile = &amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;)
-taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;networkdd3&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;加载networkdD3包&lt;/h2&gt;
-&lt;p&gt;该包使用D3.js实现数据的交互式可视化，具体一些例子参见&lt;a href=&#34;https://christophergandrud.github.io/networkD3/&#34;&gt;这里&lt;/a&gt;：&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(networkD3)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;数据预处理&lt;/h2&gt;
-&lt;p&gt;函数&lt;a href=&#34;https://www.rdocumentation.org/packages/networkD3/versions/0.4/topics/sankeyNetwork&#34;&gt;sankeyNetwork&lt;/a&gt;主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从&lt;strong&gt;0&lt;/strong&gt;开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA)
-
-taxtab &amp;lt;- taxtab[-grep(&amp;#39;unclassified&amp;#39;, taxtab$V1), ]   ## remove unlassified taxa
- 
-tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;)                ## split into different taxonomy levels
-target &amp;lt;- sapply(tax_split, tail, n=1)                 ## target node
-mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target)
-target_id &amp;lt;- mapping$id
-source &amp;lt;- sapply(tax_split, second_last)               ## source node
-source_id &amp;lt;- mapping[source,]
-value &amp;lt;- taxtab$V2                                     ## width of flow
-
-links &amp;lt;- data.frame(source=source_id, target=target_id, value) ## links
-links &amp;lt;- links[!is.na(links$source), ]                 ## root of the tree has no parent (source)
-nodes &amp;lt;- data.frame(do.call(rbind, strsplit(target,&amp;#39;__&amp;#39;)))
-colnames(nodes)=c(&amp;#39;tax&amp;#39;, &amp;#39;name&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;绘图&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sankeyNetwork(Links = links, Nodes = nodes, 
-              Source = &amp;quot;source&amp;quot;, Target = &amp;quot;target&amp;quot;, 
-              Value = &amp;quot;value&amp;quot;, NodeID = &amp;quot;name&amp;quot;, NodeGroup = &amp;#39;tax&amp;#39;,
-              sinksRight=FALSE, fontSize = 10, nodeWidth = 20, nodePadding=40, 
-              height =200, width = 900)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:900px;height:200px;&#34; class=&#34;sankeyNetwork html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;links&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966]},&#34;nodes&#34;:{&#34;name&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;],&#34;group&#34;:[&#34;k&#34;,&#34;p&#34;,&#34;p&#34;,&#34;c&#34;,&#34;c&#34;,&#34;o&#34;,&#34;o&#34;,&#34;f&#34;,&#34;f&#34;,&#34;f&#34;,&#34;g&#34;,&#34;g&#34;,&#34;g&#34;,&#34;s&#34;,&#34;s&#34;]},&#34;options&#34;:{&#34;NodeID&#34;:&#34;name&#34;,&#34;NodeGroup&#34;:&#34;tax&#34;,&#34;LinkGroup&#34;:null,&#34;colourScale&#34;:&#34;d3.scaleOrdinal(d3.schemeCategory20);&#34;,&#34;fontSize&#34;:10,&#34;fontFamily&#34;:null,&#34;nodeWidth&#34;:20,&#34;nodePadding&#34;:40,&#34;units&#34;:&#34;&#34;,&#34;margin&#34;:{&#34;top&#34;:null,&#34;right&#34;:null,&#34;bottom&#34;:null,&#34;left&#34;:null},&#34;iterations&#34;:32,&#34;sinksRight&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt; 在此图中，不同颜色代表不同的taxonomy level，连接的宽度代表相对丰度。&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;桑基图工具的其他选择&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;用于生成第一张图的&lt;a href=&#34;https://github.com/BetaCollins/Sankey&#34;&gt;源代码&lt;/a&gt;基于Cairo，操作更加复杂&lt;/li&gt;
-&lt;li&gt;最新发布于&lt;a href=&#34;https://www.biorxiv.org/content/early/2017/09/20/191767&#34;&gt;bioRxiv&lt;/a&gt;的BioSankey：&lt;a href=&#34;https://github.com/nthomasCUBE/BioSankey&#34; class=&#34;uri&#34;&gt;https://github.com/nthomasCUBE/BioSankey&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;拥有图形界面的Pavian: &lt;a href=&#34;https://github.com/fbreitwieser/pavian&#34; class=&#34;uri&#34;&gt;https://github.com/fbreitwieser/pavian&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 &lt;/section&gt;
 </description>
     </item>

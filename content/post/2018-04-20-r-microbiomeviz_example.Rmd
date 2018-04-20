@@ -1,0 +1,73 @@
+---
+title: "Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz"
+author: "Chenhao Li （李陈浩）"
+date: 2018-04-20
+tags: ['R', 'microbiomeViz']
+output: html_document
+summary: "Let's try this for fun!"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Data downloading and preprocessing
+
+Now let's try to generate a figure like this:
+
+![](https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png)
+
+Sample processed by MetaPhlAn:
+
+https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2
+
+Script to merge samples:
+
+https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py
+
+Merge files into a single table
+```{sh eval=FALSE}
+python merge_metaphlan_tables.py profiled_samples/*.txt > profiled_samples/merged_abundance_table.txt
+```
+
+
+### Now switch to R
+
+#### Load data and library
+```{r}
+df <- read.table("~/Downloads/profiled_samples/merged_abundance_table.txt", head=TRUE, stringsAsFactors = FALSE)
+df <- df[,-ncol(df)]
+## Use row means as a proxy for node size
+dat <- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE)
+
+library(microbiomeViz)
+```
+
+#### Parse data and create a backbone
+```{r}
+tr <- parseMetaphlanTSV(dat, node.size.offset=2, node.size.scale=0.8)
+p <- tree.backbone(tr, size=0.5)
+p
+```
+
+#### Hard-coded lefse results
+```{r}
+lefse_lists = data.frame(node=c('s__Haemophilus_parainfluenzae','p__Proteobacteria',
+                              'f__Veillonellaceae','o__Selenomonadales',
+                              'c__Negativicutes', 's__Streptococcus_parasanguinis',
+
+                              'p__Firmicutes','f__Streptococcaceae',
+                              'g__Streptococcus','o__Lactobacillales',
+                              'c__Bacilli','s__Streptococcus_mitis'),
+                         color=c(rep('darkgreen',6), rep('red','6')),
+                         stringsAsFactors = FALSE
+                         )
+```
+
+#### Annotate the tree
+```{r fig.height = 10, fig.width = 10}
+p <- clade.anno(p, lefse_lists, alpha=0.3)
+p
+```
+
+
