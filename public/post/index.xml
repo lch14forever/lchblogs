@@ -71,6 +71,78 @@ p&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
+      <title>一（三）文你读不懂PCA和PCoA</title>
+      <link>/post/2018-04-39-r-pca_pcoa/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-39-r-pca_pcoa/</guid>
+      <description>&lt;div id=&#34;pcapcoa&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;三文读懂PCA和PCoA？&lt;/h2&gt;
+&lt;p&gt;今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html&#34;&gt;一&lt;/a&gt;》,《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html&#34;&gt;二&lt;/a&gt;》,《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html&#34;&gt;三&lt;/a&gt;》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。&lt;/p&gt;
+&lt;p&gt;特别指出在第二篇文章中：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“&lt;strong&gt;PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目&lt;/strong&gt;。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“同样的道理，&lt;strong&gt;PCoA基于样本间的距离矩阵就意味着PCoA分析的矩阵维度与样本数目相关&lt;/strong&gt;。如果你要分析的样本做PCoA分析的话，那么一般来说有n个样本就至多有n-1个维度”。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这是一个n（样本数目）和p（维度）的问题，维度就是维度，p就是p，不能混淆。&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“&lt;strong&gt;多数情况下，我们在做降维处理的时候，期望维数越低越好，这样我们就可以最大程度地保真原始数据&lt;/strong&gt;”&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;天下没有免费的午餐，维数越低，保真度自然越低。而PCA、PCoA所做的是在低维空间中尽量多的保存数据之间的差异。&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“&lt;strong&gt;如果样本数目比较多，而物种数目比较少，那肯定首选PCA；如果样本数目比较少，而物种数目比较多，那肯定首选PCoA&lt;/strong&gt;”&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这是一个很有意思的问题，其实PCoA和PCA的结果取决于PCoA的实现，但是直觉上想，既然PCA的变换会保存数据点间的欧氏距离，那么它和基于欧式距离的PCoA有什么区别呢？&lt;/p&gt;
+&lt;p&gt;下面做一个实验，我们用两组数据（样本数目&amp;gt;维度，纬度&amp;gt;样本数目）来看看R中常见的PCA和PCoA实现的结果有何不同。&lt;/p&gt;
+&lt;div id=&#34;iris&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;iris：样本数目&amp;gt;维度&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Low dimensional data (n&amp;gt;&amp;gt;p)
+data(iris)
+par(mfrow=c(2,2),cex=0.7, pch=19)
+## PCA
+pca &amp;lt;- prcomp(iris[,-5])
+plot(pca$x[,1:2], col=iris[,5], xlab=&amp;#39;PC1&amp;#39;,ylab=&amp;#39;PC2&amp;#39;, main=&amp;#39;PCA&amp;#39;)
+## PCoA
+pcoa &amp;lt;- cmdscale(dist(iris[,-5], method = &amp;quot;euclidean&amp;quot;))
+plot(pcoa, xlab=&amp;#39;MDS1&amp;#39;,ylab=&amp;#39;MDS2&amp;#39;, col=iris[,5], main=&amp;#39;PCoA&amp;#39;)
+## pairwise distances
+plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), 
+     xlab=&amp;#39;PCA&amp;#39;, ylab=&amp;#39;PCoA&amp;#39;, main=&amp;#39;Pairwise distances&amp;#39;,
+     pch=19, col=rgb(0,0,0,0.3), cex=0.5)
+plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
+     main=&amp;#39;Difference in pairwise distances&amp;#39;, ylab=&amp;#39;Delta&amp;#39;,
+     cex=0.5, col=rgb(0,0,0,0.3))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-39-r-pca_pcoa_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gene-expression-dataset&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Gene expression dataset：维度&amp;gt;样本数目&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## High dimensional data (p&amp;gt;&amp;gt;n)
+## source(&amp;quot;http://bioconductor.org/biocLite.R&amp;quot;)
+## biocLite(&amp;quot;hopach&amp;quot;)
+suppressMessages(library(hopach))
+par(mfrow=c(2,2),cex=0.7, pch=19)
+data(golub)
+pca &amp;lt;- prcomp(t(golub))
+plot(pca$x[,1:2], col=golub.cl+1, xlab=&amp;#39;PC1&amp;#39;,ylab=&amp;#39;PC2&amp;#39;, main=&amp;#39;PCA&amp;#39;)
+pcoa &amp;lt;- cmdscale(dist(t(golub), method = &amp;quot;euclidean&amp;quot;))
+plot(pcoa, xlab=&amp;#39;MDS1&amp;#39;,ylab=&amp;#39;MDS2&amp;#39;, col=golub.cl+1, main=&amp;#39;PCoA&amp;#39;)
+plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), 
+     xlab=&amp;#39;PCA&amp;#39;, ylab=&amp;#39;PCoA&amp;#39;, main=&amp;#39;Pairwise distances&amp;#39;,
+     pch=19, col=rgb(0,0,0,0.3), cex=0.5)
+plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
+     main=&amp;#39;Difference in pairwise distances&amp;#39;, ylab=&amp;#39;Delta&amp;#39;,
+     cex=0.5, col=rgb(0,0,0,0.3))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-39-r-pca_pcoa_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;很明显，在基于欧氏距离的&lt;code&gt;cmdscale&lt;/code&gt;和PCA在前两个维度上并没有什么区别。我个人一度以为PCA和基于欧式距离的PCoA其实是等同的，但是后来我们在一些PCoA的实现中确实看到了和PCA结果的差异，但是其实这个差异并不是很大。网上其实有很多的讨论，比如&lt;a href=&#34;https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional&#34;&gt;这个&lt;/a&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Y叔的新包base2grob</title>
       <link>/post/2018-03-29-r-base2grob_igraph/</link>
       <pubDate>Thu, 29 Mar 2018 00:00:00 +0000</pubDate>
@@ -1394,300 +1466,6 @@ p&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;40f01f6aa4a7&#34; style=&#34;width:800px;height:200px;&#34; class=&#34;plotly html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;40f01f6aa4a7&#34;&gt;{&#34;x&#34;:{&#34;visdat&#34;:{&#34;40f01f99a23e&#34;:[&#34;function () &#34;,&#34;plotlyVisDat&#34;]},&#34;cur_data&#34;:&#34;40f01f99a23e&#34;,&#34;attrs&#34;:{&#34;40f01f99a23e&#34;:{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;alpha&#34;:1,&#34;sizes&#34;:[10,100],&#34;type&#34;:&#34;sankey&#34;}},&#34;layout&#34;:{&#34;width&#34;:800,&#34;height&#34;:200,&#34;margin&#34;:{&#34;b&#34;:40,&#34;l&#34;:60,&#34;t&#34;:25,&#34;r&#34;:10},&#34;title&#34;:&#34;Sankey Diagram of Relative Abundances&#34;,&#34;font&#34;:{&#34;size&#34;:7},&#34;xaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;tickmode&#34;:&#34;array&#34;,&#34;tickvals&#34;:[-1,0.25,1.375,2.5,3.625,4.75,5.875],&#34;tickfont&#34;:{&#34;size&#34;:10},&#34;ticktext&#34;:[&#34;Kindom&#34;,&#34;Phylum&#34;,&#34;Class&#34;,&#34;Order&#34;,&#34;Family&#34;,&#34;Genus&#34;,&#34;Species&#34;]},&#34;yaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;showticklabels&#34;:false},&#34;hovermode&#34;:&#34;closest&#34;,&#34;showlegend&#34;:false},&#34;source&#34;:&#34;A&#34;,&#34;config&#34;:{&#34;modeBarButtonsToAdd&#34;:[{&#34;name&#34;:&#34;Collaborate&#34;,&#34;icon&#34;:{&#34;width&#34;:1000,&#34;ascent&#34;:500,&#34;descent&#34;:-50,&#34;path&#34;:&#34;M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z&#34;},&#34;click&#34;:&#34;function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == &#39;?viewer_pane=1&#39;) {\n          alert(&#39;To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;);\n        } else {\n          window.open(&#39;https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;, &#39;_blank&#39;);\n        }\n      }&#34;}],&#34;cloud&#34;:false},&#34;data&#34;:[{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;type&#34;:&#34;sankey&#34;,&#34;textfont&#34;:{&#34;fillcolor&#34;:&#34;rgba(31,119,180,1)&#34;,&#34;color&#34;:&#34;rgba(31,119,180,1)&#34;},&#34;frame&#34;:null}],&#34;highlight&#34;:{&#34;on&#34;:&#34;plotly_click&#34;,&#34;persistent&#34;:false,&#34;dynamic&#34;:false,&#34;selectize&#34;:false,&#34;opacityDim&#34;:0.2,&#34;selected&#34;:{&#34;opacity&#34;:1}},&#34;base_url&#34;:&#34;https://plot.ly&#34;},&#34;evals&#34;:[&#34;config.modeBarButtonsToAdd.0.click&#34;],&#34;jsHooks&#34;:{&#34;render&#34;:[{&#34;code&#34;:&#34;function(el, x) { var ctConfig = crosstalk.var(&#39;plotlyCrosstalkOpts&#39;).set({\&#34;on\&#34;:\&#34;plotly_click\&#34;,\&#34;persistent\&#34;:false,\&#34;dynamic\&#34;:false,\&#34;selectize\&#34;:false,\&#34;opacityDim\&#34;:0.2,\&#34;selected\&#34;:{\&#34;opacity\&#34;:1}}); }&#34;,&#34;data&#34;:null}]}}&lt;/script&gt;
 &lt;/section&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>超大宏基因组数据集CuratedMetagenomicData</title>
-      <link>/post/2017-10-30-r-curatedmetagenomicdata/</link>
-      <pubDate>Mon, 30 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-10-30-r-curatedmetagenomicdata/</guid>
-      <description>&lt;section class=&#34;level1&#34;&gt;
-&lt;h1&gt;简介&lt;/h1&gt;
-&lt;p&gt;CuratedMetagenomicData(&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/&#34; class=&#34;uri&#34;&gt;https://waldronlab.github.io/curatedMetagenomicData/&lt;/a&gt;)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/datasets-included/&#34;&gt;6000余个样本&lt;/a&gt;并在持续&lt;a href=&#34;https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/&#34;&gt;扩建&lt;/a&gt;当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level1&#34;&gt;
-&lt;h1&gt;完整帮助信息&lt;/h1&gt;
-&lt;p&gt;&lt;a href=&#34;https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html&#34; class=&#34;uri&#34;&gt;https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level1&#34;&gt;
-&lt;h1&gt;安装&lt;/h1&gt;
-&lt;p&gt;通过&lt;a href=&#34;https://bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html&#34;&gt;Bioconductor&lt;/a&gt;安装最新版本&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## try http:// if https:// URLs are not supported
-source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;)
-useDevel()
-biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level1&#34;&gt;
-&lt;h1&gt;基本使用&lt;/h1&gt;
-&lt;p&gt;调用&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressPackageStartupMessages(library(curatedMetagenomicData))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;查看metadata&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;combined_metadata&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 6,058 x 80
-##     dataset_name      sampleID subjectID body_site antibiotics_current_use
-##            &amp;lt;chr&amp;gt;         &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;                   &amp;lt;chr&amp;gt;
-##  1 AsnicarF_2017 MV_FEI1_t1Q14   MV_FEI1     stool                    &amp;lt;NA&amp;gt;
-##  2 AsnicarF_2017 MV_FEI2_t1Q14   MV_FEI2     stool                    &amp;lt;NA&amp;gt;
-##  3 AsnicarF_2017 MV_FEI3_t1Q14   MV_FEI3     stool                    &amp;lt;NA&amp;gt;
-##  4 AsnicarF_2017 MV_FEI4_t1Q14   MV_FEI4     stool                    &amp;lt;NA&amp;gt;
-##  5 AsnicarF_2017 MV_FEI4_t2Q15   MV_FEI4     stool                    &amp;lt;NA&amp;gt;
-##  6 AsnicarF_2017 MV_FEI5_t1Q14   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
-##  7 AsnicarF_2017 MV_FEI5_t2Q14   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
-##  8 AsnicarF_2017 MV_FEI5_t3Q15   MV_FEI5     stool                    &amp;lt;NA&amp;gt;
-##  9 AsnicarF_2017 MV_FEM1_t1Q14   MV_FEM1     stool                    &amp;lt;NA&amp;gt;
-## 10 AsnicarF_2017 MV_FEM2_t1Q14   MV_FEM2     stool                    &amp;lt;NA&amp;gt;
-## # ... with 6,048 more rows, and 75 more variables: study_condition &amp;lt;chr&amp;gt;,
-## #   disease &amp;lt;chr&amp;gt;, age &amp;lt;int&amp;gt;, infant_age &amp;lt;int&amp;gt;, age_category &amp;lt;chr&amp;gt;,
-## #   gender &amp;lt;chr&amp;gt;, country &amp;lt;chr&amp;gt;, non_westernized &amp;lt;chr&amp;gt;,
-## #   sequencing_platform &amp;lt;chr&amp;gt;, DNA_extraction_kit &amp;lt;chr&amp;gt;, PMID &amp;lt;chr&amp;gt;,
-## #   number_reads &amp;lt;int&amp;gt;, number_bases &amp;lt;dbl&amp;gt;, minimum_read_length &amp;lt;int&amp;gt;,
-## #   median_read_length &amp;lt;dbl&amp;gt;, pregnant &amp;lt;chr&amp;gt;, lactating &amp;lt;chr&amp;gt;,
-## #   NCBI_accession &amp;lt;chr&amp;gt;, BMI &amp;lt;dbl&amp;gt;, antibiotics_family &amp;lt;chr&amp;gt;,
-## #   momeducat &amp;lt;int&amp;gt;, alcohol &amp;lt;chr&amp;gt;, `flg-genotype` &amp;lt;chr&amp;gt;,
-## #   disease_subtype &amp;lt;chr&amp;gt;, hdl &amp;lt;dbl&amp;gt;, triglycerides &amp;lt;dbl&amp;gt;, hba1c &amp;lt;dbl&amp;gt;,
-## #   ldl &amp;lt;dbl&amp;gt;, tnm &amp;lt;chr&amp;gt;, body_subsite &amp;lt;chr&amp;gt;, visit_number &amp;lt;int&amp;gt;,
-## #   days_from_first_collection &amp;lt;int&amp;gt;, `c-peptide` &amp;lt;dbl&amp;gt;, family &amp;lt;int&amp;gt;,
-## #   cholesterol &amp;lt;dbl&amp;gt;, glucose &amp;lt;dbl&amp;gt;, mumps &amp;lt;chr&amp;gt;, adiponectin &amp;lt;dbl&amp;gt;,
-## #   `insulin(cat)` &amp;lt;chr&amp;gt;, `fgf-19` &amp;lt;dbl&amp;gt;, hscrp &amp;lt;dbl&amp;gt;, leptin &amp;lt;dbl&amp;gt;,
-## #   glutamate_decarboxylase_2_antibody &amp;lt;dbl&amp;gt;, creatinine &amp;lt;dbl&amp;gt;,
-## #   `il-1` &amp;lt;dbl&amp;gt;, cd163 &amp;lt;dbl&amp;gt;, `glp-1` &amp;lt;dbl&amp;gt;, hitchip_probe_class &amp;lt;chr&amp;gt;,
-## #   hitchip_probe_number &amp;lt;int&amp;gt;, protein_intake &amp;lt;dbl&amp;gt;,
-## #   days_after_onset &amp;lt;int&amp;gt;, stec_count &amp;lt;chr&amp;gt;, shigatoxin_2_elisa &amp;lt;chr&amp;gt;,
-## #   stool_texture &amp;lt;chr&amp;gt;, ferm_milk_prod_consumer &amp;lt;chr&amp;gt;,
-## #   mgs_richness &amp;lt;dbl&amp;gt;, location &amp;lt;chr&amp;gt;, dyastolic_p &amp;lt;dbl&amp;gt;,
-## #   systolic_p &amp;lt;dbl&amp;gt;, prothrombin_time &amp;lt;int&amp;gt;, creatine &amp;lt;dbl&amp;gt;, inr &amp;lt;dbl&amp;gt;,
-## #   ctp &amp;lt;int&amp;gt;, albumine &amp;lt;dbl&amp;gt;, bilubirin &amp;lt;dbl&amp;gt;, smoker &amp;lt;chr&amp;gt;,
-## #   ever_smoker &amp;lt;chr&amp;gt;, birth_control_pil &amp;lt;chr&amp;gt;, hla_drb12 &amp;lt;int&amp;gt;,
-## #   hla_dqa12 &amp;lt;int&amp;gt;, hla_dqa11 &amp;lt;int&amp;gt;, hla_drb11 &amp;lt;int&amp;gt;,
-## #   start_solidfood &amp;lt;int&amp;gt;, ajcc &amp;lt;chr&amp;gt;, fobt &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;查看metadata参数&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colnames(combined_metadata)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;dataset_name&amp;quot;                      
-##  [2] &amp;quot;sampleID&amp;quot;                          
-##  [3] &amp;quot;subjectID&amp;quot;                         
-##  [4] &amp;quot;body_site&amp;quot;                         
-##  [5] &amp;quot;antibiotics_current_use&amp;quot;           
-##  [6] &amp;quot;study_condition&amp;quot;                   
-##  [7] &amp;quot;disease&amp;quot;                           
-##  [8] &amp;quot;age&amp;quot;                               
-##  [9] &amp;quot;infant_age&amp;quot;                        
-## [10] &amp;quot;age_category&amp;quot;                      
-## [11] &amp;quot;gender&amp;quot;                            
-## [12] &amp;quot;country&amp;quot;                           
-## [13] &amp;quot;non_westernized&amp;quot;                   
-## [14] &amp;quot;sequencing_platform&amp;quot;               
-## [15] &amp;quot;DNA_extraction_kit&amp;quot;                
-## [16] &amp;quot;PMID&amp;quot;                              
-## [17] &amp;quot;number_reads&amp;quot;                      
-## [18] &amp;quot;number_bases&amp;quot;                      
-## [19] &amp;quot;minimum_read_length&amp;quot;               
-## [20] &amp;quot;median_read_length&amp;quot;                
-## [21] &amp;quot;pregnant&amp;quot;                          
-## [22] &amp;quot;lactating&amp;quot;                         
-## [23] &amp;quot;NCBI_accession&amp;quot;                    
-## [24] &amp;quot;BMI&amp;quot;                               
-## [25] &amp;quot;antibiotics_family&amp;quot;                
-## [26] &amp;quot;momeducat&amp;quot;                         
-## [27] &amp;quot;alcohol&amp;quot;                           
-## [28] &amp;quot;flg-genotype&amp;quot;                      
-## [29] &amp;quot;disease_subtype&amp;quot;                   
-## [30] &amp;quot;hdl&amp;quot;                               
-## [31] &amp;quot;triglycerides&amp;quot;                     
-## [32] &amp;quot;hba1c&amp;quot;                             
-## [33] &amp;quot;ldl&amp;quot;                               
-## [34] &amp;quot;tnm&amp;quot;                               
-## [35] &amp;quot;body_subsite&amp;quot;                      
-## [36] &amp;quot;visit_number&amp;quot;                      
-## [37] &amp;quot;days_from_first_collection&amp;quot;        
-## [38] &amp;quot;c-peptide&amp;quot;                         
-## [39] &amp;quot;family&amp;quot;                            
-## [40] &amp;quot;cholesterol&amp;quot;                       
-## [41] &amp;quot;glucose&amp;quot;                           
-## [42] &amp;quot;mumps&amp;quot;                             
-## [43] &amp;quot;adiponectin&amp;quot;                       
-## [44] &amp;quot;insulin(cat)&amp;quot;                      
-## [45] &amp;quot;fgf-19&amp;quot;                            
-## [46] &amp;quot;hscrp&amp;quot;                             
-## [47] &amp;quot;leptin&amp;quot;                            
-## [48] &amp;quot;glutamate_decarboxylase_2_antibody&amp;quot;
-## [49] &amp;quot;creatinine&amp;quot;                        
-## [50] &amp;quot;il-1&amp;quot;                              
-## [51] &amp;quot;cd163&amp;quot;                             
-## [52] &amp;quot;glp-1&amp;quot;                             
-## [53] &amp;quot;hitchip_probe_class&amp;quot;               
-## [54] &amp;quot;hitchip_probe_number&amp;quot;              
-## [55] &amp;quot;protein_intake&amp;quot;                    
-## [56] &amp;quot;days_after_onset&amp;quot;                  
-## [57] &amp;quot;stec_count&amp;quot;                        
-## [58] &amp;quot;shigatoxin_2_elisa&amp;quot;                
-## [59] &amp;quot;stool_texture&amp;quot;                     
-## [60] &amp;quot;ferm_milk_prod_consumer&amp;quot;           
-## [61] &amp;quot;mgs_richness&amp;quot;                      
-## [62] &amp;quot;location&amp;quot;                          
-## [63] &amp;quot;dyastolic_p&amp;quot;                       
-## [64] &amp;quot;systolic_p&amp;quot;                        
-## [65] &amp;quot;prothrombin_time&amp;quot;                  
-## [66] &amp;quot;creatine&amp;quot;                          
-## [67] &amp;quot;inr&amp;quot;                               
-## [68] &amp;quot;ctp&amp;quot;                               
-## [69] &amp;quot;albumine&amp;quot;                          
-## [70] &amp;quot;bilubirin&amp;quot;                         
-## [71] &amp;quot;smoker&amp;quot;                            
-## [72] &amp;quot;ever_smoker&amp;quot;                       
-## [73] &amp;quot;birth_control_pil&amp;quot;                 
-## [74] &amp;quot;hla_drb12&amp;quot;                         
-## [75] &amp;quot;hla_dqa12&amp;quot;                         
-## [76] &amp;quot;hla_dqa11&amp;quot;                         
-## [77] &amp;quot;hla_drb11&amp;quot;                         
-## [78] &amp;quot;start_solidfood&amp;quot;                   
-## [79] &amp;quot;ajcc&amp;quot;                              
-## [80] &amp;quot;fobt&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;获取人体各部位样本概况&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(combined_metadata$body_site)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-##        milk nasalcavity  oralcavity        skin       stool      vagina 
-##           8          91         678         466        4810           5&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;获取包含的数据集&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(combined_metadata$dataset_name)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-##        AsnicarF_2017         BritoIL_2016  Castro-NallarE_2015 
-##                   24                  312                   32 
-##          ChngKR_2016           FengQ_2015      HanniganGD_2017 
-##                   78                  154                   82 
-## Heitz-BuschartA_2016             HMP_2012      KarlssonFH_2013 
-##                   53                  749                  145 
-##    LeChatelierE_2013             LiJ_2014            LiuW_2016 
-##                  292                  260                  110 
-##         LomanNJ_2013       NielsenHB_2014  Obregon-TitoAJ_2015 
-##                   43                  396                   58 
-##             OhJ_2014            QinJ_2012            QinN_2014 
-##                  291                  363                  237 
-##       RampelliS_2015        RaymondF_2016       SchirmerM_2016 
-##                   38                   72                  471 
-##          TettAJ_2016        VatanenT_2016        VincentC_2016 
-##                   97                  785                  229 
-##       VogtmannE_2016            XieH_2016             YuJ_2015 
-##                  110                  250                  128 
-##         ZellerG_2014 
-##                  199&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;下载HMP 2012（HMP I）的MetaPhlAn2分析结果&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat &amp;lt;- curatedMetagenomicData(&amp;quot;HMP_2012.metaphlan_bugs_list.*&amp;quot;, dryrun=FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.nasalcavity&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c.
-## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/424&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.oralcavity&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/425&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.stool&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/426&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Working on HMP_2012.metaphlan_bugs_list.vagina&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## snapshotDate(): 2017-10-30&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## see ?curatedMetagenomicData and browseVignettes(&amp;#39;curatedMetagenomicData&amp;#39;) for documentation&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## loading from cache &amp;#39;/Users/mayuan//.ExperimentHub/427&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;查看HMP I粪便数据的元数据&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;head( pData(dat[[3]]) )&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##                    subjectID body_site body_subsite
-## SRS056519 HMP_2012_765094712     stool        stool
-## SRS016335 HMP_2012_765074482     stool        stool
-## SRS011061 HMP_2012_158458797     stool        stool
-## SRS016267 HMP_2012_764669880     stool        stool
-## SRS053214 HMP_2012_159753524     stool        stool
-## SRS013521 HMP_2012_159227541     stool        stool
-##           antibiotics_current_use study_condition disease age age_category
-## SRS056519                    &amp;lt;NA&amp;gt;         control healthy  19    schoolage
-## SRS016335                    &amp;lt;NA&amp;gt;         control healthy  20        adult
-## SRS011061                    &amp;lt;NA&amp;gt;         control healthy  30        adult
-## SRS016267                    &amp;lt;NA&amp;gt;         control healthy  29        adult
-## SRS053214                    &amp;lt;NA&amp;gt;         control healthy  23        adult
-## SRS013521                    &amp;lt;NA&amp;gt;         control healthy  22        adult
-##           gender visit_number BMI country non_westernized
-## SRS056519   male           NA  NA     USA              no
-## SRS016335   male           NA  NA     USA              no
-## SRS011061 female           NA  NA     USA              no
-## SRS016267   male           NA  NA     USA              no
-## SRS053214 female           NA  NA     USA              no
-## SRS013521 female           NA  NA     USA              no
-##           DNA_extraction_kit number_reads number_bases minimum_read_length
-## SRS056519             Qiagen    125076707  12506449555                  60
-## SRS016335             Qiagen    125043127  11938455408                  60
-## SRS011061             Qiagen     90085554   8028157196                  60
-## SRS016267             Qiagen    103068446   9820433068                  60
-## SRS053214             Qiagen    103639606   9687833906                  60
-## SRS013521             Qiagen    115013916  10925100631                  60
-##           median_read_length NCBI_accession
-## SRS056519                100      SRS056519
-## SRS016335                100      SRS016335
-## SRS011061                 90      SRS011061
-## SRS016267                100      SRS016267
-## SRS053214                 95      SRS053214
-## SRS013521                 95      SRS013521&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;查看MetaPhlan相对丰度表&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hmp_stool_metaphlan &amp;lt;- exprs(dat[[3]])
-hmp_stool_metaphlan[1:10, 1:10]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##                                                 SRS056519 SRS016335
-## k__Viruses                                        0.00090   0.00179
-## k__Bacteria                                      99.99910  99.96451
-## k__Viruses|p__Viruses_noname                      0.00090   0.00179
-## k__Bacteria|p__Actinobacteria                     0.25980   0.13760
-## k__Bacteria|p__Firmicutes                         9.52434  18.67835
-## k__Bacteria|p__Proteobacteria                     2.27579   2.32088
-## k__Bacteria|p__Bacteroidetes                     87.93779  77.40923
-## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00090   0.00179
-## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.25980   0.13760
-## k__Bacteria|p__Firmicutes|c__Bacilli              0.01382   0.02164
-##                                                 SRS011061 SRS016267
-## k__Viruses                                        0.00000   0.00000
-## k__Bacteria                                     100.00000 100.00000
-## k__Viruses|p__Viruses_noname                      0.00000   0.00000
-## k__Bacteria|p__Actinobacteria                     0.04200   0.11105
-## k__Bacteria|p__Firmicutes                         5.59309   3.98890
-## k__Bacteria|p__Proteobacteria                     2.98345   0.55210
-## k__Bacteria|p__Bacteroidetes                     91.07961  95.28808
-## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
-## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.04200   0.11105
-## k__Bacteria|p__Firmicutes|c__Bacilli              0.04196   0.00000
-##                                                 SRS053214 SRS013521
-## k__Viruses                                        0.00000   0.00882
-## k__Bacteria                                     100.00000  99.99118
-## k__Viruses|p__Viruses_noname                      0.00000   0.00882
-## k__Bacteria|p__Actinobacteria                     0.46158   0.08515
-## k__Bacteria|p__Firmicutes                        16.03493   1.73242
-## k__Bacteria|p__Proteobacteria                     0.23830   0.49311
-## k__Bacteria|p__Bacteroidetes                     80.04580  97.68049
-## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00882
-## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.46158   0.08515
-## k__Bacteria|p__Firmicutes|c__Bacilli              0.01578   0.02924
-##                                                 SRS018817 SRS017247
-## k__Viruses                                        0.00000   0.00000
-## k__Bacteria                                     100.00000 100.00000
-## k__Viruses|p__Viruses_noname                      0.00000   0.00000
-## k__Bacteria|p__Actinobacteria                     0.08518   0.15577
-## k__Bacteria|p__Firmicutes                        11.52659   4.35400
-## k__Bacteria|p__Proteobacteria                     0.22363   0.21245
-## k__Bacteria|p__Bacteroidetes                     87.99725  95.08394
-## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00000   0.00000
-## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.08518   0.15577
-## k__Bacteria|p__Firmicutes|c__Bacilli              0.00443   0.01766
-##                                                 SRS019968 SRS064557
-## k__Viruses                                        0.00077   0.00194
-## k__Bacteria                                      99.99923  99.99806
-## k__Viruses|p__Viruses_noname                      0.00077   0.00194
-## k__Bacteria|p__Actinobacteria                     0.16129   0.03814
-## k__Bacteria|p__Firmicutes                        16.11446   2.69009
-## k__Bacteria|p__Proteobacteria                     0.17522   1.50628
-## k__Bacteria|p__Bacteroidetes                     82.54661  95.76355
-## k__Viruses|p__Viruses_noname|c__Viruses_noname    0.00077   0.00194
-## k__Bacteria|p__Actinobacteria|c__Actinobacteria   0.16129   0.03814
-## k__Bacteria|p__Firmicutes|c__Bacilli              0.01099   0.01147&lt;/code&gt;&lt;/pre&gt;
 &lt;/section&gt;
 </description>
     </item>

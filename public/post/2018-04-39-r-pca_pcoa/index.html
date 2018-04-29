@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30.2" />
+  <meta name="author" content="Chenhao Li">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="三文读懂PCA和PCoA？ 今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《一》,《二》,《三》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
+特别指出在第二篇文章中：
+“PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。  既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。
+“同样的道理，PCoA基于样本间的距离矩阵就意味着PCoA分析的矩阵维度与样本数目相关。如果你要分析的样本做PCoA分析的话，那么一般来说有n个样本就至多有n-1个维度”。  这是一个n（样本数目）和p（维度）的问题，维度就是维度，p就是p，不能混淆。
+“多数情况下，我们在做降维处理的时候，期望维数越低越好，这样我们就可以最大程度地保真原始数据”  天下没有免费的午餐，维数越低，保真度自然越低。而PCA、PCoA所做的是在低维空间中尽量多的保存数据之间的差异。
+“如果样本数目比较多，而物种数目比较少，那肯定首选PCA；如果样本数目比较少，而物种数目比较多，那肯定首选PCoA”  这是一个很有意思的问题，其实PCoA和PCA的结果取决于PCoA的实现，但是直觉上想，既然PCA的变换会保存数据点间的欧氏距离，那么它和基于欧式距离的PCoA有什么区别呢？
+下面做一个实验，我们用两组数据（样本数目&gt;维度，纬度&gt;样本数目）来看看R中常见的PCA和PCoA实现的结果有何不同。
+iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) par(mfrow=c(2,2),cex=0.7, pch=19) ## PCA pca &lt;- prcomp(iris[,-5]) plot(pca$x[,1:2], col=iris[,5], xlab=&#39;PC1&#39;,ylab=&#39;PC2&#39;, main=&#39;PCA&#39;) ## PCoA pcoa &lt;- cmdscale(dist(iris[,-5], method = &quot;euclidean&quot;)) plot(pcoa, xlab=&#39;MDS1&#39;,ylab=&#39;MDS2&#39;, col=iris[,5], main=&#39;PCoA&#39;) ## pairwise distances plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), xlab=&#39;PCA&#39;, ylab=&#39;PCoA&#39;, main=&#39;Pairwise distances&#39;, pch=19, col=rgb(0,0,0,0.3), cex=0.5) plot(as.vector(dist(pca$x[,1:2])) - as.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2018-04-39-r-pca_pcoa/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2018-04-39-r-pca_pcoa/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:url" content="/post/2018-04-39-r-pca_pcoa/">
+  <meta property="og:title" content="一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Blog">
+  <meta property="og:description" content="三文读懂PCA和PCoA？ 今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《一》,《二》,《三》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
+特别指出在第二篇文章中：
+“PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。  既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。
+“同样的道理，PCoA基于样本间的距离矩阵就意味着PCoA分析的矩阵维度与样本数目相关。如果你要分析的样本做PCoA分析的话，那么一般来说有n个样本就至多有n-1个维度”。  这是一个n（样本数目）和p（维度）的问题，维度就是维度，p就是p，不能混淆。
+“多数情况下，我们在做降维处理的时候，期望维数越低越好，这样我们就可以最大程度地保真原始数据”  天下没有免费的午餐，维数越低，保真度自然越低。而PCA、PCoA所做的是在低维空间中尽量多的保存数据之间的差异。
+“如果样本数目比较多，而物种数目比较少，那肯定首选PCA；如果样本数目比较少，而物种数目比较多，那肯定首选PCoA”  这是一个很有意思的问题，其实PCoA和PCA的结果取决于PCoA的实现，但是直觉上想，既然PCA的变换会保存数据点间的欧氏距离，那么它和基于欧式距离的PCoA有什么区别呢？
+下面做一个实验，我们用两组数据（样本数目&gt;维度，纬度&gt;样本数目）来看看R中常见的PCA和PCoA实现的结果有何不同。
+iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) par(mfrow=c(2,2),cex=0.7, pch=19) ## PCA pca &lt;- prcomp(iris[,-5]) plot(pca$x[,1:2], col=iris[,5], xlab=&#39;PC1&#39;,ylab=&#39;PC2&#39;, main=&#39;PCA&#39;) ## PCoA pcoa &lt;- cmdscale(dist(iris[,-5], method = &quot;euclidean&quot;)) plot(pcoa, xlab=&#39;MDS1&#39;,ylab=&#39;MDS2&#39;, col=iris[,5], main=&#39;PCoA&#39;) ## pairwise distances plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), xlab=&#39;PCA&#39;, ylab=&#39;PCoA&#39;, main=&#39;Pairwise distances&#39;, pch=19, col=rgb(0,0,0,0.3), cex=0.5) plot(as.vector(dist(pca$x[,1:2])) - as.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-04-14T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-04-14T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Blog</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">一（三）文你读不懂PCA和PCoA</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-04-14 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Apr 14, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <div id="pcapcoa" class="section level2">
+<h2>三文读懂PCA和PCoA？</h2>
+<p>今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html">一</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html">二</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html">三</a>》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。</p>
+<p>特别指出在第二篇文章中：</p>
+<ol style="list-style-type: decimal">
+<li>“<strong>PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目</strong>。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。</li>
+</ol>
+<p>既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。</p>
+<ol start="2" style="list-style-type: decimal">
+<li>“同样的道理，<strong>PCoA基于样本间的距离矩阵就意味着PCoA分析的矩阵维度与样本数目相关</strong>。如果你要分析的样本做PCoA分析的话，那么一般来说有n个样本就至多有n-1个维度”。</li>
+</ol>
+<p>这是一个n（样本数目）和p（维度）的问题，维度就是维度，p就是p，不能混淆。</p>
+<ol start="3" style="list-style-type: decimal">
+<li>“<strong>多数情况下，我们在做降维处理的时候，期望维数越低越好，这样我们就可以最大程度地保真原始数据</strong>”</li>
+</ol>
+<p>天下没有免费的午餐，维数越低，保真度自然越低。而PCA、PCoA所做的是在低维空间中尽量多的保存数据之间的差异。</p>
+<ol start="4" style="list-style-type: decimal">
+<li>“<strong>如果样本数目比较多，而物种数目比较少，那肯定首选PCA；如果样本数目比较少，而物种数目比较多，那肯定首选PCoA</strong>”</li>
+</ol>
+<p>这是一个很有意思的问题，其实PCoA和PCA的结果取决于PCoA的实现，但是直觉上想，既然PCA的变换会保存数据点间的欧氏距离，那么它和基于欧式距离的PCoA有什么区别呢？</p>
+<p>下面做一个实验，我们用两组数据（样本数目&gt;维度，纬度&gt;样本数目）来看看R中常见的PCA和PCoA实现的结果有何不同。</p>
+<div id="iris" class="section level4">
+<h4>iris：样本数目&gt;维度</h4>
+<pre class="r"><code>## Low dimensional data (n&gt;&gt;p)
+data(iris)
+par(mfrow=c(2,2),cex=0.7, pch=19)
+## PCA
+pca &lt;- prcomp(iris[,-5])
+plot(pca$x[,1:2], col=iris[,5], xlab=&#39;PC1&#39;,ylab=&#39;PC2&#39;, main=&#39;PCA&#39;)
+## PCoA
+pcoa &lt;- cmdscale(dist(iris[,-5], method = &quot;euclidean&quot;))
+plot(pcoa, xlab=&#39;MDS1&#39;,ylab=&#39;MDS2&#39;, col=iris[,5], main=&#39;PCoA&#39;)
+## pairwise distances
+plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), 
+     xlab=&#39;PCA&#39;, ylab=&#39;PCoA&#39;, main=&#39;Pairwise distances&#39;,
+     pch=19, col=rgb(0,0,0,0.3), cex=0.5)
+plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
+     main=&#39;Difference in pairwise distances&#39;, ylab=&#39;Delta&#39;,
+     cex=0.5, col=rgb(0,0,0,0.3))</code></pre>
+<p><img src="/post/2018-04-39-r-pca_pcoa_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div id="gene-expression-dataset" class="section level4">
+<h4>Gene expression dataset：维度&gt;样本数目</h4>
+<pre class="r"><code>## High dimensional data (p&gt;&gt;n)
+## source(&quot;http://bioconductor.org/biocLite.R&quot;)
+## biocLite(&quot;hopach&quot;)
+suppressMessages(library(hopach))
+par(mfrow=c(2,2),cex=0.7, pch=19)
+data(golub)
+pca &lt;- prcomp(t(golub))
+plot(pca$x[,1:2], col=golub.cl+1, xlab=&#39;PC1&#39;,ylab=&#39;PC2&#39;, main=&#39;PCA&#39;)
+pcoa &lt;- cmdscale(dist(t(golub), method = &quot;euclidean&quot;))
+plot(pcoa, xlab=&#39;MDS1&#39;,ylab=&#39;MDS2&#39;, col=golub.cl+1, main=&#39;PCoA&#39;)
+plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), 
+     xlab=&#39;PCA&#39;, ylab=&#39;PCoA&#39;, main=&#39;Pairwise distances&#39;,
+     pch=19, col=rgb(0,0,0,0.3), cex=0.5)
+plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
+     main=&#39;Difference in pairwise distances&#39;, ylab=&#39;Delta&#39;,
+     cex=0.5, col=rgb(0,0,0,0.3))</code></pre>
+<p><img src="/post/2018-04-39-r-pca_pcoa_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>很明显，在基于欧氏距离的<code>cmdscale</code>和PCA在前两个维度上并没有什么区别。我个人一度以为PCA和基于欧式距离的PCoA其实是等同的，但是后来我们在一些PCoA的实现中确实看到了和PCA结果的差异，但是其实这个差异并不是很大。网上其实有很多的讨论，比如<a href="https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional">这个</a>。</p>
+</div>
+</div>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/bioinformatics">Bioinformatics</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2018-03-29-r-base2grob_igraph/">Y叔的新包base2grob</a></li>
+    
+    <li><a href="/post/2018-02-01-r-metagenomeviz-italictaxon/">microbiomeViz--斜体显示taxon name</a></li>
+    
+    <li><a href="/post/2018-01-18-r-metagenomeviz/">microbiomeViz--人生第一个R包</a></li>
+    
+    <li><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></li>
+    
+    <li><a href="/post/2018-01-09-r-ordellipsecode/">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
