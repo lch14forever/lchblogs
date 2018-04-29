@@ -1,7 +1,7 @@
 ---
 title: "一（三）文你读不懂PCA和PCoA"
 author: "Chenhao Li"
-date: 2018-04-14
+date: 2018-04-30
 categories: ["R"]
 tags: ["R", "Bioinformatics"]
 output: html_document

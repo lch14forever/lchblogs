@@ -11,69 +11,9 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
-      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
-      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
-      <description>&lt;section id=&#34;data-downloading-and-preprocessing&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Data downloading and preprocessing&lt;/h3&gt;
-&lt;p&gt;Now let’s try to generate a figure like this:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Sample processed by MetaPhlAn:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Script to merge samples:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Merge files into a single table&lt;/p&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;python merge_metaphlan_tables.py profiled_samples/*.txt &amp;gt; profiled_samples/merged_abundance_table.txt&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;now-switch-to-r&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Now switch to R&lt;/h3&gt;
-&lt;section id=&#34;load-data-and-library&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Load data and library&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- read.table(&amp;quot;~/Downloads/profiled_samples/merged_abundance_table.txt&amp;quot;, head=TRUE, stringsAsFactors = FALSE)
-df &amp;lt;- df[,-ncol(df)]
-## Use row means as a proxy for node size
-dat &amp;lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE)
-
-library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
-## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;parse-data-and-create-a-backbone&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Parse data and create a backbone&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tr &amp;lt;- parseMetaphlanTSV(dat, node.size.offset=2, node.size.scale=0.8)
-p &amp;lt;- tree.backbone(tr, size=0.5)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;hard-coded-lefse-results&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Hard-coded lefse results&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lefse_lists = data.frame(node=c(&amp;#39;s__Haemophilus_parainfluenzae&amp;#39;,&amp;#39;p__Proteobacteria&amp;#39;,
-                              &amp;#39;f__Veillonellaceae&amp;#39;,&amp;#39;o__Selenomonadales&amp;#39;,
-                              &amp;#39;c__Negativicutes&amp;#39;, &amp;#39;s__Streptococcus_parasanguinis&amp;#39;,
-
-                              &amp;#39;p__Firmicutes&amp;#39;,&amp;#39;f__Streptococcaceae&amp;#39;,
-                              &amp;#39;g__Streptococcus&amp;#39;,&amp;#39;o__Lactobacillales&amp;#39;,
-                              &amp;#39;c__Bacilli&amp;#39;,&amp;#39;s__Streptococcus_mitis&amp;#39;),
-                         color=c(rep(&amp;#39;darkgreen&amp;#39;,6), rep(&amp;#39;red&amp;#39;,&amp;#39;6&amp;#39;)),
-                         stringsAsFactors = FALSE
-                         )&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;annotate-the-tree&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Annotate the tree&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- clade.anno(p, lefse_lists, alpha=0.3)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;960&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
       <title>一（三）文你读不懂PCA和PCoA</title>
       <link>/post/2018-04-39-r-pca_pcoa/</link>
-      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 30 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018-04-39-r-pca_pcoa/</guid>
       <description>&lt;div id=&#34;pcapcoa&#34; class=&#34;section level2&#34;&gt;
@@ -139,6 +79,66 @@ plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
 &lt;p&gt;很明显，在基于欧氏距离的&lt;code&gt;cmdscale&lt;/code&gt;和PCA在前两个维度上并没有什么区别。我个人一度以为PCA和基于欧式距离的PCoA其实是等同的，但是后来我们在一些PCoA的实现中确实看到了和PCA结果的差异，但是其实这个差异并不是很大。网上其实有很多的讨论，比如&lt;a href=&#34;https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional&#34;&gt;这个&lt;/a&gt;。&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
+      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
+      <description>&lt;section id=&#34;data-downloading-and-preprocessing&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Data downloading and preprocessing&lt;/h3&gt;
+&lt;p&gt;Now let’s try to generate a figure like this:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Sample processed by MetaPhlAn:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Script to merge samples:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Merge files into a single table&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;python merge_metaphlan_tables.py profiled_samples/*.txt &amp;gt; profiled_samples/merged_abundance_table.txt&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;now-switch-to-r&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Now switch to R&lt;/h3&gt;
+&lt;section id=&#34;load-data-and-library&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Load data and library&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- read.table(&amp;quot;~/Downloads/profiled_samples/merged_abundance_table.txt&amp;quot;, head=TRUE, stringsAsFactors = FALSE)
+df &amp;lt;- df[,-ncol(df)]
+## Use row means as a proxy for node size
+dat &amp;lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE)
+
+library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
+## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;parse-data-and-create-a-backbone&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Parse data and create a backbone&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tr &amp;lt;- parseMetaphlanTSV(dat, node.size.offset=2, node.size.scale=0.8)
+p &amp;lt;- tree.backbone(tr, size=0.5)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id=&#34;hard-coded-lefse-results&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Hard-coded lefse results&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lefse_lists = data.frame(node=c(&amp;#39;s__Haemophilus_parainfluenzae&amp;#39;,&amp;#39;p__Proteobacteria&amp;#39;,
+                              &amp;#39;f__Veillonellaceae&amp;#39;,&amp;#39;o__Selenomonadales&amp;#39;,
+                              &amp;#39;c__Negativicutes&amp;#39;, &amp;#39;s__Streptococcus_parasanguinis&amp;#39;,
+
+                              &amp;#39;p__Firmicutes&amp;#39;,&amp;#39;f__Streptococcaceae&amp;#39;,
+                              &amp;#39;g__Streptococcus&amp;#39;,&amp;#39;o__Lactobacillales&amp;#39;,
+                              &amp;#39;c__Bacilli&amp;#39;,&amp;#39;s__Streptococcus_mitis&amp;#39;),
+                         color=c(rep(&amp;#39;darkgreen&amp;#39;,6), rep(&amp;#39;red&amp;#39;,&amp;#39;6&amp;#39;)),
+                         stringsAsFactors = FALSE
+                         )&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;annotate-the-tree&#34; class=&#34;level4&#34;&gt;
+&lt;h4&gt;Annotate the tree&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- clade.anno(p, lefse_lists, alpha=0.3)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;960&#34; /&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
 </description>
     </item>
     
