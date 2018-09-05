@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
@@ -15,10 +13,14 @@
   
   
   
-  <meta name="description" content="PhD student">
+    
+      
+    
+  
+  <meta name="description" content="Linux  Extract (decompress) with a file pattern (wildcard) (ref)[https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard]  tar -xf MyTar.tar --wildcards &quot;*.jpg&quot;  ggplot2  rotate axis label (ref)[https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2]  p &#43; theme(axis.text.x = element_text(angle = 90, hjust = 1))  remove legend title (ref)[http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title]  # Remove title for fill legend p &#43; guides(fill=guide_legend(title=NULL)) # Remove title for all legends p &#43; theme(legend.title=element_blank())  legends in multiple columns/rows ref A lot of interesting and useful things in this ref overriding the alpha value customizing the legend text angle etc  p &#43; guides(col = guide_legend(nrow = 8))  ">
 
   
-  <link rel="alternate" hreflang="en-us" href="/tags/r/">
+  <link rel="alternate" hreflang="en-us" href="/post/2018-09-05-bioinfo-cheatsheet/">
 
   
 
@@ -79,7 +81,7 @@
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="/tags/r/">
+  <link rel="canonical" href="/post/2018-09-05-bioinfo-cheatsheet/">
 
   <meta property="twitter:card" content="summary_large_image">
   
@@ -87,17 +89,19 @@
   <meta property="twitter:creator" content="@li_chenhao">
   
   <meta property="og:site_name" content="Chenhao&#39;s Blog">
-  <meta property="og:url" content="/tags/r/">
-  <meta property="og:title" content="R | Chenhao&#39;s Blog">
-  <meta property="og:description" content="PhD student">
+  <meta property="og:url" content="/post/2018-09-05-bioinfo-cheatsheet/">
+  <meta property="og:title" content="Frequently Googled Questions | Chenhao&#39;s Blog">
+  <meta property="og:description" content="Linux  Extract (decompress) with a file pattern (wildcard) (ref)[https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard]  tar -xf MyTar.tar --wildcards &quot;*.jpg&quot;  ggplot2  rotate axis label (ref)[https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2]  p &#43; theme(axis.text.x = element_text(angle = 90, hjust = 1))  remove legend title (ref)[http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title]  # Remove title for fill legend p &#43; guides(fill=guide_legend(title=NULL)) # Remove title for all legends p &#43; theme(legend.title=element_blank())  legends in multiple columns/rows ref A lot of interesting and useful things in this ref overriding the alpha value customizing the legend text angle etc  p &#43; guides(col = guide_legend(nrow = 8))  ">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2018-09-05T00:00:00&#43;00:00">
+  <meta property="article:published_time" content="2018-09-05T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-09-05T00:00:00&#43;00:00">
   
 
   
 
-  <title>R | Chenhao&#39;s Blog</title>
+  <title>Frequently Googled Questions | Chenhao&#39;s Blog</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -224,17 +228,6 @@
       
 
       
-      
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
-            <i class="fa fa-globe" aria-hidden="true"></i>
-            <span>English</span>
-          </a>
-          <ul class="dropdown-menu">
-            
-          </ul>
-        </li>
-        
       </ul>
 
     </div>
@@ -242,129 +235,170 @@
 </nav>
 
 
-
-
-
-<div class="universal-wrapper">
-
-  <h1>R</h1>
+<article class="article" itemscope itemtype="http://schema.org/Article">
 
   
 
-  
-  
-  <div>
-    <h2><a href="/post/2018-09-05-bioinfo-cheatsheet/">Frequently Googled Questions</a></h2>
-    <div class="article-style">
-      
-      一些从来都需要google的东西
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-04-39-r-pca_pcoa/">一（三）文你读不懂PCA和PCoA</a></h2>
-    <div class="article-style">
-      
-      今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html" target="_blank">一</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html" target="_blank">二</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html" target="_blank">三</a>》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-04-20-r-microbiomeviz_example/">Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</a></h2>
-    <div class="article-style">
-      
-      Let&rsquo;s try this for fun!
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-03-29-r-base2grob_igraph/">Y叔的新包base2grob</a></h2>
-    <div class="article-style">
-      
-      测试了一下Y叔的新包<a href="https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html" target="_blank">base2grob</a>。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-02-01-r-metagenomeviz-italictaxon/">microbiomeViz--斜体显示taxon name</a></h2>
-    <div class="article-style">
-      
-      微生物种名属名经常需要*<code>斜体</code>*表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的<strong>一个</strong>（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-01-18-r-metagenomeviz/">microbiomeViz--人生第一个R包</a></h2>
-    <div class="article-style">
-      
-      平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics" target="_blank">pipeline</a>使用MetaPhlAn，Kraken等profiler。一直觉得<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home" target="_blank">GraPhlAn</a>的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></h2>
-    <div class="article-style">
-      
-      <p># 写在前面
-本文的大部分内容都来自我们之前的一篇综述文章<a href="http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub" target="_blank">Li et al, 2016</a>。</p>
 
-<h1 id="微生物组测序与成分数据">微生物组测序与成分数据</h1>
-
-<p>微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息&ndash;微生物总量（total abundance）。</p>
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">Frequently Googled Questions</h1>
 
       
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-01-09-r-ordellipsecode/">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></h2>
-    <div class="article-style">
-      
-      看到Y叔为<a href="https://github.com/fawda123/ggord" target="_blank">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R" target="_blank">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/" target="_blank">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2017-12-29-r-addconfellipse/">Add confidence ellipse to LDA ordination plot II</a></h2>
-    <div class="article-style">
-      
-      <h2 id="为排序图添加置信范围曲线">为排序图添加置信范围曲线</h2>
 
-<p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/" target="_blank">文章</a>我们利用<a href="https://github.com/fawda123/ggord" target="_blank">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/" target="_blank">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot" target="_blank">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2017-11-18-r-absolute/">有了绝对定量就完了？</a></h2>
-    <div class="article-style">
-      
-      Jeroen Raes研究组上周在Nature发表<a href="https://www.nature.com/articles/nature24460" target="_blank">文章</a>，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。
-      
-    </div>
-  </div>
-  
+<div class="article-metadata">
 
-  
-<nav>
-  <ul class="pager">
+  <span class="article-date">
     
+    <time datetime="2018-09-05 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Sep 5, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
     
-    <li><a href="/tags/r/page/2/">&gt;</a></li>
+    <a href="/categories/general">General</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <section id="linux" class="level3">
+<h3>Linux</h3>
+<ul>
+<li>Extract (decompress) with a file pattern (wildcard) (ref)[<a href="https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard" class="uri">https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard</a>]</li>
+</ul>
+<pre class="sh"><code>tar -xf MyTar.tar --wildcards &quot;*.jpg&quot;</code></pre>
+</section>
+<section id="ggplot2" class="level3">
+<h3>ggplot2</h3>
+<ul>
+<li>rotate axis label (ref)[<a href="https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2" class="uri">https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2</a>]</li>
+</ul>
+<pre class="r"><code>p + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
+<ul>
+<li>remove legend title (ref)[<a href="http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title">http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title</a>]</li>
+</ul>
+<pre class="r"><code># Remove title for fill legend
+p + 
+  guides(fill=guide_legend(title=NULL))
+
+# Remove title for all legends
+p + 
+  theme(legend.title=element_blank())</code></pre>
+<ul>
+<li>legends in multiple columns/rows <a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">ref</a></li>
+<li>A lot of interesting and useful things in this ref</li>
+<li>overriding the alpha value</li>
+<li>customizing the legend text angle</li>
+<li>etc</li>
+</ul>
+<pre class="r"><code>p + 
+  guides(col = guide_legend(nrow = 8))</code></pre>
+</section>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/bioinformatics">Bioinformatics</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/linux">Linux</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2018-04-39-r-pca_pcoa/">一（三）文你读不懂PCA和PCoA</a></li>
+    
+    <li><a href="/post/2018-04-20-r-microbiomeviz_example/">Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</a></li>
+    
+    <li><a href="/post/2018-03-29-r-base2grob_igraph/">Y叔的新包base2grob</a></li>
+    
+    <li><a href="/post/2018-02-01-r-metagenomeviz-italictaxon/">microbiomeViz--斜体显示taxon name</a></li>
+    
+    <li><a href="/post/2018-01-18-r-metagenomeviz/">microbiomeViz--人生第一个R包</a></li>
     
   </ul>
-</nav>
+</div>
 
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
 
 
 </div>
+
 <footer class="site-footer">
   <div class="container">
     <p class="powered-by">
@@ -462,6 +496,4 @@
 
   </body>
 </html>
-
-
 

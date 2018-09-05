@@ -11,6 +11,49 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Frequently Googled Questions</title>
+      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
+      <description>&lt;section id=&#34;linux&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;Linux&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Extract (decompress) with a file pattern (wildcard) (ref)[&lt;a href=&#34;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&#34; class=&#34;uri&#34;&gt;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;tar -xf MyTar.tar --wildcards &amp;quot;*.jpg&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id=&#34;ggplot2&#34; class=&#34;level3&#34;&gt;
+&lt;h3&gt;ggplot2&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;rotate axis label (ref)[&lt;a href=&#34;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&#34; class=&#34;uri&#34;&gt;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;remove legend title (ref)[&lt;a href=&#34;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&#34;&gt;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Remove title for fill legend
+p + 
+  guides(fill=guide_legend(title=NULL))
+
+# Remove title for all legends
+p + 
+  theme(legend.title=element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;legends in multiple columns/rows &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/guide_legend.html&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;A lot of interesting and useful things in this ref&lt;/li&gt;
+&lt;li&gt;overriding the alpha value&lt;/li&gt;
+&lt;li&gt;customizing the legend text angle&lt;/li&gt;
+&lt;li&gt;etc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
+  guides(col = guide_legend(nrow = 8))&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;
+</description>
+    </item>
+    
+    <item>
       <title>一（三）文你读不懂PCA和PCoA</title>
       <link>/post/2018-04-39-r-pca_pcoa/</link>
       <pubDate>Mon, 30 Apr 2018 00:00:00 +0000</pubDate>
@@ -1362,110 +1405,6 @@ write.table(skinDataHealthy[rowSums(skinDataHealthy)!=0,], &amp;#39;~/Desktop/cu
 &lt;ul&gt;
 &lt;li&gt;Tool collection for SC data &lt;a href=&#34;https://github.com/seandavi/awesome-single-cell&#34; class=&#34;uri&#34;&gt;https://github.com/seandavi/awesome-single-cell&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>桑基图（Sankey diagram）II</title>
-      <link>/post/2017-11-02-r-sankeyplot2/</link>
-      <pubDate>Thu, 02 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-11-02-r-sankeyplot2/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/plotlyjs/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/plotlyjs/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
-
-
-&lt;section id=&#34;plotly&#34; class=&#34;level1&#34;&gt;
-&lt;h1&gt;使用plotly&lt;/h1&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;预处理&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)
-
-second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA)
-
-taxtab &amp;lt;- taxtab[-grep(&amp;#39;t__.*unclassified&amp;#39;, taxtab$V1), ]   ## remove strain level
- 
-tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;)                ## split into different taxonomy levels
-target &amp;lt;- sapply(tax_split, tail, n=1)                 ## target node
-mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target)
-target_id &amp;lt;- mapping$id
-source &amp;lt;- sapply(tax_split, second_last)               ## source node
-source_id &amp;lt;- mapping[source,]
-value &amp;lt;- taxtab$V2                                     ## width of flow
-
-links &amp;lt;- data.frame(source=source_id, target=target_id, value) ## links
-links &amp;lt;- links[!is.na(links$source), ]                 ## root of the tree has no parent (source)
-nodes &amp;lt;- data.frame(do.call(rbind, strsplit(target,&amp;#39;__&amp;#39;)))
-colnames(nodes)=c(&amp;#39;tax&amp;#39;, &amp;#39;name&amp;#39;)
-nodes$tax &amp;lt;- factor(as.character(nodes$tax), levels=c(&amp;#39;k&amp;#39;,&amp;#39;p&amp;#39;,&amp;#39;c&amp;#39;,&amp;#39;o&amp;#39;,&amp;#39;f&amp;#39;,&amp;#39;g&amp;#39;,&amp;#39;s&amp;#39;))
-nodes$colors &amp;lt;- rainbow(length(levels(nodes$tax)))[as.numeric(nodes$tax)]
-##links$colors &amp;lt;- nodes[links$source+1,3]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(plotly)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Loading required package: ggplot2&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## Attaching package: &amp;#39;plotly&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
-## 
-##     last_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:stats&amp;#39;:
-## 
-##     filter&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:graphics&amp;#39;:
-## 
-##     layout&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;packageVersion(&amp;#39;plotly&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] &amp;#39;4.7.1&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- plot_ly(
-    type = &amp;quot;sankey&amp;quot;,
-    domain = c(
-      x =  c(0,1),
-      y =  c(0,1)
-    ),
-    orientation = &amp;quot;h&amp;quot;,
-    valueformat = &amp;quot;.0f&amp;quot;,
-    valuesuffix = &amp;quot;TWh&amp;quot;,
-  width = 800, height = 200,
-    node = list(
-      label = nodes$name,
-      color = nodes$colors,
-      pad = 40,
-      thickness = 15,
-      line = list(
-        color = &amp;quot;black&amp;quot;,
-        width = 0.5
-      )
-    ),
-
-    link = list(
-      source = links$source,
-      target = links$target,
-      value =  links$value,
-      label =  links$value
-    )
-  ) %&amp;gt;% 
-  layout(
-    title = &amp;quot;Sankey Diagram of Relative Abundances&amp;quot;,
-    font = list(
-      size = 7
-    ),
-    xaxis = list(showgrid = F, zeroline = F,tickmode=&amp;#39;array&amp;#39;,
-                 tickvals=c(-1,0.25,1.375,2.5,3.625,4.75, 5.875),
-                 tickfont=list(size=10),
-                 ticktext=c(&amp;#39;Kindom&amp;#39;,&amp;#39;Phylum&amp;#39;,&amp;#39;Class&amp;#39;,&amp;#39;Order&amp;#39;,&amp;#39;Family&amp;#39;,&amp;#39;Genus&amp;#39;,&amp;#39;Species&amp;#39;)),
-    yaxis = list(showgrid = F, zeroline = F, showticklabels =F)
-)
-
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;40f01f6aa4a7&#34; style=&#34;width:800px;height:200px;&#34; class=&#34;plotly html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;40f01f6aa4a7&#34;&gt;{&#34;x&#34;:{&#34;visdat&#34;:{&#34;40f01f99a23e&#34;:[&#34;function () &#34;,&#34;plotlyVisDat&#34;]},&#34;cur_data&#34;:&#34;40f01f99a23e&#34;,&#34;attrs&#34;:{&#34;40f01f99a23e&#34;:{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;alpha&#34;:1,&#34;sizes&#34;:[10,100],&#34;type&#34;:&#34;sankey&#34;}},&#34;layout&#34;:{&#34;width&#34;:800,&#34;height&#34;:200,&#34;margin&#34;:{&#34;b&#34;:40,&#34;l&#34;:60,&#34;t&#34;:25,&#34;r&#34;:10},&#34;title&#34;:&#34;Sankey Diagram of Relative Abundances&#34;,&#34;font&#34;:{&#34;size&#34;:7},&#34;xaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;tickmode&#34;:&#34;array&#34;,&#34;tickvals&#34;:[-1,0.25,1.375,2.5,3.625,4.75,5.875],&#34;tickfont&#34;:{&#34;size&#34;:10},&#34;ticktext&#34;:[&#34;Kindom&#34;,&#34;Phylum&#34;,&#34;Class&#34;,&#34;Order&#34;,&#34;Family&#34;,&#34;Genus&#34;,&#34;Species&#34;]},&#34;yaxis&#34;:{&#34;showgrid&#34;:false,&#34;zeroline&#34;:false,&#34;showticklabels&#34;:false},&#34;hovermode&#34;:&#34;closest&#34;,&#34;showlegend&#34;:false},&#34;source&#34;:&#34;A&#34;,&#34;config&#34;:{&#34;modeBarButtonsToAdd&#34;:[{&#34;name&#34;:&#34;Collaborate&#34;,&#34;icon&#34;:{&#34;width&#34;:1000,&#34;ascent&#34;:500,&#34;descent&#34;:-50,&#34;path&#34;:&#34;M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z&#34;},&#34;click&#34;:&#34;function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == &#39;?viewer_pane=1&#39;) {\n          alert(&#39;To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;);\n        } else {\n          window.open(&#39;https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html&#39;, &#39;_blank&#39;);\n        }\n      }&#34;}],&#34;cloud&#34;:false},&#34;data&#34;:[{&#34;domain&#34;:[0,1,0,1],&#34;orientation&#34;:&#34;h&#34;,&#34;valueformat&#34;:&#34;.0f&#34;,&#34;valuesuffix&#34;:&#34;TWh&#34;,&#34;node&#34;:{&#34;label&#34;:[&#34;Bacteria&#34;,&#34;Actinobacteria&#34;,&#34;Bacteroidetes&#34;,&#34;Actinobacteria&#34;,&#34;Flavobacteriia&#34;,&#34;Actinomycetales&#34;,&#34;Flavobacteriales&#34;,&#34;Corynebacteriaceae&#34;,&#34;Micrococcaceae&#34;,&#34;Flavobacteriaceae&#34;,&#34;Corynebacterium&#34;,&#34;Rothia&#34;,&#34;Capnocytophaga&#34;,&#34;Corynebacterium_matruchotii&#34;,&#34;Rothia_dentocariosa&#34;,&#34;Capnocytophaga_unclassified&#34;],&#34;color&#34;:[&#34;#FF0000FF&#34;,&#34;#FFDB00FF&#34;,&#34;#FFDB00FF&#34;,&#34;#49FF00FF&#34;,&#34;#49FF00FF&#34;,&#34;#00FF92FF&#34;,&#34;#00FF92FF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#0092FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#4900FFFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;,&#34;#FF00DBFF&#34;],&#34;pad&#34;:40,&#34;thickness&#34;:15,&#34;line&#34;:{&#34;color&#34;:&#34;black&#34;,&#34;width&#34;:0.5}},&#34;link&#34;:{&#34;source&#34;:[0,0,1,2,3,4,5,5,6,7,8,9,10,11,12],&#34;target&#34;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&#34;value&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439],&#34;label&#34;:[90.32561,9.67439,90.32561,9.67439,90.32561,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439,58.21595,32.10966,9.67439]},&#34;type&#34;:&#34;sankey&#34;,&#34;textfont&#34;:{&#34;fillcolor&#34;:&#34;rgba(31,119,180,1)&#34;,&#34;color&#34;:&#34;rgba(31,119,180,1)&#34;},&#34;frame&#34;:null}],&#34;highlight&#34;:{&#34;on&#34;:&#34;plotly_click&#34;,&#34;persistent&#34;:false,&#34;dynamic&#34;:false,&#34;selectize&#34;:false,&#34;opacityDim&#34;:0.2,&#34;selected&#34;:{&#34;opacity&#34;:1}},&#34;base_url&#34;:&#34;https://plot.ly&#34;},&#34;evals&#34;:[&#34;config.modeBarButtonsToAdd.0.click&#34;],&#34;jsHooks&#34;:{&#34;render&#34;:[{&#34;code&#34;:&#34;function(el, x) { var ctConfig = crosstalk.var(&#39;plotlyCrosstalkOpts&#39;).set({\&#34;on\&#34;:\&#34;plotly_click\&#34;,\&#34;persistent\&#34;:false,\&#34;dynamic\&#34;:false,\&#34;selectize\&#34;:false,\&#34;opacityDim\&#34;:0.2,\&#34;selected\&#34;:{\&#34;opacity\&#34;:1}}); }&#34;,&#34;data&#34;:null}]}}&lt;/script&gt;
-&lt;/section&gt;
 &lt;/section&gt;
 </description>
     </item>

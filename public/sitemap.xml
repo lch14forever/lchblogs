@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2018-09-05-bioinfo-cheatsheet/</loc>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/2018-04-39-r-pca_pcoa/</loc>
       <lastmod>2018-04-30T00:00:00+00:00</lastmod>
     </url>
@@ -243,7 +252,7 @@
     <url>
     
       <loc>/tags/bioinformatics/</loc>
-      <lastmod>2018-04-30T00:00:00+00:00</lastmod>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -302,7 +311,7 @@
     <url>
     
       <loc>/categories/general/</loc>
-      <lastmod>2017-11-04T00:00:00+00:00</lastmod>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -313,6 +322,16 @@
     
       <loc>/categories/ggplot2/</loc>
       <lastmod>2018-01-09T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/linux/</loc>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -394,7 +413,7 @@
       <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
     
       <loc>/tags/r/</loc>
-      <lastmod>2018-04-30T00:00:00+00:00</lastmod>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

@@ -1,0 +1,46 @@
+---
+title: "Frequently Googled Questions"
+author: "Chenhao Li （李陈浩）"
+categories: ["General"]
+tags: ["Bioinformatics", "R", "Linux"]
+date: 2018-09-05
+output: html_document
+summary: "一些从来都需要google的东西"
+---
+
+
+
+<section id="linux" class="level3">
+<h3>Linux</h3>
+<ul>
+<li>Extract (decompress) with a file pattern (wildcard) (ref)[<a href="https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard" class="uri">https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard</a>]</li>
+</ul>
+<pre class="sh"><code>tar -xf MyTar.tar --wildcards &quot;*.jpg&quot;</code></pre>
+</section>
+<section id="ggplot2" class="level3">
+<h3>ggplot2</h3>
+<ul>
+<li>rotate axis label (ref)[<a href="https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2" class="uri">https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2</a>]</li>
+</ul>
+<pre class="r"><code>p + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
+<ul>
+<li>remove legend title (ref)[<a href="http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title">http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title</a>]</li>
+</ul>
+<pre class="r"><code># Remove title for fill legend
+p + 
+  guides(fill=guide_legend(title=NULL))
+
+# Remove title for all legends
+p + 
+  theme(legend.title=element_blank())</code></pre>
+<ul>
+<li>legends in multiple columns/rows <a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">ref</a></li>
+<li>A lot of interesting and useful things in this ref</li>
+<li>overriding the alpha value</li>
+<li>customizing the legend text angle</li>
+<li>etc</li>
+</ul>
+<pre class="r"><code>p + 
+  guides(col = guide_legend(nrow = 8))</code></pre>
+</section>
