@@ -16,22 +16,22 @@
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
-      <description>&lt;section id=&#34;linux&#34; class=&#34;level3&#34;&gt;
+      <description>&lt;div id=&#34;linux&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Linux&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Extract (decompress) with a file pattern (wildcard) (ref)[&lt;a href=&#34;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&#34; class=&#34;uri&#34;&gt;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&lt;/a&gt;]&lt;/li&gt;
+&lt;li&gt;Extract (decompress) with a file pattern (wildcard) &lt;a href=&#34;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;tar -xf MyTar.tar --wildcards &amp;quot;*.jpg&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;ggplot2&#34; class=&#34;level3&#34;&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ggplot2&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;ggplot2&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;rotate axis label (ref)[&lt;a href=&#34;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&#34; class=&#34;uri&#34;&gt;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&lt;/a&gt;]&lt;/li&gt;
+&lt;li&gt;rotate axis label &lt;a href=&#34;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
-&lt;li&gt;remove legend title (ref)[&lt;a href=&#34;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&#34;&gt;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&lt;/a&gt;]&lt;/li&gt;
+&lt;li&gt;remove legend title &lt;a href=&#34;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Remove title for fill legend
 p + 
@@ -49,7 +49,7 @@ p +
 &lt;/ul&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
   guides(col = guide_legend(nrow = 8))&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
+&lt;/div&gt;
 </description>
     </item>
     

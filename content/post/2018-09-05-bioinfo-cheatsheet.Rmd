@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 
 ### Linux
 
- - Extract (decompress) with a file pattern (wildcard) (ref)[https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard]
+ - Extract (decompress) with a file pattern (wildcard) [ref](https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard)
 
 ```{sh}
 tar -xf MyTar.tar --wildcards "*.jpg"
@@ -22,14 +22,14 @@ tar -xf MyTar.tar --wildcards "*.jpg"
 
 ### ggplot2
 
- - rotate axis label (ref)[https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2]
+ - rotate axis label [ref](https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2)
 
 ```{r}
 p + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
- - remove legend title (ref)[http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title]
+ - remove legend title [ref](http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title)
 
 ```{r}
 # Remove title for fill legend
