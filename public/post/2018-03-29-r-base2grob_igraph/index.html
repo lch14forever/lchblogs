@@ -74,8 +74,8 @@ library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## 
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -89,9 +89,9 @@ library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## 
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-03-29-r-base2grob_igraph/">
-  <meta property="og:title" content="Y叔的新包base2grob | Chenhao&#39;s Blog">
+  <meta property="og:title" content="Y叔的新包base2grob | Chenhao&#39;s Personal Page">
   <meta property="og:description" content="测试了一下Y叔的新包base2grob。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。
 library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## decompose, spectrum ## The following object is masked from &#39;package:base&#39;: ## ## union library(cowplot) ## Loading required package: ggplot2 ## ## Attaching package: &#39;cowplot&#39; ## The following object is masked from &#39;package:ggplot2&#39;: ## ## ggsave g1 &lt;- erdos.renyi.game(10, 0.2) g2 &lt;- erdos.renyi.game(10, 0.5) E(g1)$width &lt;- E(g2)$width &lt;- 5 E(g1)$label.cex &lt;- E(g2)$label.cex &lt;- 1e-16 ## 这个我承认有点傻，但是没有找到更好的方法 V(g1)$color &lt;- &#39;cyan&#39; V(g2)$color &lt;- &#39;green&#39; p1 &lt;- base2grob(~plot(g1)) p2 &lt;- base2grob(~plot(g2)) plot_grid(p1, p2, labels=LETTERS[1:2]) ">
   <meta property="og:locale" content="en-us">
@@ -103,7 +103,7 @@ library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## 
 
   
 
-  <title>Y叔的新包base2grob | Chenhao&#39;s Blog</title>
+  <title>Y叔的新包base2grob | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -122,7 +122,7 @@ library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## 
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
     </div>
 
     

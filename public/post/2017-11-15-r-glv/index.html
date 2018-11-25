@@ -74,8 +74,8 @@
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -89,9 +89,9 @@
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-11-15-r-glv/">
-  <meta property="og:title" content="Generalized Lotka-Volterra model | Chenhao&#39;s Blog">
+  <meta property="og:title" content="Generalized Lotka-Volterra model | Chenhao&#39;s Personal Page">
   <meta property="og:description" content="The model \(\frac{dx_i}{dt}= ax_i&#43;\sum_{j=1}^pb_{ij}x_ix_j\)
 ## library library(&#39;deSolve&#39;) ## GLV function lvm &lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &lt;- alpha * x &#43; x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &lt;- c(0.1, 0.2, 0.3) beta &lt;- t(matrix(c(-0.5, -0.3 , 0, 0.">
   <meta property="og:locale" content="en-us">
@@ -103,7 +103,7 @@
 
   
 
-  <title>Generalized Lotka-Volterra model | Chenhao&#39;s Blog</title>
+  <title>Generalized Lotka-Volterra model | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -122,7 +122,7 @@
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
     </div>
 
     

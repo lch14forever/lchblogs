@@ -17,15 +17,13 @@
       
     
   
-  <meta name="description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
-download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
- 官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
- 跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
- MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
- MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.">
+  <meta name="description" content="本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
+打开本地shell/eshell (M-x shell/eshell) 在打开的shell中连接远程服务器（ssh -X user@remote.machine.ip 或 ssh -Y）并运行R 使用ESS remote（M-x ess-remote） 打开本地或远程（Tramp mode）的R脚本 使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行  在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。
+为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：
+(defun spawn-ess-remote (login) &quot;connect to remote server and open ssh&quot; (interactive &quot;sUser login (uname@server.ip): &quot;) (pop-to-buffer (get-buffer-create (generate-new-buffer-name &quot;Remote-R&quot;))) (shell (current-buffer)) (process-send-string nil (format&quot;ssh -Y %s \n&quot; login) ) (process-send-string nil &quot;R\n&quot;) (ess-remote nil &quot;R&quot;)) (global-set-key (kbd &quot;C-c C-r&quot;) &#39;spawn-ess-remote)   ">
 
   
-  <link rel="alternate" hreflang="en-us" href="/post/2018-01-18-r-metagenomeviz/">
+  <link rel="alternate" hreflang="en-us" href="/post/2018-11-25-emacs-remote-r/">
 
   
 
@@ -86,7 +84,7 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="/post/2018-01-18-r-metagenomeviz/">
+  <link rel="canonical" href="/post/2018-11-25-emacs-remote-r/">
 
   <meta property="twitter:card" content="summary_large_image">
   
@@ -94,24 +92,22 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
   <meta property="twitter:creator" content="@li_chenhao">
   
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
-  <meta property="og:url" content="/post/2018-01-18-r-metagenomeviz/">
-  <meta property="og:title" content="microbiomeViz--人生第一个R包 | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
-download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
- 官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
- 跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
- MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
- MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.">
+  <meta property="og:url" content="/post/2018-11-25-emacs-remote-r/">
+  <meta property="og:title" content="Emacs远程连接R | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
+打开本地shell/eshell (M-x shell/eshell) 在打开的shell中连接远程服务器（ssh -X user@remote.machine.ip 或 ssh -Y）并运行R 使用ESS remote（M-x ess-remote） 打开本地或远程（Tramp mode）的R脚本 使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行  在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。
+为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：
+(defun spawn-ess-remote (login) &quot;connect to remote server and open ssh&quot; (interactive &quot;sUser login (uname@server.ip): &quot;) (pop-to-buffer (get-buffer-create (generate-new-buffer-name &quot;Remote-R&quot;))) (shell (current-buffer)) (process-send-string nil (format&quot;ssh -Y %s \n&quot; login) ) (process-send-string nil &quot;R\n&quot;) (ess-remote nil &quot;R&quot;)) (global-set-key (kbd &quot;C-c C-r&quot;) &#39;spawn-ess-remote)   ">
   <meta property="og:locale" content="en-us">
   
-  <meta property="article:published_time" content="2018-01-18T00:00:00&#43;00:00">
+  <meta property="article:published_time" content="2018-11-25T00:00:00&#43;00:00">
   
-  <meta property="article:modified_time" content="2018-01-18T00:00:00&#43;00:00">
-  
-
+  <meta property="article:modified_time" content="2018-11-25T00:00:00&#43;00:00">
   
 
-  <title>microbiomeViz--人生第一个R包 | Chenhao&#39;s Personal Page</title>
+  
+
+  <title>Emacs远程连接R | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -252,7 +248,7 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
 
   <div class="article-container">
     <div class="article-inner">
-      <h1 itemprop="name">microbiomeViz--人生第一个R包</h1>
+      <h1 itemprop="name">Emacs远程连接R</h1>
 
       
 
@@ -260,8 +256,8 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
 
   <span class="article-date">
     
-    <time datetime="2018-01-18 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
-      Jan 18, 2018
+    <time datetime="2018-11-25 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Nov 25, 2018
     </time>
   </span>
   <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
@@ -279,6 +275,21 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
   
 
   
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >, 
+    
+    <a href="/categories/emacs">Emacs</a
+    >
+    
+  </span>
+  
+  
 
   
   
@@ -289,111 +300,29 @@ download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biob
 
 
       <div class="article-style" itemprop="articleBody">
-        <div class="section level3">
-<h3>为啥写这个</h3>
-<p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
-<pre class="r"><code>download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
-knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">V1</th>
-<th align="right">V2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">k__Bacteria</td>
-<td align="right">100.00000</td>
-</tr>
-<tr class="even">
-<td align="left">k__Bacteria|p__Firmicutes</td>
-<td align="right">64.91753</td>
-</tr>
-<tr class="odd">
-<td align="left">k__Bacteria|p__Bacteroidetes</td>
-<td align="right">35.08247</td>
-</tr>
-<tr class="even">
-<td align="left">k__Bacteria|p__Firmicutes|c__Clostridia</td>
-<td align="right">64.91753</td>
-</tr>
-<tr class="odd">
-<td align="left">k__Bacteria|p__Bacteroidetes|c__Bacteroidia</td>
-<td align="right">35.08247</td>
-</tr>
-<tr class="even">
-<td align="left">k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales</td>
-<td align="right">64.91753</td>
-</tr>
-</tbody>
-</table>
-<p>第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home">GraPhlAn</a>:</p>
-<div class="figure">
-<img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" />
-
-</div>
-<p>官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。<a href="https://github.com/marbl/Krona/wiki">Krona</a>可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404">Metacoder</a>，画出的图个人真心不是很喜欢：</p>
-<div class="figure">
-<img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" />
-
-</div>
-<p>跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。</p>
-</div>
-<div id="microbiomeviz" class="section level3">
-<h3>MicrobiomeViz–千里之行，始于足下</h3>
-<p>其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： <a href="https://github.com/lch14forever/microbiomeViz" class="uri">https://github.com/lch14forever/microbiomeViz</a></p>
-</div>
-<div id="metaphlanparser" class="section level3">
-<h3>MetaPhlan结果的parser</h3>
-<div class="section level4">
-<h4>安装</h4>
-<pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;)</code></pre>
-<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
-## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
-<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.
-##   Use `force = TRUE` to force installation</code></pre>
-</div>
-<div class="section level4">
-<h4>使用</h4>
-<p>目前有三个函数：</p>
-<ul>
-<li><code>parseMetaphlanTSV</code>: 将MetaPhlAn的表格转换成tree格式</li>
-<li><code>tree.backbone</code>: 做出树的骨架</li>
-<li><code>clade.anno</code>: 高亮一个节点及其下属所有节点</li>
-</ul>
-<p>这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了phylobase的phylo4d类：</p>
-<pre class="r"><code>library(microbiomeViz)</code></pre>
-<pre><code>## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when
-## loading &#39;microbiomeViz&#39;</code></pre>
-<pre class="r"><code>data(&quot;SRS014459_Stool_profile&quot;)                    ## 上面的示例数据已经加如microbiomeViz
-tr &lt;- parseMetaphlanTSV(SRS014459_Stool_profile)   ## parsing</code></pre>
-</div>
-<div id="ggtree" class="section level4">
-<h4>基于ggtree的大戏</h4>
-<p>做出树的骨架</p>
-<pre class="r"><code>p &lt;- tree.backbone(tr)
-p</code></pre>
-<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>微生物组常见的操作就是组间比较，我们可以向GraPhlAn那样把显著的节点高亮出来：</p>
-<pre class="r"><code>## 假设以下taxa在疾病组显著
-anno.data &lt;- data.frame(node=c(&quot;g__Roseburia&quot;, &quot;c__Clostridia&quot;, &quot;s__Bacteroides_ovatus&quot;),
-                       color=&#39;red&#39;, stringsAsFactors = FALSE)
-p &lt;- clade.anno(p, anno.data)
-p</code></pre>
-<p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-</div>
-</div>
-<div class="section level3">
-<h3>希望有更多的拓展</h3>
-<p>所有的操作均基于<code>treedata</code>和<code>ggtree</code>，正因为有了这些灵活的框架，上面的几个例子可拓展性还是很强的。</p>
-<ul>
-<li>[ ] 多个MetaPhlan表，节点大小取平均</li>
-<li>[ ] Biom数据支持</li>
-<li>[ ] 和heatmap结合</li>
-<li>[ ] …</li>
-</ul>
-</div>
+        <section id="r" class="level2">
+<h2>本地的R脚本，远程执行</h2>
+<p>从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：</p>
+<ol type="1">
+<li>打开本地shell/eshell (M-x shell/eshell)</li>
+<li>在打开的shell中连接远程服务器（ssh -X <a href="mailto:user@remote.machine.ip">user@remote.machine.ip</a> 或 ssh -Y）并运行R</li>
+<li>使用ESS remote（M-x ess-remote）</li>
+<li>打开本地或远程（Tramp mode）的R脚本</li>
+<li>使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行</li>
+</ol>
+<p>在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。</p>
+<p>为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：</p>
+<pre class="lisp"><code>(defun spawn-ess-remote (login)
+  &quot;connect to remote server and open ssh&quot;
+  (interactive &quot;sUser login (uname@server.ip): &quot;)
+  (pop-to-buffer (get-buffer-create (generate-new-buffer-name &quot;Remote-R&quot;)))
+  (shell (current-buffer))
+  (process-send-string nil (format&quot;ssh -Y %s \n&quot; login) )
+  (process-send-string nil &quot;R\n&quot;)
+  (ess-remote nil &quot;R&quot;))
+(global-set-key (kbd &quot;C-c C-r&quot;) &#39;spawn-ess-remote)
+</code></pre>
+</section>
 
       </div>
 
@@ -404,7 +333,7 @@ p</code></pre>
   
   <a class="btn btn-primary btn-outline" href="/tags/r">R</a>
   
-  <a class="btn btn-primary btn-outline" href="/tags/microbiomeviz">microbiomeViz</a>
+  <a class="btn btn-primary btn-outline" href="/tags/emacs">Emacs</a>
   
 </div>
 
@@ -422,15 +351,15 @@ p</code></pre>
   <h3>Related</h3>
   <ul>
     
-    <li><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></li>
+    <li><a href="/post/2018-09-05-bioinfo-cheatsheet/">Frequently Googled Questions</a></li>
     
-    <li><a href="/post/2018-01-09-r-ordellipsecode/">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a></li>
+    <li><a href="/post/2018-04-39-r-pca_pcoa/">一（三）文你读不懂PCA和PCoA</a></li>
     
-    <li><a href="/post/2017-12-29-r-addconfellipse/">Add confidence ellipse to LDA ordination plot II</a></li>
+    <li><a href="/post/2018-04-20-r-microbiomeviz_example/">Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</a></li>
     
-    <li><a href="/post/2017-11-18-r-absolute/">有了绝对定量就完了？</a></li>
+    <li><a href="/post/2018-03-29-r-base2grob_igraph/">Y叔的新包base2grob</a></li>
     
-    <li><a href="/post/2017-11-15-r-glv/">Generalized Lotka-Volterra model</a></li>
+    <li><a href="/post/2018-02-01-r-metagenomeviz-italictaxon/">microbiomeViz--斜体显示taxon name</a></li>
     
   </ul>
 </div>

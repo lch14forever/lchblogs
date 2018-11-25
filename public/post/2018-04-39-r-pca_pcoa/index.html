@@ -80,8 +80,8 @@ iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) pa
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Blog">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -95,9 +95,9 @@ iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) pa
   <meta property="twitter:site" content="@li_chenhao">
   <meta property="twitter:creator" content="@li_chenhao">
   
-  <meta property="og:site_name" content="Chenhao&#39;s Blog">
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-04-39-r-pca_pcoa/">
-  <meta property="og:title" content="一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Blog">
+  <meta property="og:title" content="一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Personal Page">
   <meta property="og:description" content="三文读懂PCA和PCoA？ 今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《一》,《二》,《三》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
 特别指出在第二篇文章中：
 “PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。  既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。
@@ -115,7 +115,7 @@ iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) pa
 
   
 
-  <title>一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Blog</title>
+  <title>一（三）文你读不懂PCA和PCoA | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -134,7 +134,7 @@ iris：样本数目&gt;维度 ## Low dimensional data (n&gt;&gt;p) data(iris) pa
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/">Chenhao&#39;s Blog</a>
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
     </div>
 
     
