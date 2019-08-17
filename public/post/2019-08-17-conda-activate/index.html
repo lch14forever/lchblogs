@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30.2" />
+  <meta name="author" content="Chenhao Li">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="这是一个神奇的路径 我们在服务器上用conda创建了一个叫metagenomics的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：
+export PATH=/opt/gcc-4.9.3/bin/:$PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH 那么如果我希望以上环境变量仅对我特定的Conda环境起效（metagenomics）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：
+ANACONDA_PATH/envs/ENV_PATH/etc/conda/ ├── activate.d │ └── env_vars.sh ## &lt;- sourced when you do `conda activate` └── deactivate.d └── env_vars.sh ## &lt;- sourced when you do `conda deactivate` 剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。
+activate.d/env_vars.sh #!/bin/sh ## CANU export OLD_PATH=$PATH export PATH=$(echo $PATH | sed &#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&#39;) export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/ ## Kraken2 export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH  deactivate.d/env_vars.sh #!/bin/sh export PATH=$OLD_PATH export R_LIBS= export BOWTIE2_INDEXES= export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH 在旧版的Anaconda中，source deactivate默认会把PATH变量中的第一个目录删掉，所以上面使用了sed来把新目录插到第二个的位置。现在的conda版本(使用conda deactivate)好像不存在这样的问题了。">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2019-08-17-conda-activate/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2019-08-17-conda-activate/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
+  <meta property="og:url" content="/post/2019-08-17-conda-activate/">
+  <meta property="og:title" content="启动Conda环境时自动更改环境变量 | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="这是一个神奇的路径 我们在服务器上用conda创建了一个叫metagenomics的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：
+export PATH=/opt/gcc-4.9.3/bin/:$PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH 那么如果我希望以上环境变量仅对我特定的Conda环境起效（metagenomics）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：
+ANACONDA_PATH/envs/ENV_PATH/etc/conda/ ├── activate.d │ └── env_vars.sh ## &lt;- sourced when you do `conda activate` └── deactivate.d └── env_vars.sh ## &lt;- sourced when you do `conda deactivate` 剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。
+activate.d/env_vars.sh #!/bin/sh ## CANU export OLD_PATH=$PATH export PATH=$(echo $PATH | sed &#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&#39;) export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/ ## Kraken2 export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH  deactivate.d/env_vars.sh #!/bin/sh export PATH=$OLD_PATH export R_LIBS= export BOWTIE2_INDEXES= export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH 在旧版的Anaconda中，source deactivate默认会把PATH变量中的第一个目录删掉，所以上面使用了sed来把新目录插到第二个的位置。现在的conda版本(使用conda deactivate)好像不存在这样的问题了。">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-08-17T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-08-17T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>启动Conda环境时自动更改环境变量 | Chenhao&#39;s Personal Page</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">启动Conda环境时自动更改环境变量</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2019-08-17 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Aug 17, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/linux">Linux</a
+    >, 
+    
+    <a href="/categories/python">Python</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <div class="section level2">
+<h2>这是一个神奇的路径</h2>
+<p>我们在服务器上用conda创建了一个叫<code>metagenomics</code>的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：</p>
+<pre class="sh"><code>export PATH=/opt/gcc-4.9.3/bin/:$PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH</code></pre>
+<p>那么如果我希望以上环境变量仅对我特定的Conda环境起效（<code>metagenomics</code>）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：</p>
+<pre class="sh"><code>ANACONDA_PATH/envs/ENV_PATH/etc/conda/
+├── activate.d        
+│   └── env_vars.sh   ## &lt;- sourced when you do `conda activate`
+└── deactivate.d     
+    └── env_vars.sh   ## &lt;- sourced when you do `conda deactivate`</code></pre>
+<p>剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。</p>
+<div id="activate.denv_vars.sh" class="section level4">
+<h4><code>activate.d/env_vars.sh</code></h4>
+<pre class="sh"><code>#!/bin/sh
+
+## CANU
+export OLD_PATH=$PATH
+export PATH=$(echo $PATH | sed &#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&#39;)
+export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library
+export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/
+
+## Kraken2
+export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH</code></pre>
+</div>
+<div id="deactivate.denv_vars.sh" class="section level4">
+<h4><code>deactivate.d/env_vars.sh</code></h4>
+<pre class="sh"><code>#!/bin/sh
+
+export PATH=$OLD_PATH
+export R_LIBS=
+export BOWTIE2_INDEXES=
+export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH</code></pre>
+<p>在旧版的Anaconda中，<code>source deactivate</code>默认会把<code>PATH</code>变量中的第一个目录删掉，所以上面使用了<code>sed</code>来把新目录插到第二个的位置。现在的conda版本(使用<code>conda deactivate</code>)好像不存在这样的问题了。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>参考资料</h2>
+<p><a href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html" class="uri">https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html</a></p>
+</div>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/linux">Linux</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/python">Python</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2018-09-05-bioinfo-cheatsheet/">Frequently Googled Questions</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

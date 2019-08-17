@@ -1,0 +1,53 @@
+---
+title: "启动Conda环境时自动更改环境变量"
+author: "Chenhao Li"
+output: html_document
+categories: ["Linux", "Python"]
+tags: ["Linux","Python"]
+date: 2019-08-17
+summary: "Conda环境给我们安装软件带来了很多便利，我时常遇到需要在启用特定环境时加载环境变量的需求，本文介绍如何自动化这一过程"
+---
+
+
+
+<div class="section level2">
+<h2>这是一个神奇的路径</h2>
+<p>我们在服务器上用conda创建了一个叫<code>metagenomics</code>的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：</p>
+<pre class="sh"><code>export PATH=/opt/gcc-4.9.3/bin/:$PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH</code></pre>
+<p>那么如果我希望以上环境变量仅对我特定的Conda环境起效（<code>metagenomics</code>）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：</p>
+<pre class="sh"><code>ANACONDA_PATH/envs/ENV_PATH/etc/conda/
+├── activate.d        
+│   └── env_vars.sh   ## &lt;- sourced when you do `conda activate`
+└── deactivate.d     
+    └── env_vars.sh   ## &lt;- sourced when you do `conda deactivate`</code></pre>
+<p>剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。</p>
+<div id="activate.denv_vars.sh" class="section level4">
+<h4><code>activate.d/env_vars.sh</code></h4>
+<pre class="sh"><code>#!/bin/sh
+
+## CANU
+export OLD_PATH=$PATH
+export PATH=$(echo $PATH | sed &#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&#39;)
+export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library
+export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/
+
+## Kraken2
+export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH</code></pre>
+</div>
+<div id="deactivate.denv_vars.sh" class="section level4">
+<h4><code>deactivate.d/env_vars.sh</code></h4>
+<pre class="sh"><code>#!/bin/sh
+
+export PATH=$OLD_PATH
+export R_LIBS=
+export BOWTIE2_INDEXES=
+export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH</code></pre>
+<p>在旧版的Anaconda中，<code>source deactivate</code>默认会把<code>PATH</code>变量中的第一个目录删掉，所以上面使用了<code>sed</code>来把新目录插到第二个的位置。现在的conda版本(使用<code>conda deactivate</code>)好像不存在这样的问题了。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>参考资料</h2>
+<p><a href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html" class="uri">https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html</a></p>
+</div>

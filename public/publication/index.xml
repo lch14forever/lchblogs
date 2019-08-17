@@ -11,11 +11,29 @@
     <atom:link href="/publication/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
+      <link>/publication/predict_review/</link>
+      <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/predict_review/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>INC-Seq: accurate single molecule reads using nanopore sequencing</title>
       <link>/publication/incseq/</link>
       <pubDate>Tue, 02 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/publication/incseq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Predicting Microbial Interactions through Computational Approaches</title>
+      <link>/publication/beem/</link>
+      <pubDate>Wed, 01 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/beem/</guid>
       <description></description>
     </item>
     

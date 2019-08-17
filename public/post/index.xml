@@ -11,6 +11,56 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>启动Conda环境时自动更改环境变量</title>
+      <link>/post/2019-08-17-conda-activate/</link>
+      <pubDate>Sat, 17 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-08-17-conda-activate/</guid>
+      <description>&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;这是一个神奇的路径&lt;/h2&gt;
+&lt;p&gt;我们在服务器上用conda创建了一个叫&lt;code&gt;metagenomics&lt;/code&gt;的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export PATH=/opt/gcc-4.9.3/bin/:$PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;那么如果我希望以上环境变量仅对我特定的Conda环境起效（&lt;code&gt;metagenomics&lt;/code&gt;）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;ANACONDA_PATH/envs/ENV_PATH/etc/conda/
+├── activate.d        
+│   └── env_vars.sh   ## &amp;lt;- sourced when you do `conda activate`
+└── deactivate.d     
+    └── env_vars.sh   ## &amp;lt;- sourced when you do `conda deactivate`&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。&lt;/p&gt;
+&lt;div id=&#34;activate.denv_vars.sh&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;code&gt;activate.d/env_vars.sh&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/sh
+
+## CANU
+export OLD_PATH=$PATH
+export PATH=$(echo $PATH | sed &amp;#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&amp;#39;)
+export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library
+export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/
+
+## Kraken2
+export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deactivate.denv_vars.sh&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;&lt;code&gt;deactivate.d/env_vars.sh&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/sh
+
+export PATH=$OLD_PATH
+export R_LIBS=
+export BOWTIE2_INDEXES=
+export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在旧版的Anaconda中，&lt;code&gt;source deactivate&lt;/code&gt;默认会把&lt;code&gt;PATH&lt;/code&gt;变量中的第一个目录删掉，所以上面使用了&lt;code&gt;sed&lt;/code&gt;来把新目录插到第二个的位置。现在的conda版本(使用&lt;code&gt;conda deactivate&lt;/code&gt;)好像不存在这样的问题了。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;参考资料&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html&#34; class=&#34;uri&#34;&gt;https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Emacs远程连接R</title>
       <link>/post/2018-11-25-emacs-remote-r/</link>
       <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>
@@ -1281,123 +1331,6 @@ matplot(dat.norm.w_scaled_beta - dat.norm, type=&amp;#39;b&amp;#39;, ylab=&amp;#
 &lt;section id=&#34;conclusion&#34; class=&#34;level2&#34;&gt;
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;It turned out that the GLV model could be scaled as long as the abundances and the interaction matrix were compatible (scale abundances by a factor of &lt;span class=&#34;math inline&#34;&gt;\(c\)&lt;/span&gt;, then interaction matrix scaled by a factor of &lt;span class=&#34;math inline&#34;&gt;\(1/c\)&lt;/span&gt;).&lt;/p&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>从curatedMetagenoimcData提取健康样本的微生物组</title>
-      <link>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</link>
-      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</guid>
-      <description>&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;简介&lt;/h2&gt;
-&lt;p&gt;有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见&lt;a href=&#34;http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article&#34;&gt;NEJM社论&lt;/a&gt;)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：&lt;/p&gt;
-&lt;ol type=&#34;1&#34;&gt;
-&lt;li&gt;&lt;p&gt;作为validation cohort来验证已发现的结论。如我们的&lt;a href=&#34;https://www.nature.com/articles/nmicrobiol2016106&#34;&gt;这篇文章&lt;/a&gt;都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;用来测试新方法，发现新的生物问题。如&lt;a href=&#34;http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614&#34;&gt;这篇文章&lt;/a&gt;中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;当然最基础的操作，就是要从数据库中提取数据。&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;演示&lt;/h2&gt;
-&lt;p&gt;我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。&lt;/p&gt;
-&lt;section id=&#34;r-package&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;加载R package&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressMessages(library(curatedMetagenomicData))
-suppressMessages(library(foreach))&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;.experimenthub&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存）&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## download all stool samples
-stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.stool&amp;quot;, dryrun=FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c.
-## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;skinData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.skin&amp;quot;, dryrun=FALSE)
-## merge
-stoolDataMerged &amp;lt;- mergeData(stoolData)
-skinDataMerged &amp;lt;- mergeData(skinData)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level3&#34;&gt;
-&lt;h3&gt;验证元数据与样本对应关系&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged)))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## TRUE 
-## 4810&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged)))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## TRUE 
-##  466&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level3&#34;&gt;
-&lt;h3&gt;通过元数据来提取健康样本的数据&lt;/h3&gt;
-&lt;p&gt;顺便过滤掉整行、整列为0的数据&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stoolDataHealthy &amp;lt;- exprs(stoolDataMerged)[, which(pData(stoolDataMerged)$disease==&amp;#39;healthy&amp;#39;)] %&amp;gt;%
-  data.frame() %&amp;gt;%
-  select(which(colSums(.)!=0)) 
-skinDataHealthy &amp;lt;- exprs(skinDataMerged)[, which(pData(skinDataMerged)$disease==&amp;#39;healthy&amp;#39;)] %&amp;gt;%
-  data.frame() %&amp;gt;%
-  select(which(colSums(.)!=0)) &lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level3&#34;&gt;
-&lt;h3&gt;存储数据&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write.table(stoolDataHealthy[rowSums(stoolDataHealthy)!=0,], &amp;#39;~/Desktop/curatedMetagenomicData_stool_healthy.tsv&amp;#39;, quote=F, sep=&amp;#39;\t&amp;#39;, col.names = FALSE, row.names = TRUE)
-write.table(skinDataHealthy[rowSums(skinDataHealthy)!=0,], &amp;#39;~/Desktop/curatedMetagenomicData_skin_healthy.tsv&amp;#39;, quote=F, sep=&amp;#39;\t&amp;#39;, col.names = FALSE, row.names = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level3&#34;&gt;
-&lt;h3&gt;最重要一点，记录版本号，记录版本号，记录版本号！&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo(&amp;#39;curatedMetagenomicData&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## R version 3.4.2 (2017-09-28)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.2
-## 
-## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
-## 
-## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-## 
-## attached base packages:
-## character(0)
-## 
-## other attached packages:
-## [1] curatedMetagenomicData_1.7.92
-## 
-## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.14                  BiocInstaller_1.28.0         
-##  [3] compiler_3.4.2                AnnotationHub_2.9.22         
-##  [5] bindr_0.1                     iterators_1.0.8              
-##  [7] methods_3.4.2                 utils_3.4.2                  
-##  [9] tools_3.4.2                   grDevices_3.4.2              
-## [11] digest_0.6.13                 bit_1.1-12                   
-## [13] evaluate_0.10.1               RSQLite_2.0                  
-## [15] memoise_1.1.0                 tibble_1.3.4                 
-## [17] pkgconfig_2.0.1               rlang_0.1.4                  
-## [19] foreach_1.4.3                 shiny_1.0.5                  
-## [21] DBI_0.7                       yaml_2.1.16                  
-## [23] parallel_3.4.2                blogdown_0.3                 
-## [25] bindrcpp_0.2                  dplyr_0.7.4                  
-## [27] stringr_1.2.0                 httr_1.3.1                   
-## [29] knitr_1.18                    IRanges_2.10.5               
-## [31] graphics_3.4.2                S4Vectors_0.14.7             
-## [33] datasets_3.4.2                stats_3.4.2                  
-## [35] stats4_3.4.2                  rprojroot_1.2                
-## [37] bit64_0.9-7                   glue_1.2.0                   
-## [39] base_3.4.2                    Biobase_2.37.2               
-## [41] R6_2.2.2                      AnnotationDbi_1.38.2         
-## [43] rmarkdown_1.7                 bookdown_0.5                 
-## [45] purrr_0.2.4                   tidyr_0.7.2                  
-## [47] ExperimentHub_1.3.9           blob_1.1.0                   
-## [49] magrittr_1.5                  codetools_0.2-15             
-## [51] backports_1.1.1               htmltools_0.3.6              
-## [53] BiocGenerics_0.22.1           assertthat_0.2.0             
-## [55] mime_0.5                      interactiveDisplayBase_1.14.0
-## [57] xtable_1.8-2                  httpuv_1.3.5                 
-## [59] stringi_1.1.5&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
 &lt;/section&gt;
 </description>
     </item>
