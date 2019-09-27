@@ -11,6 +11,49 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>基于Nextflow的宏基因组有参分析-I</title>
+      <link>/post/2019-09-27-nextflow-install/</link>
+      <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-27-nextflow-install/</guid>
+      <description>&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;开一个坑&lt;/h2&gt;
+&lt;p&gt;本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个&lt;a href=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline&#34;&gt;流程&lt;/a&gt;。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.nextflow.io/&#34;&gt;Nextflow&lt;/a&gt;作为后起之秀迅速成长，拥有很好的社区支持（&lt;a href=&#34;https://groups.google.com/forum/#!forum/nextflow&#34;&gt;google group&lt;/a&gt;，&lt;a href=&#34;https://gitter.im/nextflow-io/nextflow&#34;&gt;gitter&lt;/a&gt;），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程&lt;a href=&#34;https://github.com/nf-core&#34;&gt;nf-core&lt;/a&gt;。最近的一次更新推出了模块化的&lt;a href=&#34;https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html&#34;&gt;DSL 2架构&lt;/a&gt;，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;流程介绍&lt;/h2&gt;
+&lt;p&gt;这个流程可以参见snakemake生成的DAG:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline/raw/master/snakemake_pipeline/work_flow.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;步骤为：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;合并相同样本&lt;/li&gt;
+&lt;li&gt;去接头&lt;/li&gt;
+&lt;li&gt;去宿主DNA&lt;/li&gt;
+&lt;li&gt;使用Profiling工具（kraken2，MetaPhlAn2）&lt;/li&gt;
+&lt;li&gt;按系统分类拆分&lt;/li&gt;
+&lt;li&gt;合并&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;## 安装Nextflow&lt;/p&gt;
+&lt;p&gt;依赖：java &amp;gt;= 1.8&lt;/p&gt;
+&lt;p&gt;稳定版本安装：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -s https://get.nextflow.io | bash&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;开发版本安装：&lt;/p&gt;
+&lt;p&gt;这里安装我自己修改过的版本（ps暂时没有被合并）&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;git clone https://github.com/lch14forever/nextflow.git
+
+cd nextflow
+
+make compile
+
+make pack&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;最后的Nextflow在&lt;code&gt;build/releases/nextflow-19.09.0-edge-all&lt;/code&gt;，可以重新命名为&lt;code&gt;nextflow&lt;/code&gt;并放在&lt;code&gt;$PATH&lt;/code&gt;中。&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>启动Conda环境时自动更改环境变量</title>
       <link>/post/2019-08-17-conda-activate/</link>
       <pubDate>Sat, 17 Aug 2019 00:00:00 +0000</pubDate>
@@ -1258,79 +1301,6 @@ dat &amp;lt;- dat %&amp;gt;% mutate(Y=melt(Y)$value) %&amp;gt;% mutate(MY=M*Y)&l
 &lt;h2&gt;相关性？为什么相关？&lt;/h2&gt;
 &lt;p&gt;所以在以上的实验当中，不难看出即使不相关的两个OTU，因为个体差异不大，转化为绝对数量之后很有可能呈现相关性，而这样的相关性跟生态意义毫无关系，只是因为latent variable微生物总量而已（Nature文章的Figure 3）。&lt;/p&gt;
 &lt;p&gt;延展开来，当你发现某些微生物的绝对数量和某种表征相关的时候，也需要考虑一下，它们是否只是因为微生物总量的不同呢（Nature文章的Figure 4）？&lt;/p&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Generalized Lotka-Volterra model</title>
-      <link>/post/2017-11-15-r-glv/</link>
-      <pubDate>Wed, 15 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-11-15-r-glv/</guid>
-      <description>&lt;section id=&#34;the-model&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;The model&lt;/h2&gt;
-&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\frac{dx_i}{dt}= ax_i+\sum_{j=1}^pb_{ij}x_ix_j\)&lt;/span&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## library
-library(&amp;#39;deSolve&amp;#39;)
-## GLV function
-lvm &amp;lt;- function(t, x, params){
-  with(as.list(params, c(x)), {
-    dx &amp;lt;- alpha * x + x * (beta %*% x)
-    list(dx)
-  })
-}
-
-## numerical integration
-n.integrate &amp;lt;- function(time, init.x, model, params){
-    as.data.frame(ode(init.x, time, model, params))
-}
-## normalizations
-TSS &amp;lt;- function(x){
-  apply(x, 1, function(x)x/sum(x))
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;glv-with-3-species&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;GLV with 3 species&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;alpha &amp;lt;- c(0.1, 0.2, 0.3)
-beta &amp;lt;- t(matrix(c(-0.5, -0.3 ,   0, 
-                    0.1, -0.5 ,   0,
-                     0 ,   0  , -0.5), 
-                 3,3 ))
-
-init.x &amp;lt;- c(0.6, 1, 0.4)
-
-dat &amp;lt;- n.integrate(0:10, init.x, lvm, list(alpha=alpha, beta=beta))
-dat.norm &amp;lt;- t(TSS(dat[,-1]))
-
-par(mfrow=c(1,2))
-matplot(x=dat$time, y=dat[,-1], typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Absolute abundance&amp;#39;) ## absolute abundance
-matplot(x=dat$time, y=dat.norm, typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Relative abundance&amp;#39;) ## relative abundance&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/sample_data-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;scale-parameters&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Scale parameters&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;init.x.scaled &amp;lt;- init.x/sum(init.x)
-beta.scaled &amp;lt;- beta * sum(init.x)
-
-dat.w_scaled_beta &amp;lt;- n.integrate(0:10, init.x.scaled, lvm, list(alpha=alpha, beta=beta.scaled))
-dat.norm.w_scaled_beta &amp;lt;- t(TSS(dat.w_scaled_beta[,-1]))
-
-par(mfrow=c(1,2))
-matplot(x=dat.w_scaled_beta$time, y=dat.w_scaled_beta[,-1], typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Absolute abundance&amp;#39;) ## absolute abundance
-matplot(x=dat.w_scaled_beta$time, y=dat.norm.w_scaled_beta, typ=&amp;#39;b&amp;#39;, xlab=&amp;#39;time&amp;#39;, ylab=&amp;#39;Relative abundance&amp;#39;) ## relative abundance&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/scaled_data-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;compare&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Compare&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;par(mfrow=c(1,2))
-matplot(dat.w_scaled_beta[,-1]/dat[,-1], type=&amp;#39;b&amp;#39;, ylab=&amp;#39;Ratio of abundance trajectories&amp;#39;)
-matplot(dat.norm.w_scaled_beta - dat.norm, type=&amp;#39;b&amp;#39;, ylab=&amp;#39;Absolute Error in Relative Abundances&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-15-r-GLV_files/figure-html/compare-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;conclusion&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;It turned out that the GLV model could be scaled as long as the abundances and the interaction matrix were compatible (scale abundances by a factor of &lt;span class=&#34;math inline&#34;&gt;\(c\)&lt;/span&gt;, then interaction matrix scaled by a factor of &lt;span class=&#34;math inline&#34;&gt;\(1/c\)&lt;/span&gt;).&lt;/p&gt;
 &lt;/section&gt;
 </description>
     </item>

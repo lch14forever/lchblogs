@@ -11,6 +11,49 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>基于Nextflow的宏基因组有参分析-I</title>
+      <link>/post/2019-09-27-nextflow-install/</link>
+      <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-27-nextflow-install/</guid>
+      <description>&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;开一个坑&lt;/h2&gt;
+&lt;p&gt;本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个&lt;a href=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline&#34;&gt;流程&lt;/a&gt;。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.nextflow.io/&#34;&gt;Nextflow&lt;/a&gt;作为后起之秀迅速成长，拥有很好的社区支持（&lt;a href=&#34;https://groups.google.com/forum/#!forum/nextflow&#34;&gt;google group&lt;/a&gt;，&lt;a href=&#34;https://gitter.im/nextflow-io/nextflow&#34;&gt;gitter&lt;/a&gt;），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程&lt;a href=&#34;https://github.com/nf-core&#34;&gt;nf-core&lt;/a&gt;。最近的一次更新推出了模块化的&lt;a href=&#34;https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html&#34;&gt;DSL 2架构&lt;/a&gt;，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;流程介绍&lt;/h2&gt;
+&lt;p&gt;这个流程可以参见snakemake生成的DAG:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline/raw/master/snakemake_pipeline/work_flow.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;步骤为：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;合并相同样本&lt;/li&gt;
+&lt;li&gt;去接头&lt;/li&gt;
+&lt;li&gt;去宿主DNA&lt;/li&gt;
+&lt;li&gt;使用Profiling工具（kraken2，MetaPhlAn2）&lt;/li&gt;
+&lt;li&gt;按系统分类拆分&lt;/li&gt;
+&lt;li&gt;合并&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;## 安装Nextflow&lt;/p&gt;
+&lt;p&gt;依赖：java &amp;gt;= 1.8&lt;/p&gt;
+&lt;p&gt;稳定版本安装：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -s https://get.nextflow.io | bash&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;开发版本安装：&lt;/p&gt;
+&lt;p&gt;这里安装我自己修改过的版本（ps暂时没有被合并）&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;git clone https://github.com/lch14forever/nextflow.git
+
+cd nextflow
+
+make compile
+
+make pack&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;最后的Nextflow在&lt;code&gt;build/releases/nextflow-19.09.0-edge-all&lt;/code&gt;，可以重新命名为&lt;code&gt;nextflow&lt;/code&gt;并放在&lt;code&gt;$PATH&lt;/code&gt;中。&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
       <link>/publication/predict_review/</link>
       <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>
@@ -1031,242 +1074,6 @@ anotherEll &amp;lt;- get_lda_ell(ord, iris$Species, 0.97)&lt;/code&gt;&lt;/pre&g
                  aes_string(color = &amp;#39;Groups&amp;#39;, group = &amp;#39;Groups&amp;#39;),
                  lty=2, fill = NA)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2017-12-22-r-addConfEllipseLDA_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>有了绝对定量就完了？</title>
-      <link>/post/2017-11-18-r-absolute/</link>
-      <pubDate>Tue, 28 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-11-18-r-absolute/</guid>
-      <description>&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;微生物组研究走向绝对定量&lt;/h2&gt;
-&lt;p&gt;Jeroen Raes研究组上周在Nature发表&lt;a href=&#34;https://www.nature.com/articles/nature24460&#34;&gt;文章&lt;/a&gt;，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; -diversity，然后进行基于距离矩阵的分析（PCoA）。&lt;/p&gt;
-&lt;p&gt;似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;flow-cytometryvariation&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;使用Flow cytometry测定的肠道微生物总量的variation有多大？&lt;/h2&gt;
-&lt;p&gt;下载Nature文章中的&lt;a href=&#34;https://images.nature.com/original/nature-assets/nature/journal/vaop/ncurrent/extref/nature24460-s2.xlsx&#34;&gt;Supplementary Table&lt;/a&gt;，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。&lt;/p&gt;
-&lt;section id=&#34;rggplot2&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;加载R包，ggplot2主题&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.2.1 ──&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-## ✔ tibble  1.3.4     ✔ dplyr   0.7.4
-## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
-## ✔ readr   1.1.1     ✔ forcats 0.2.0&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(data.table)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## Attaching package: &amp;#39;data.table&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:
-## 
-##     between, first, last&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:purrr&amp;#39;:
-## 
-##     transpose&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cowplot)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-## Attaching package: &amp;#39;cowplot&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
-## 
-##     ggsave&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(readxl)
-
-figtheme &amp;lt;- theme_bw() + 
-  theme(text = element_text(size=10,face=&amp;#39;bold&amp;#39;),panel.border  = element_rect(colour = &amp;quot;black&amp;quot;,size=2),
-        axis.title.y=element_text(margin=margin(0,15,0,0)),axis.title.x=element_text(margin=margin(15,0,0,0)),
-        plot.margin = unit(c(1,1,1,1), &amp;quot;cm&amp;quot;),
-        plot.title = element_text(margin=margin(0,0,15,0)))
-theme_set(figtheme)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;6&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;读取表6，并预处理&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cell_counts_dat &amp;lt;- read_excel(&amp;#39;~/nature24460-s2.xlsx&amp;#39;, sheet=6) %&amp;gt;%
-  mutate(Cohort=gsub(&amp;#39;[0-9]+&amp;#39;,&amp;#39;&amp;#39;,Individual)) %&amp;gt;%
-  mutate(Cell_count_avg=`Average cell count (per gram of frozen feces)`)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = tz): unknown timezone &amp;#39;zone/tz/2017c.
-## 1.0/zoneinfo/Asia/Singapore&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cell_counts_dat&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 321 x 10
-##    Individual Cohort   Day `Health status`
-##         &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;           &amp;lt;chr&amp;gt;
-##  1       SC01     SC     1         Healthy
-##  2       SC02     SC     1         Healthy
-##  3       SC03     SC     1         Healthy
-##  4       SC04     SC     1         Healthy
-##  5       SC05     SC     1         Healthy
-##  6       SC06     SC     1         Healthy
-##  7       SC07     SC     1         Healthy
-##  8       SC08     SC     1         Healthy
-##  9       SC09     SC     1         Healthy
-## 10       SC10     SC     1         Healthy
-## # ... with 311 more rows, and 6 more variables: `Average cell count (per
-## #   gram of fresh feces)` &amp;lt;chr&amp;gt;, `STDEV cell count (per gram of fresh
-## #   feces)` &amp;lt;chr&amp;gt;, `Average cell count (per gram of frozen feces)` &amp;lt;dbl&amp;gt;,
-## #   `STDEV cell count (per gram of frozen feces)` &amp;lt;chr&amp;gt;, Enterotype &amp;lt;chr&amp;gt;,
-## #   Cell_count_avg &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level3&#34;&gt;
-&lt;h3&gt;微生物总量差异&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;个体差异&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aggregate(data=cell_counts_dat, Cell_count_avg~Cohort, function(x) c(Mean=mean(x), SD=sd(x), CV=sd(x)/mean(x)) )&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##   Cohort Cell_count_avg.Mean Cell_count_avg.SD Cell_count_avg.CV
-## 1     DC        9.092967e+10      6.344747e+10      6.977642e-01
-## 2     LC        1.249278e+11      5.406697e+10      4.327858e-01
-## 3     SC        1.528339e+11      7.018824e+10      4.592451e-01
-## 4     VC        1.447904e+11      7.630896e+10      5.270304e-01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(cell_counts_dat, aes(x=Cohort, y=Cell_count_avg)) + geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;个体内差异&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aggregate(data=cell_counts_dat[cell_counts_dat$Cohort==&amp;#39;LC&amp;#39;,], Cell_count_avg~Individual, function(x) c(Mean=mean(x), SD=sd(x), CV=sd(x)/mean(x)) )&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##    Individual Cell_count_avg.Mean Cell_count_avg.SD Cell_count_avg.CV
-## 1        LC01        1.121069e+11      3.062958e+10      2.732175e-01
-## 2        LC02        1.057725e+11      1.457955e+10      1.378387e-01
-## 3        LC03        6.998669e+10      3.207140e+10      4.582500e-01
-## 4        LC04        6.433548e+10      1.478855e+10      2.298661e-01
-## 5        LC05        2.198245e+11      2.726579e+10      1.240343e-01
-## 6        LC06        2.054927e+11      4.951278e+10      2.409466e-01
-## 7        LC07        1.197242e+11      3.438372e+10      2.871911e-01
-## 8        LC08        1.162890e+11      3.286685e+10      2.826307e-01
-## 9        LC09        1.501435e+11      6.018554e+10      4.008535e-01
-## 10       LC10        1.790086e+11      8.293900e+10      4.633241e-01
-## 11       LC11        1.565348e+11      4.038210e+10      2.579752e-01
-## 12       LC12        1.247153e+11      2.494971e+10      2.000533e-01
-## 13       LC13        9.804859e+10      2.625298e+10      2.677548e-01
-## 14       LC14        1.037225e+11      4.329933e+10      4.174534e-01
-## 15       LC15        1.592359e+11      2.337419e+10      1.467897e-01
-## 16       LC16        1.171450e+11      6.207212e+10      5.298741e-01
-## 17       LC17        1.215423e+11      3.782074e+10      3.111736e-01
-## 18       LC18        1.042144e+11      4.236728e+10      4.065395e-01
-## 19       LC19        7.013542e+10      2.326036e+10      3.316492e-01
-## 20       LC20        1.465100e+11      2.763866e+10      1.886470e-01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(cell_counts_dat[cell_counts_dat$Cohort==&amp;#39;LC&amp;#39;,], aes(x=Day, y=Cell_count_avg)) + geom_line() + facet_wrap(~Individual)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;容易看出，疾病组（DC）的微生物总量最低，其他几个健康组微生物总量差异不大，而个人的微生物总量在一周内的变化要小一些（CV~30%），但其实比起个体间差异不是小很多。&lt;/p&gt;
-&lt;/section&gt;
-&lt;/section&gt;
-&lt;section id=&#34;variation&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;人的肠道微生物相对丰度的variation有多大？&lt;/h2&gt;
-&lt;section id=&#34;hmp&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;下载人类微生物组项目（HMP）数据&lt;/h3&gt;
-&lt;p&gt;我们使用HMPv35的16S的&lt;a href=&#34;ftp://public-ftp.ihmpdcc.org/HMQCP/otu_table_psn_v35.txt.gz&#34;&gt;OTU table&lt;/a&gt;和元数据表(&lt;a href=&#34;ftp://public-ftp.ihmpdcc.org/HMQCP/v35_map_uniquebyPSN.txt.bz2&#34;&gt;mapping file&lt;/a&gt;)。下载之后解压。&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;0otu&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;清洗数据，保留肠道数据并去掉整行为0的OTU&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;metadata &amp;lt;- fread(&amp;#39;~/v35_map_uniquebyPSN.txt&amp;#39;)
-stoolIDs &amp;lt;- as.character((metadata %&amp;gt;% filter(HMPbodysubsite==&amp;#39;Stool&amp;#39;))[,1])
-
-otutab &amp;lt;- fread(&amp;#39;~/otu_table_psn_v35.txt&amp;#39;,head=TRUE, select=stoolIDs,sep=&amp;#39;\t&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
-## stoolIDs, : Starting data input on line 2 and discarding line 1 because it
-## has too few or too many items to be column names or data: # QIIME v1.3.0-
-## dev OTU table&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
-## stoolIDs, : Column name &amp;#39;700107040&amp;#39; not found in column name header (case
-## sensitive), skipping.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in fread(&amp;quot;~/otu_table_psn_v35.txt&amp;quot;, head = TRUE, select =
-## stoolIDs, : Column name &amp;#39;700114489&amp;#39; not found in column name header (case
-## sensitive), skipping.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
-Read 44.1% of 45383 rows
-Read 45383 rows and 319 (of 4790) columns from 0.409 GB file in 00:00:04&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## keep samples with counts &amp;gt; 2000
-otutab &amp;lt;- otutab %&amp;gt;% select(which(colSums(otutab)&amp;gt; 2000 ))
-## we down sample (rarefy) the samples to have 2000 counts in total
-otutab_rare &amp;lt;- apply(otutab, 2, function(x) rmultinom(1,size=2000, prob=x))
-## remove OTUs not present at all and normalize to proportions
-otutab_rel &amp;lt;- apply(otutab_rare[rowSums(otutab_rare)!=0,], 2, function(x)x/sum(x))&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;sd-cv-mean&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;SD, CV, Mean&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;SD &amp;lt;- apply(otutab_rel,1,sd)
-Mean &amp;lt;- apply(otutab_rel, 1, mean)
-tmp &amp;lt;- data.frame(CV=SD/Mean, Mean, SD)
-g1 &amp;lt;- ggplot(tmp, aes(y=SD, x=Mean)) + 
-  geom_point(alpha=0.1) + 
-  scale_x_log10()  + scale_y_log10() + 
-  annotation_logticks(sides = &amp;#39;lb&amp;#39;)
-g2 &amp;lt;- ggplot(tmp, aes(y=CV, x=Mean)) + 
-  geom_point(alpha=0.1) + 
-  scale_x_log10()   + 
-  annotation_logticks(sides = &amp;#39;b&amp;#39;)
-plot_grid(g1, g2, nrow=1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;从CV来看，HMP的数据相对丰度其实在个体间差距比较大（特别是低丰度的OTU，可以想象这是跟0的数量多有关），所以可能大多数情况下，我们不会受到总量变化（CV~50%）的影响。&lt;strong&gt;Note: &lt;/strong&gt;还是需要注意在我们的研究数据中会不会&lt;/p&gt;
-&lt;/section&gt;
-&lt;/section&gt;
-&lt;section id=&#34;a-thought-experiment&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;绝对定量的分析，A thought experiment&lt;/h2&gt;
-&lt;p&gt;正态分布的随机变量（&lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;，&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;）分别代表微生物总量（&lt;span class=&#34;math inline&#34;&gt;\(M\sim|Normal(10^{11},CV_m\times10^{11}|)\)&lt;/span&gt;），微生物&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;的相对丰度（&lt;span class=&#34;math inline&#34;&gt;\(X\sim| Normal(10^{-1},CV_x \times10^{-1})|\)&lt;/span&gt;），那么绝对数量&lt;span class=&#34;math inline&#34;&gt;\(MX\)&lt;/span&gt;会与&lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;相关吗？&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M &amp;lt;- abs(rnorm(1000, 1e11, 0.5e11)) ## CV=0.5
-X &amp;lt;- sapply(c(0.1,0.5,1,5,10), function(x)abs(rnorm(1000, 0.1, x*0.1)))   
-colnames(X) &amp;lt;- c(&amp;#39;X_cv0.1&amp;#39;,&amp;#39;X_cv0.5&amp;#39;,&amp;#39;X_cv1&amp;#39;, &amp;#39;X_cv5&amp;#39;, &amp;#39;X_cv10&amp;#39;)
-dat &amp;lt;- melt(X)%&amp;gt;% mutate(MX=value*M) %&amp;gt;% mutate(M=rep(M,5))
-
-dat %&amp;gt;% group_by(Var2) %&amp;gt;% summarise(cor(MX, M, method=&amp;#39;spearman&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 2
-##      Var2 `cor(MX, M, method = &amp;quot;spearman&amp;quot;)`
-##    &amp;lt;fctr&amp;gt;                             &amp;lt;dbl&amp;gt;
-## 1 X_cv0.1                         0.9745780
-## 2 X_cv0.5                         0.6241846
-## 3   X_cv1                         0.4850720
-## 4   X_cv5                         0.5014045
-## 5  X_cv10                         0.4692217&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat,aes(x=M,y=MX)) + 
-  geom_point(alpha=0.4) + 
-  facet_wrap(~Var2, nrow=2, scale=&amp;#39;free_y&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;所以不难看出来微生物的绝对数量与微生物总量相关，特别是当相对丰度差异不大的时候。So what？记得correlation有传递性吗？所以如果有两个不相关的微生物，它们的绝对数量会不会因为总量而变得相关呢？我们根据&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;的分布生成另一个独立的随机变量&lt;span class=&#34;math inline&#34;&gt;\(Y\)&lt;/span&gt;，让我们来看下他们的correlation是怎样的。&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;Y &amp;lt;- sapply(c(0.1,0.5,1,5,10), function(x)abs(rnorm(1000, 0.1, x*0.1))) 
-colnames(Y) &amp;lt;- c(&amp;#39;Y_cv0.1&amp;#39;,&amp;#39;Y_cv0.5&amp;#39;,&amp;#39;Y_cv1&amp;#39;, &amp;#39;Y_cv5&amp;#39;, &amp;#39;Y_cv10&amp;#39;)
-dat &amp;lt;- dat %&amp;gt;% mutate(Y=melt(Y)$value) %&amp;gt;% mutate(MY=M*Y)&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;毫无关联的&lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;,&lt;span class=&#34;math inline&#34;&gt;\(Y\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat %&amp;gt;% group_by(Var2) %&amp;gt;% summarise(cor(value, Y, method=&amp;#39;spearman&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 2
-##      Var2 `cor(value, Y, method = &amp;quot;spearman&amp;quot;)`
-##    &amp;lt;fctr&amp;gt;                                &amp;lt;dbl&amp;gt;
-## 1 X_cv0.1                          0.039534460
-## 2 X_cv0.5                          0.025382017
-## 3   X_cv1                          0.039640060
-## 4   X_cv5                          0.015882484
-## 5  X_cv10                          0.002462222&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;转化成绝对数量后&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat %&amp;gt;% group_by(Var2) %&amp;gt;% 
-  summarise(Spearman_rho=cor(MX, MY, method=&amp;#39;spearman&amp;#39;),
-            p_value=cor.test(MX, MY, method=&amp;#39;spearman&amp;#39;)$p.value)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 3
-##      Var2 Spearman_rho      p_value
-##    &amp;lt;fctr&amp;gt;        &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;
-## 1 X_cv0.1    0.9509044 0.000000e+00
-## 2 X_cv0.5    0.4455341 0.000000e+00
-## 3   X_cv1    0.3194627 0.000000e+00
-## 4   X_cv5    0.2866312 2.842296e-20
-## 5  X_cv10    0.2930657 3.241526e-21&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;散点图&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat,aes(x=MX,y=MY)) + 
-  geom_point(alpha=0.4) + 
-  facet_wrap(~Var2, nrow=2, scale=&amp;#39;free&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-11-18-r-absolute_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;相关性？为什么相关？&lt;/h2&gt;
-&lt;p&gt;所以在以上的实验当中，不难看出即使不相关的两个OTU，因为个体差异不大，转化为绝对数量之后很有可能呈现相关性，而这样的相关性跟生态意义毫无关系，只是因为latent variable微生物总量而已（Nature文章的Figure 3）。&lt;/p&gt;
-&lt;p&gt;延展开来，当你发现某些微生物的绝对数量和某种表征相关的时候，也需要考虑一下，它们是否只是因为微生物总量的不同呢（Nature文章的Figure 4）？&lt;/p&gt;
 &lt;/section&gt;
 </description>
     </item>

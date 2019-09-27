@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
@@ -15,10 +13,25 @@
   
   
   
-  <meta name="description" content="PhD student">
+    
+      
+    
+  
+  <meta name="description" content="开一个坑 本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个流程。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。
+Nextflow作为后起之秀迅速成长，拥有很好的社区支持（google group，gitter），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程nf-core。最近的一次更新推出了模块化的DSL 2架构，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。
+ 流程介绍 这个流程可以参见snakemake生成的DAG:
+步骤为：
+合并相同样本 去接头 去宿主DNA 使用Profiling工具（kraken2，MetaPhlAn2） 按系统分类拆分 合并  ## 安装Nextflow
+依赖：java &gt;= 1.8
+稳定版本安装：
+curl -s https://get.nextflow.io | bash 开发版本安装：
+这里安装我自己修改过的版本（ps暂时没有被合并）
+git clone https://github.com/lch14forever/nextflow.git cd nextflow make compile make pack 最后的Nextflow在build/releases/nextflow-19.09.0-edge-all，可以重新命名为nextflow并放在$PATH中。
+(未完)
+ ">
 
   
-  <link rel="alternate" hreflang="en-us" href="/tags/metagenomics/">
+  <link rel="alternate" hreflang="en-us" href="/post/2019-09-27-nextflow-install/">
 
   
 
@@ -79,7 +92,7 @@
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="/tags/metagenomics/">
+  <link rel="canonical" href="/post/2019-09-27-nextflow-install/">
 
   <meta property="twitter:card" content="summary_large_image">
   
@@ -87,17 +100,30 @@
   <meta property="twitter:creator" content="@li_chenhao">
   
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
-  <meta property="og:url" content="/tags/metagenomics/">
-  <meta property="og:title" content="Metagenomics | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="PhD student">
+  <meta property="og:url" content="/post/2019-09-27-nextflow-install/">
+  <meta property="og:title" content="基于Nextflow的宏基因组有参分析-I | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="开一个坑 本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个流程。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。
+Nextflow作为后起之秀迅速成长，拥有很好的社区支持（google group，gitter），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程nf-core。最近的一次更新推出了模块化的DSL 2架构，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。
+ 流程介绍 这个流程可以参见snakemake生成的DAG:
+步骤为：
+合并相同样本 去接头 去宿主DNA 使用Profiling工具（kraken2，MetaPhlAn2） 按系统分类拆分 合并  ## 安装Nextflow
+依赖：java &gt;= 1.8
+稳定版本安装：
+curl -s https://get.nextflow.io | bash 开发版本安装：
+这里安装我自己修改过的版本（ps暂时没有被合并）
+git clone https://github.com/lch14forever/nextflow.git cd nextflow make compile make pack 最后的Nextflow在build/releases/nextflow-19.09.0-edge-all，可以重新命名为nextflow并放在$PATH中。
+(未完)
+ ">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2017-11-07T00:00:00&#43;00:00">
+  <meta property="article:published_time" content="2019-09-27T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-09-27T00:00:00&#43;00:00">
   
 
   
 
-  <title>Metagenomics | Chenhao&#39;s Personal Page</title>
+  <title>基于Nextflow的宏基因组有参分析-I | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -231,37 +257,148 @@
 </nav>
 
 
-
-
-
-<div class="universal-wrapper">
-
-  <h1>Metagenomics</h1>
+<article class="article" itemscope itemtype="http://schema.org/Article">
 
   
 
-  
-  
-  <div>
-    <h2><a href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/">从curatedMetagenoimcData提取健康样本的微生物组</a></h2>
-    <div class="article-style">
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">基于Nextflow的宏基因组有参分析-I</h1>
+
       
-      <h2 id="简介">简介</h2>
 
-<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article" target="_blank">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
-1. 作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106" target="_blank">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
-2. 用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614" target="_blank">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
-3. 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-当然最基础的操作，就是要从数据库中提取数据。
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2019-09-27 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Sep 27, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/nextflow">Nextflow</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <div class="section level2">
+<h2>开一个坑</h2>
+<p>本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个<a href="https://github.com/lch14forever/shotgun-metagenomics-pipeline">流程</a>。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。</p>
+<p><a href="https://www.nextflow.io/">Nextflow</a>作为后起之秀迅速成长，拥有很好的社区支持（<a href="https://groups.google.com/forum/#!forum/nextflow">google group</a>，<a href="https://gitter.im/nextflow-io/nextflow">gitter</a>），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程<a href="https://github.com/nf-core">nf-core</a>。最近的一次更新推出了模块化的<a href="https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html">DSL 2架构</a>，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。</p>
+</div>
+<div class="section level2">
+<h2>流程介绍</h2>
+<p>这个流程可以参见snakemake生成的DAG:</p>
+<p><img src="https://github.com/lch14forever/shotgun-metagenomics-pipeline/raw/master/snakemake_pipeline/work_flow.png" /></p>
+<p>步骤为：</p>
+<ol style="list-style-type: decimal">
+<li>合并相同样本</li>
+<li>去接头</li>
+<li>去宿主DNA</li>
+<li>使用Profiling工具（kraken2，MetaPhlAn2）</li>
+<li>按系统分类拆分</li>
+<li>合并</li>
+</ol>
+<p>## 安装Nextflow</p>
+<p>依赖：java &gt;= 1.8</p>
+<p>稳定版本安装：</p>
+<pre class="sh"><code>curl -s https://get.nextflow.io | bash</code></pre>
+<p>开发版本安装：</p>
+<p>这里安装我自己修改过的版本（ps暂时没有被合并）</p>
+<pre class="sh"><code>git clone https://github.com/lch14forever/nextflow.git
+
+cd nextflow
+
+make compile
+
+make pack</code></pre>
+<p>最后的Nextflow在<code>build/releases/nextflow-19.09.0-edge-all</code>，可以重新命名为<code>nextflow</code>并放在<code>$PATH</code>中。</p>
+<p>(未完)</p>
+</div>
+
+      </div>
+
       
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/nextflow">Nextflow</a>
+  
+</div>
+
+
+
     </div>
   </div>
-  
 
+</article>
+
+
+
+
+
+
+<div class="article-container">
   
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
 
 
 </div>
+
 <footer class="site-footer">
   <div class="container">
     <p class="powered-by">
@@ -359,6 +496,4 @@
 
   </body>
 </html>
-
-
 
