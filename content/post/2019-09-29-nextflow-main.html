@@ -1,0 +1,124 @@
+---
+title: "基于Nextflow的宏基因组有参分析-II 主函数和输入输出"
+author: "Chenhao Li"
+output: html_document
+categories: ["Nextflow"]
+tags: ["Nextflow"]
+date: 2019-09-29
+summary: "极简的Nextflow程序"
+---
+
+
+
+<div id="nextflow" class="section level2">
+<h2>第一个Nextflow程序</h2>
+<p>创建以下名为main.nf的Nextflow文件</p>
+<pre class="groovy"><code>#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &quot;${workflow.projectDir}/data&quot;
+
+// help message
+def helpMessage() {
+    log.info&quot;&quot;&quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &quot;&quot;&quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &#39;/**{1,2}.f*q*&#39;, flat: true)
+
+ch_reads.view()</code></pre>
+</div>
+<div class="section level2">
+<h2>逐行解析</h2>
+<div id="shebang" class="section level3">
+<h3>Shebang</h3>
+<pre class="groovy"><code>#!/usr/bin/env nextflow</code></pre>
+<p>同很多Unix-like脚本一样，第一行叫做<a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">“shebang” (Hash bang)</a>，出现在脚本第一行并以<code>#!</code>开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：</p>
+<ol style="list-style-type: decimal">
+<li>通过Interpreter来调用脚本（shebang不存在时也可使用）：</li>
+</ol>
+<pre class="sh"><code>nextflow run ./main.nf</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>直接调用（需要shebang）：</li>
+</ol>
+<pre class="sh"><code>chmod u+x ./main.nf ## 添加可执行权限
+./main.nf           ## 系统自动使用nextflow运行</code></pre>
+</div>
+<div id="dsl2" class="section level3">
+<h3>使用DSL2语言</h3>
+<pre class="groovy"><code>nextflow.preview.dsl=2</code></pre>
+<p>注：DSL2是新功能，后续语法可能会调整</p>
+</div>
+<div class="section level3">
+<h3>流程参数</h3>
+<pre class="groovy"><code>// parameters
+params.help = false
+params.read_path  = &quot;${workflow.projectDir}/data&quot;</code></pre>
+<p>Nextflow通过params这个字典来允许执行时直接传入参数。上述的两个参数<code>help</code>，和<code>read_path</code>，在命令行中可通过<code>--help</code>，<code>--read_path /PATH/TO/READS</code>，来更改。</p>
+<pre class="sh"><code>./main.nf --help ## 将params.help的值更改为true
+./main.nf --read_path /data/reads/ ## 将params.read_path的值更改为~/reads</code></pre>
+</div>
+<div id="groovy" class="section level3">
+<h3>Groovy原生支持</h3>
+<pre class="groovy"><code>def helpMessage() {
+    log.info&quot;&quot;&quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &quot;&quot;&quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}</code></pre>
+<p>Nextflow基于Groovy语言，可在流程中直接使用。以上部分定义了函数<code>helppMessage</code>，在接到<code>--help</code>输入时会输出帮助文档并退出执行。<code>workflow</code>为Nextflow定义的特殊字典，<code>${workflow.projectDir}</code>对应了当前脚本(<code>main.nf</code>)的目录。</p>
+<pre class="sh"><code>$ ./main.nf --help
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [distraught_meitner] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+=================================================================
+Usage: /home/ubuntu/shotgunmetagenomics-nf/tutorial/main.nf --read_path PATH/OF/READS
+=================================================================</code></pre>
+</div>
+<div id="channel" class="section level3">
+<h3>Channel</h3>
+<pre class="groovy"><code>ch_reads = Channel
+    .fromFilePairs(params.read_path + &#39;/**{1,2}.f*q*&#39;, flat: true)
+
+ch_reads.view()</code></pre>
+<p>Netflow定义了Channel，通过Channel来在不同过程(Process)之间传递文件。Channel保证了基于不同文件的运算独立、并行进行。Channel对应的文件会被“拷贝”(经常以symbolic link的形式)到<code>work/</code>目录下。这个定义其实不是很容易说得清楚，建议阅读Nextflow<a href="https://www.nextflow.io/docs/latest/channel.html">帮助文档</a>。</p>
+<ul>
+<li><code>fromFilePair</code>专门为fastq打造，可以直接将不同的样本以列表形式分组</li>
+<li><code>'/**{1,2}.f*q*'</code>定义了文件匹配方式，<code>**</code>表示递归地检索文件，<code>{1,2}.f*q*</code>跟bash本身的文件匹配一致，这里会匹配结尾为<code>1.fastq.gz</code>，<code>2.fastq</code>，<code>1.fq</code>，<code>2.fq.gz</code>的文件</li>
+<li><code>flat: ture</code>使返回的双端序列和匹配ID存储为一个列表中。下面是一个例子：</li>
+</ul>
+<pre class="sh"><code>$ ls /data/reads/
+SRR1950772_1.fastq.gz  SRR1950772_2.fastq.gz  SRR1950773_1.fastq.gz  SRR1950773_2.fastq.gz
+
+$ ./main.nf --read_path /data/reads/
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [elegant_volta] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+[SRR1950773, /data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]
+[SRR1950772, /data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]</code></pre>
+<p>如果默认情况 (<code>flat: false</code>)使用<code>.fromFilePairs(params.read_path + '/**{1,2}.f*q*')</code>，输出结果会将Read1和Read2合并在一个列表中：</p>
+<pre class="sh"><code>[SRR1950773, [/data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]]
+[SRR1950772, [/data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]]</code></pre>
+<p>参考：
+<a href="https://www.nextflow.io/docs/latest/" class="uri">https://www.nextflow.io/docs/latest/</a></p>
+<p>(未完)</p>
+</div>
+</div>

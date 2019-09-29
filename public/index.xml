@@ -11,7 +11,128 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>基于Nextflow的宏基因组有参分析-I</title>
+      <title>基于Nextflow的宏基因组有参分析-II 主函数和输入输出</title>
+      <link>/post/2019-09-29-nextflow-main/</link>
+      <pubDate>Sun, 29 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-29-nextflow-main/</guid>
+      <description>&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;第一个Nextflow程序&lt;/h2&gt;
+&lt;p&gt;创建以下名为main.nf的Nextflow文件&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+ch_reads.view()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div id=&#34;shebang&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Shebang&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;同很多Unix-like脚本一样，第一行叫做&lt;a href=&#34;https://en.wikipedia.org/wiki/Shebang_(Unix)&#34;&gt;“shebang” (Hash bang)&lt;/a&gt;，出现在脚本第一行并以&lt;code&gt;#!&lt;/code&gt;开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;通过Interpreter来调用脚本（shebang不存在时也可使用）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;nextflow run ./main.nf&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;直接调用（需要shebang）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;chmod u+x ./main.nf ## 添加可执行权限
+./main.nf           ## 系统自动使用nextflow运行&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dsl2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;使用DSL2语言&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;nextflow.preview.dsl=2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注：DSL2是新功能，后续语法可能会调整&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow通过params这个字典来允许执行时直接传入参数。上述的两个参数&lt;code&gt;help&lt;/code&gt;，和&lt;code&gt;read_path&lt;/code&gt;，在命令行中可通过&lt;code&gt;--help&lt;/code&gt;，&lt;code&gt;--read_path /PATH/TO/READS&lt;/code&gt;，来更改。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;./main.nf --help ## 将params.help的值更改为true
+./main.nf --read_path /data/reads/ ## 将params.read_path的值更改为~/reads&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;groovy&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Groovy原生支持&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow基于Groovy语言，可在流程中直接使用。以上部分定义了函数&lt;code&gt;helppMessage&lt;/code&gt;，在接到&lt;code&gt;--help&lt;/code&gt;输入时会输出帮助文档并退出执行。&lt;code&gt;workflow&lt;/code&gt;为Nextflow定义的特殊字典，&lt;code&gt;${workflow.projectDir}&lt;/code&gt;对应了当前脚本(&lt;code&gt;main.nf&lt;/code&gt;)的目录。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ./main.nf --help
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [distraught_meitner] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+=================================================================
+Usage: /home/ubuntu/shotgunmetagenomics-nf/tutorial/main.nf --read_path PATH/OF/READS
+=================================================================&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;channel&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Channel&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+ch_reads.view()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Netflow定义了Channel，通过Channel来在不同过程(Process)之间传递文件。Channel保证了基于不同文件的运算独立、并行进行。Channel对应的文件会被“拷贝”(经常以symbolic link的形式)到&lt;code&gt;work/&lt;/code&gt;目录下。这个定义其实不是很容易说得清楚，建议阅读Nextflow&lt;a href=&#34;https://www.nextflow.io/docs/latest/channel.html&#34;&gt;帮助文档&lt;/a&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;fromFilePair&lt;/code&gt;专门为fastq打造，可以直接将不同的样本以列表形式分组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&#39;/**{1,2}.f*q*&#39;&lt;/code&gt;定义了文件匹配方式，&lt;code&gt;**&lt;/code&gt;表示递归地检索文件，&lt;code&gt;{1,2}.f*q*&lt;/code&gt;跟bash本身的文件匹配一致，这里会匹配结尾为&lt;code&gt;1.fastq.gz&lt;/code&gt;，&lt;code&gt;2.fastq&lt;/code&gt;，&lt;code&gt;1.fq&lt;/code&gt;，&lt;code&gt;2.fq.gz&lt;/code&gt;的文件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;flat: ture&lt;/code&gt;使返回的双端序列和匹配ID存储为一个列表中。下面是一个例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls /data/reads/
+SRR1950772_1.fastq.gz  SRR1950772_2.fastq.gz  SRR1950773_1.fastq.gz  SRR1950773_2.fastq.gz
+
+$ ./main.nf --read_path /data/reads/
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [elegant_volta] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+[SRR1950773, /data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]
+[SRR1950772, /data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果默认情况 (&lt;code&gt;flat: false&lt;/code&gt;)使用&lt;code&gt;.fromFilePairs(params.read_path + &#39;/**{1,2}.f*q*&#39;)&lt;/code&gt;，输出结果会将Read1和Read2合并在一个列表中：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;[SRR1950773, [/data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]]
+[SRR1950772, [/data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-I 安装Nextflow</title>
       <link>/post/2019-09-27-nextflow-install/</link>
       <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
       
@@ -38,9 +159,8 @@
 &lt;p&gt;依赖：java &amp;gt;= 1.8&lt;/p&gt;
 &lt;p&gt;稳定版本安装：&lt;/p&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -s https://get.nextflow.io | bash&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;开发版本安装：&lt;/p&gt;
-&lt;p&gt;这里安装我自己修改过的版本（ps暂时没有被合并）&lt;/p&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;git clone https://github.com/lch14forever/nextflow.git
+&lt;p&gt;Github开发版本安装，支持DSL2语法：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;git clone https://github.com/nextflow-io/nextflow.git
 
 cd nextflow
 
@@ -48,6 +168,7 @@ make compile
 
 make pack&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;最后的Nextflow在&lt;code&gt;build/releases/nextflow-19.09.0-edge-all&lt;/code&gt;，可以重新命名为&lt;code&gt;nextflow&lt;/code&gt;并放在&lt;code&gt;$PATH&lt;/code&gt;中。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export PATH=$PATH:/PATH/TO/REPO/build/releases/&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;(未完)&lt;/p&gt;
 &lt;/div&gt;
 </description>
@@ -1013,67 +1134,6 @@ ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/mds-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/section&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Add confidence ellipse to LDA ordination plot</title>
-      <link>/post/2017-12-22-r-addconfellipselda/</link>
-      <pubDate>Fri, 22 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-12-22-r-addconfellipselda/</guid>
-      <description>&lt;section id=&#34;use-ggord-to-plot-lda-ordination-plot&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Use ggord to plot LDA ordination plot&lt;/h2&gt;
-&lt;section id=&#34;installation&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Installation&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;#39;fawda123/ggord&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;basic-lda-ordination-biplot&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Basic LDA ordination biplot&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(MASS)
-ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3)
-
-library(ggord)
-p &amp;lt;- ggord(ord, iris$Species)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-22-r-addConfEllipseLDA_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;/section&gt;
-&lt;section id=&#34;a-function-to-compute-confidence-ellipse&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;A function to compute confidence ellipse&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;get_lda_ell &amp;lt;- function(ord_in, grp_in, ellipse_pro = 0.97){
-    ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
-    require(plyr)
-    axes = c(&amp;#39;LD1&amp;#39;, &amp;#39;LD2&amp;#39;)
-    obs &amp;lt;- data.frame(predict(ord_in)$x[, axes])
-    obs$Groups &amp;lt;- grp_in
-    names(obs)[1:2] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
-    theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
-    circle &amp;lt;- cbind(cos(theta), sin(theta))
-    ell &amp;lt;- ddply(obs, &amp;#39;Groups&amp;#39;, function(x) {
-        if(nrow(x) &amp;lt;= 2) {
-            return(NULL)
-        }
-        sigma &amp;lt;- var(cbind(x$one, x$two))
-        mu &amp;lt;- c(mean(x$one), mean(x$two))
-        ed &amp;lt;- sqrt(qchisq(ellipse_pro, df = 2))
-        data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
-    })
-    names(ell)[2:3] &amp;lt;- c(&amp;#39;one&amp;#39;, &amp;#39;two&amp;#39;)
-    ell &amp;lt;- ddply(ell, .(Groups), function(x) x[chull(x$one, x$two), ])
-    ell
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;using-the-function&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Using the function&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)
-anotherEll &amp;lt;- get_lda_ell(ord, iris$Species, 0.97)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Loading required package: plyr&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + geom_polygon(data = anotherEll, 
-                 aes_string(color = &amp;#39;Groups&amp;#39;, group = &amp;#39;Groups&amp;#39;),
-                 lty=2, fill = NA)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-22-r-addConfEllipseLDA_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/section&gt;
 </description>
     </item>

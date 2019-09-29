@@ -1,5 +1,5 @@
 ---
-title: "基于Nextflow的宏基因组有参分析-I"
+title: "基于Nextflow的宏基因组有参分析-I 安装Nextflow"
 author: "Chenhao Li"
 output: html_document
 categories: ["Nextflow"]
@@ -32,9 +32,8 @@ summary: "本系列介绍如何搭建基于Nextflow的宏基因组有参分析�
 <p>依赖：java &gt;= 1.8</p>
 <p>稳定版本安装：</p>
 <pre class="sh"><code>curl -s https://get.nextflow.io | bash</code></pre>
-<p>开发版本安装：</p>
-<p>这里安装我自己修改过的版本（ps暂时没有被合并）</p>
-<pre class="sh"><code>git clone https://github.com/lch14forever/nextflow.git
+<p>Github开发版本安装，支持DSL2语法：</p>
+<pre class="sh"><code>git clone https://github.com/nextflow-io/nextflow.git
 
 cd nextflow
 
@@ -42,5 +41,6 @@ make compile
 
 make pack</code></pre>
 <p>最后的Nextflow在<code>build/releases/nextflow-19.09.0-edge-all</code>，可以重新命名为<code>nextflow</code>并放在<code>$PATH</code>中。</p>
+<pre class="sh"><code>export PATH=$PATH:/PATH/TO/REPO/build/releases/</code></pre>
 <p>(未完)</p>
 </div>

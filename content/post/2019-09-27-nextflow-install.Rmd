@@ -1,5 +1,5 @@
 ---
-title: "基于Nextflow的宏基因组有参分析-I"
+title: "基于Nextflow的宏基因组有参分析-I 安装Nextflow"
 author: "Chenhao Li"
 output: html_document
 categories: ["Nextflow"]
@@ -44,12 +44,11 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
  curl -s https://get.nextflow.io | bash
  ```
 
-开发版本安装：
+Github开发版本安装，支持DSL2语法：
 
-这里安装我自己修改过的版本（ps暂时没有被合并）
 
 ```{sh}
-git clone https://github.com/lch14forever/nextflow.git
+git clone https://github.com/nextflow-io/nextflow.git
 
 cd nextflow
 
@@ -59,6 +58,10 @@ make pack
 ```
 
 最后的Nextflow在`build/releases/nextflow-19.09.0-edge-all`，可以重新命名为`nextflow`并放在`$PATH`中。
+
+```{sh}
+export PATH=$PATH:/PATH/TO/REPO/build/releases/
+```
 
 (未完)
 
