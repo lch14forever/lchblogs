@@ -11,6 +11,215 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>基于Nextflow的宏基因组有参分析-III 质控&#43;去宿主DNA</title>
+      <link>/post/2019-10-01-nextflow-decont/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-01-nextflow-decont/</guid>
+      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shell脚本&lt;/h2&gt;
+&lt;p&gt;质控和去宿主主要由以下工具完成：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;fastp: 去接头，修剪低质量序列&lt;/li&gt;
+&lt;li&gt;BWA + samtools：去宿主&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;参照这篇&lt;a href=&#34;http://www.metagenomics.wiki/tools/short-read/remove-host-sequences&#34;&gt;教程&lt;/a&gt;，我们可以设计如下简单的流程：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/bash
+
+## requirement:
+## fastp, BWA, samtools &amp;gt;= 1.7
+
+ref=$1
+reads1=$2
+reads2=$3
+prefix=$4
+threads=${5:-4}
+
+fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | 
+    bwa mem -p -t $threads $ref - | 
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处尽可能地使用管道来避免硬盘读写和不必要的数据存储。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nextflow模块&lt;/h2&gt;
+&lt;p&gt;我们可以把以上脚本写成简单的nextflow模块decont.nf：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.index = &amp;#39;hg19.fa&amp;#39;
+params.outdir = &amp;#39;./&amp;#39;
+
+process DECONT {
+    tag &amp;quot;${prefix}&amp;quot;
+    cpus 8
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+    output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | \\
+    bwa mem -p -t $task.cpus ${index_path}/${params.index} - | \\
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -
+    &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;模块参数:&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.index = &amp;#39;hg19.fa&amp;#39;
+params.outdir = &amp;#39;./&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;和上一篇介绍的流程参数一致，定义了在该模块的参数（我推测这些参数的scope是local，即仅限于该模块，有待确定）。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;过程定义：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;process DECONT {
+    input:
+    ...
+    output:
+    ...
+    script:
+    ...
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;以上为Nextflow过程(process)的骨架结构，主要由输入(input)，输出(output)，脚本(script)来构成。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;过程指令：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;tag &amp;quot;${prefix}&amp;quot;
+cpus 8
+publishDir params.outdir, mode: &amp;#39;copy&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tag&lt;/code&gt;：给每一个过程执行命名，方便在执行日志中查看&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cpus&lt;/code&gt;：此过程运行时的CPU数量&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;publishDir&lt;/code&gt;：结果发布路径，运行完成后将最终的结果（由&lt;code&gt;output&lt;/code&gt;定义）拷贝（&lt;code&gt;&#39;copy&#39;&lt;/code&gt;）到该路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;更多的指令建议参考Nextflow的&lt;a href=&#34;https://www.nextflow.io/docs/latest/process.html#directives&#34;&gt;官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;输入、输出：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;由关键字&lt;code&gt;input:&lt;/code&gt;或&lt;code&gt;output:&lt;/code&gt;(注意冒号)构成，后面接内容(全都为&lt;code&gt;Channel&lt;/code&gt;类型)。内容可包含：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;值(&lt;code&gt;val&lt;/code&gt;)：可省略&lt;/li&gt;
+&lt;li&gt;文件(&lt;code&gt;file&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;列表(&lt;code&gt;tuple&lt;/code&gt;)：形式为&lt;code&gt;[element1, element2, elemnet3, ...]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注：似乎在Nextflow文档中&lt;code&gt;tuple&lt;/code&gt;和&lt;code&gt;list&lt;/code&gt;等同。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;脚本&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;script:
+    &amp;quot;&amp;quot;&amp;quot;
+    fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | \\
+    bwa mem -p -t $task.cpus ${index_path}/${params.index} - | \\
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -
+    &amp;quot;&amp;quot;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用&lt;code&gt;\$&lt;/code&gt;开头。注意脚本部分涉及的文件(或路径)必须是Channel。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;在主脚本中调用模块&lt;/h2&gt;
+&lt;p&gt;延续上一篇中的主脚本(&lt;code&gt;main.nf&lt;/code&gt;)，我们可以调用DECONT过程：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// parameters decont                                                                       // ***
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;                                                // ***
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;                                                          // ***
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;                                     // ***
+ch_bwa_idx = file(params.decont_refpath)                                                   // ***
+include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)  // ***
+
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+workflow{                                                                                 // ***
+    DECONT(ch_bwa_idx, ch_reads)                                                          // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;加入&lt;code&gt;// ***&lt;/code&gt;的部分为添加的内容&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div id=&#34;decont&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;配置DECONT过程参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters decont                                                                       // ***
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;                                                // ***
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;                                                          // ***
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;                                     // ***
+ch_bwa_idx = file(params.decont_refpath)                                                   // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;我们知道DECONT部分需要四个参数：
+1. BWA索引路径
+1. BWA索引的前缀
+1. DECONT输出路径
+1. 输入fastq文件：[prefix, r1.fastq, r2.fastq] (&lt;code&gt;tuple prefix, file(reads1), file(reads2)&lt;/code&gt;)
+&lt;strong&gt;注意这里BWA索引路径需要以Channel的形式传入&lt;/strong&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;引用模块&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)  // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;非文件或路径的参数通过&lt;code&gt;params(param1:, param2:)&lt;/code&gt;传入。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程定义&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;workflow{                                                                                 // ***
+    DECONT(ch_bwa_idx, ch_reads)                                                          // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;执行流程，process所需的输入文件通过上面的方式传入。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;执行&lt;/h2&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls data
+SRR1950772_1.fastq.gz  SRR1950772_2.fastq.gz  SRR1950773_1.fastq.gz  SRR1950773_2.fastq.gz
+$ ./main.nf
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [desperate_mcnulty] - revision: f74174c1c6
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+executor &amp;gt;  local (2)
+[f7/14223b] process &amp;gt; DECONT (SRR1950773) [100%] 2 of 2 ✔&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看结果：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ls pipeline_output/decont_out/
+SRR1950772_fastpdecont_1.fastq.gz  SRR1950772.html  SRR1950773_fastpdecont_1.fastq.gz  SRR1950773.html
+SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fastq.gz  SRR1950773.json&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>基于Nextflow的宏基因组有参分析-II 主函数和输入输出</title>
       <link>/post/2019-09-29-nextflow-main/</link>
       <pubDate>Sun, 29 Sep 2019 00:00:00 +0000</pubDate>
@@ -1060,80 +1269,6 @@ docker rmi [image] # 删除镜像&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;Commit&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Add confidence ellipse to LDA ordination plot II</title>
-      <link>/post/2017-12-29-r-addconfellipse/</link>
-      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-12-29-r-addconfellipse/</guid>
-      <description>&lt;section class=&#34;level2&#34;&gt;
-&lt;h2&gt;为排序图添加置信范围曲线&lt;/h2&gt;
-&lt;p&gt;上一篇&lt;a href=&#34;http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/&#34;&gt;文章&lt;/a&gt;我们利用&lt;a href=&#34;https://github.com/fawda123/ggord&#34;&gt;ggord&lt;/a&gt;的源代码改写了一个为LDA排序图添加置信曲线的函数，现在&lt;a href=&#34;https://guangchuangyu.github.io/&#34;&gt;Y叔&lt;/a&gt;已经把它改写成了一个geom添加在了他的&lt;a href=&#34;https://github.com/GuangchuangYu/yyplot&#34;&gt;yyplot&lt;/a&gt;包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggord)
-library(yyplot)
-library(MASS)&lt;/code&gt;&lt;/pre&gt;
-&lt;section id=&#34;lda&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;LDA&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3)
-ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/lda-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;pca&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;PCA&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- prcomp(iris[, 1:4])
-ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/pca-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;mds&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;MDS&lt;/h3&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(vegan)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Loading required package: permute&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Loading required package: lattice&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## This is vegan 2.4-4&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ord &amp;lt;- metaMDS(iris[, 1:4])&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Run 0 stress 0.03775523 
-## Run 1 stress 0.05879963 
-## Run 2 stress 0.05771902 
-## Run 3 stress 0.03775576 
-## ... Procrustes: rmse 6.70624e-05  max resid 0.0002355622 
-## ... Similar to previous best
-## Run 4 stress 0.0599531 
-## Run 5 stress 0.04367524 
-## Run 6 stress 0.05537389 
-## Run 7 stress 0.03775524 
-## ... Procrustes: rmse 9.47124e-06  max resid 4.820747e-05 
-## ... Similar to previous best
-## Run 8 stress 0.03775578 
-## ... Procrustes: rmse 2.073778e-05  max resid 0.000125111 
-## ... Similar to previous best
-## Run 9 stress 0.04367554 
-## Run 10 stress 0.03775534 
-## ... Procrustes: rmse 1.898558e-05  max resid 5.211088e-05 
-## ... Similar to previous best
-## Run 11 stress 0.04367546 
-## Run 12 stress 0.06174009 
-## Run 13 stress 0.04367526 
-## Run 14 stress 0.0377554 
-## ... Procrustes: rmse 3.074059e-05  max resid 0.0001171343 
-## ... Similar to previous best
-## Run 15 stress 0.05093855 
-## Run 16 stress 0.05398536 
-## Run 17 stress 0.03775584 
-## ... Procrustes: rmse 7.169048e-05  max resid 0.0002630254 
-## ... Similar to previous best
-## Run 18 stress 0.03775551 
-## ... Procrustes: rmse 4.556503e-05  max resid 0.0001590274 
-## ... Similar to previous best
-## Run 19 stress 0.04804016 
-## Run 20 stress 0.04355825 
-## *** Solution reached&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-12-29-r-addConfEllipse_files/figure-html/mds-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
 &lt;/section&gt;
 </description>
     </item>
