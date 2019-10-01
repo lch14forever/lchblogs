@@ -9,6 +9,7 @@ summary: "使用fastp, BWA, samtools完成宏基因组数据预处理"
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 ```
 
@@ -142,7 +143,7 @@ script:
     """
 ```
  
-Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用`\$`开头。注意脚本部分涉及的文件(或路径)必须是Channel。
+Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用`\$`开头。脚本部分涉及的文件(或路径)必须是Channel。
 
 ## 在主脚本中调用模块
 
@@ -202,10 +203,12 @@ ch_bwa_idx = file(params.decont_refpath)                                        
 ```
 
 我们知道DECONT部分需要四个参数：
+
  1. BWA索引路径
  1. BWA索引的前缀
  1. DECONT输出路径
  1. 输入fastq文件：[prefix, r1.fastq, r2.fastq] (`tuple prefix, file(reads1), file(reads2)`)
+ 
 **注意这里BWA索引路径需要以Channel的形式传入**。
 
 ### 引用模块

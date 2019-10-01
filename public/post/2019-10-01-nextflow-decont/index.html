@@ -407,7 +407,7 @@ output:
     bwa mem -p -t $task.cpus ${index_path}/${params.index} - | \\
     samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -
     &quot;&quot;&quot;</code></pre>
-<p>Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用<code>\$</code>开头。注意脚本部分涉及的文件(或路径)必须是Channel。</p>
+<p>Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用<code>\$</code>开头。脚本部分涉及的文件(或路径)必须是Channel。</p>
 </div>
 </div>
 <div class="section level2">
@@ -461,12 +461,14 @@ params.decont_refpath = &#39;/data/nucleotide/&#39;                             
 params.decont_index   = &#39;hg19.fa&#39;                                                          // ***
 params.decont_outdir  = &#39;./pipeline_output/decont_out&#39;                                     // ***
 ch_bwa_idx = file(params.decont_refpath)                                                   // ***</code></pre>
-<p>我们知道DECONT部分需要四个参数：
-1. BWA索引路径
-1. BWA索引的前缀
-1. DECONT输出路径
-1. 输入fastq文件：[prefix, r1.fastq, r2.fastq] (<code>tuple prefix, file(reads1), file(reads2)</code>)
-<strong>注意这里BWA索引路径需要以Channel的形式传入</strong>。</p>
+<p>我们知道DECONT部分需要四个参数：</p>
+<ol style="list-style-type: decimal">
+<li>BWA索引路径</li>
+<li>BWA索引的前缀</li>
+<li>DECONT输出路径</li>
+<li>输入fastq文件：[prefix, r1.fastq, r2.fastq] (<code>tuple prefix, file(reads1), file(reads2)</code>)</li>
+</ol>
+<p><strong>注意这里BWA索引路径需要以Channel的形式传入</strong>。</p>
 </div>
 <div class="section level3">
 <h3>引用模块</h3>
