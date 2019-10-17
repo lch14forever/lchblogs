@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2019-10-17-nextflow-kraken/</loc>
+      <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/2019-10-01-nextflow-decont/</loc>
       <lastmod>2019-10-01T00:00:00+00:00</lastmod>
     </url>
@@ -474,7 +483,7 @@
     <url>
     
       <loc>/tags/nextflow/</loc>
-      <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+      <lastmod>2019-10-17T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -484,7 +493,7 @@
     <url>
     
       <loc>/categories/nextflow/</loc>
-      <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+      <lastmod>2019-10-17T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

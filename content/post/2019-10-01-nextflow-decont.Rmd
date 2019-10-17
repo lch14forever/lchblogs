@@ -242,7 +242,7 @@ executor >  local (2)
 
 查看结果：
 ```{sh}
-$ls pipeline_output/decont_out/
+$ ls pipeline_output/decont_out/
 SRR1950772_fastpdecont_1.fastq.gz  SRR1950772.html  SRR1950773_fastpdecont_1.fastq.gz  SRR1950773.html
 SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fastq.gz  SRR1950773.json
 ```

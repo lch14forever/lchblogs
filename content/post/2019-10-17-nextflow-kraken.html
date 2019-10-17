@@ -1,0 +1,227 @@
+---
+title: "基于Nextflow的宏基因组有参分析-IV Kraken2+Bracken"
+author: "Chenhao Li"
+output: html_document
+categories: ["Nextflow"]
+tags: ["Nextflow"]
+date: 2019-10-17
+summary: "使用Kraken2+Bracken获取各级分类的相对丰度"
+---
+
+
+
+<div id="shell" class="section level2">
+<h2>Shell脚本</h2>
+<p>和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：</p>
+<pre class="sh"><code>#!/bin/bash
+set -e -o pipefail
+source activate metagenomics
+
+fq1=$1
+fq2=$2
+prefix=$3
+KRAKEN_DB=/data/minikraken2_v2_8GB 
+
+### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &gt; /dev/null
+
+
+for tax in s g;
+do
+bracken -d ${KRAKEN_DB} \
+    -i ${prefix}.kraken2 \
+    -o ${prefix}.bracken.${tax} \
+    -l ${tax^^}
+
+sed &#39;s/ /_/g&#39; ${prefix}.bracken.${tax} | \
+    tail -n+2 | \
+    cut -f 1,7 &gt; ${prefix}.${tax}
+done</code></pre>
+<p>在上面的脚本里面，为了获取mpa（MetaPhlAn）格式的输出，我运行了两次Kraken2，第一次生成mpa格式的分类谱，第二次生成Bracken所需要的report格式。Kraken2的参考数据库（含Bracken参考）可从官方<a href="https://ccb.jhu.edu/software/kraken2/downloads.shtml">FTP</a>下载。</p>
+</div>
+<div id="nextflow" class="section level2">
+<h2>Nextflow模块</h2>
+<p>将上面的脚本写成一个nextflow模块kraken2.nf：</p>
+<pre class="groovy"><code>params.outdir = &#39;./&#39;
+
+process KRAKEN2 {
+    tag &quot;${prefix}&quot;
+    cpus 8
+    publishDir params.outdir, mode: &#39;copy&#39;
+
+    input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+    output:
+    tuple prefix, file(&quot;${prefix}.kraken2.report&quot;)
+    tuple prefix, file(&quot;${prefix}.kraken2.tax&quot;)
+    file &quot;${prefix}.kraken2.out&quot;
+
+    script:
+    &quot;&quot;&quot;
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpus \\
+    --output ${prefix}.kraken2.out \\
+    --report ${prefix}.kraken2.tax \\
+    $reads1 $reads2 \\
+    --use-mpa-style \\
+
+    ### run again for bracken
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpu \\
+    --report ${prefix}.kraken2.report \\
+    $reads1 $reads2 \\
+    --output -
+    &quot;&quot;&quot;
+}
+
+process BRACKEN {
+    tag &quot;${prefix}&quot;
+    publishDir params.outdir, mode: &#39;copy&#39;
+
+    input:
+    file index_path  // This must have the bracken database
+    tuple prefix, file(kraken2_report)
+    each tax
+
+    output:
+    file &quot;${prefix}*.tsv&quot;
+
+    script:
+    &quot;&quot;&quot;
+    TAX=$tax; \\
+
+    bracken -d $index_path \\
+    -i $kraken2_report \\
+    -o ${prefix}.bracken.${tax} \\
+    -l \${TAX^^}; \\
+
+    sed &#39;s/ /_/g&#39; ${prefix}.bracken.${tax} | \\
+    tail -n+2 | \\
+    cut -f 1,7 &gt; ${prefix}.bracken.${tax}.tsv
+    &quot;&quot;&quot;
+}</code></pre>
+<p>其中<code>each</code>相当于上面脚本的<code>for</code>循环，对于不同的分类<code>s</code>（species），<code>g</code>（genus）分别运行bracken。</p>
+</div>
+<div class="section level2">
+<h2>主脚本中调用模块</h2>
+<p>接上一篇中的主脚本（<code>main.nf</code>），我们可以直接使用DECONT过程的结果作为Kraken2+Bracken的输入：</p>
+<pre class="groovy"><code>#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &quot;${workflow.projectDir}/data&quot;
+
+// parameters decont
+params.decont_refpath = &#39;/data/nucleotide/&#39;
+params.decont_index   = &#39;hg19.fa&#39;
+params.decont_outdir  = &#39;./pipeline_output/decont_out&#39;
+ch_bwa_idx = file(params.decont_refpath)
+// parameters kraken2                                              // ***
+params.kraken2_refpath = &#39;/data/minikraken2_v2_8GB_201904_UPDATE/&#39; // ***
+params.kraken2_outdir = &#39;./pipeline_output/kraken2_out&#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***
+
+include &#39;./decont&#39; params(index: &quot;$params.decont_index&quot;, outdir: &quot;$params.decont_outdir&quot;)
+include &#39;./kraken2&#39; params(outdir: &quot;$params.kraken2_outdir&quot;)       // ***
+
+
+// help message
+def helpMessage() {
+    log.info&quot;&quot;&quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &quot;&quot;&quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &#39;/**{1,2}.f*q*&#39;, flat: true)
+
+workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&#39;s&#39;, &#39;g&#39;)) // ***
+}</code></pre>
+<p>加入<code>// ***</code>的部分为添加的内容</p>
+</div>
+<div class="section level2">
+<h2>逐行解析</h2>
+<div class="section level3">
+<h3>配置参数</h3>
+<pre class="groovy"><code>// parameters kraken2                                              // ***
+params.kraken2_refpath = &#39;/data/minikraken2_v2_8GB_201904_UPDATE/&#39; // ***
+params.kraken2_outdir = &#39;./pipeline_output/kraken2_out&#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***</code></pre>
+<p>此处于DECONT过程的配置类似，这里假设Bracken的索引和Kraken2的索引在同一个目录下。</p>
+</div>
+<div class="section level3">
+<h3>引用模块</h3>
+<pre class="groovy"><code>include &#39;./kraken2&#39; params(outdir: &quot;$params.kraken2_outdir&quot;)      // ***</code></pre>
+<p>此处与DECONT过程的配置类似</p>
+</div>
+<div class="section level3">
+<h3>流程定义</h3>
+<pre class="groovy"><code>workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&#39;s&#39;, &#39;g&#39;)) // ***
+}</code></pre>
+<p>在上一篇博文，DECONT的输出被定义为两个tuple：</p>
+<pre class="groovy"><code>output:
+    tuple prefix, file(&quot;${prefix}*1.fastq.gz&quot;), file(&quot;${prefix}*2.fastq.gz&quot;)
+    tuple file(&quot;${prefix}.html&quot;), file(&quot;${prefix}.json&quot;)</code></pre>
+<p>第一个tuple为去宿主DNA之后的fastq文件，第二个为fastp的质控文件，运行KRAKEN过程的时候，我们以<code>DECONT.out[0]</code>来使用DECONT过程结果的第一个tuple。同样的，在BRACKEN过程调用时，我们以<code>KRAKEN2.out[0]</code>来使用KRAKEN2过程结果的第一个tuple</p>
+</div>
+</div>
+<div class="section level2">
+<h2>执行</h2>
+<pre class="sh"><code>$ ls data
+$ ./main.nf
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [jolly_heyrovsky] - revision: b913fda572
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+executor &gt;  local (8)
+[6f/7c66ef] process &gt; DECONT (SRR1950773)  [100%] 2 of 2 ✔
+[51/9f4f92] process &gt; KRAKEN2 (SRR1950773) [100%] 2 of 2 ✔
+[c7/603e5e] process &gt; BRACKEN (SRR1950772) [100%] 4 of 4 ✔
+Completed at: 17-Oct-2019 12:57:14
+Duration    : 3m 50s
+CPU hours   : 0.5
+Succeeded   : 8</code></pre>
+<p>查看结果：</p>
+<pre class="sh"><code>$ ls pipeline_output/kraken2_out/
+SRR1950772.bracken.g.tsv  SRR1950772.kraken2.out     SRR1950772.kraken2.tax    SRR1950773.bracken.s.tsv  SRR1950773.kraken2.report
+SRR1950772.bracken.s.tsv  SRR1950772.kraken2.report  SRR1950773.bracken.g.tsv  SRR1950773.kraken2.out    SRR1950773.kraken2.tax</code></pre>
+<p>参考：
+<a href="https://www.nextflow.io/docs/latest/" class="uri">https://www.nextflow.io/docs/latest/</a></p>
+<p>(未完)</p>
+</div>

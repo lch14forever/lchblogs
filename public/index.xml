@@ -11,6 +11,230 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>基于Nextflow的宏基因组有参分析-IV Kraken2&#43;Bracken</title>
+      <link>/post/2019-10-17-nextflow-kraken/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-17-nextflow-kraken/</guid>
+      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shell脚本&lt;/h2&gt;
+&lt;p&gt;和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/bash
+set -e -o pipefail
+source activate metagenomics
+
+fq1=$1
+fq2=$2
+prefix=$3
+KRAKEN_DB=/data/minikraken2_v2_8GB 
+
+### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &amp;gt; /dev/null
+
+
+for tax in s g;
+do
+bracken -d ${KRAKEN_DB} \
+    -i ${prefix}.kraken2 \
+    -o ${prefix}.bracken.${tax} \
+    -l ${tax^^}
+
+sed &amp;#39;s/ /_/g&amp;#39; ${prefix}.bracken.${tax} | \
+    tail -n+2 | \
+    cut -f 1,7 &amp;gt; ${prefix}.${tax}
+done&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在上面的脚本里面，为了获取mpa（MetaPhlAn）格式的输出，我运行了两次Kraken2，第一次生成mpa格式的分类谱，第二次生成Bracken所需要的report格式。Kraken2的参考数据库（含Bracken参考）可从官方&lt;a href=&#34;https://ccb.jhu.edu/software/kraken2/downloads.shtml&#34;&gt;FTP&lt;/a&gt;下载。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nextflow模块&lt;/h2&gt;
+&lt;p&gt;将上面的脚本写成一个nextflow模块kraken2.nf：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.outdir = &amp;#39;./&amp;#39;
+
+process KRAKEN2 {
+    tag &amp;quot;${prefix}&amp;quot;
+    cpus 8
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+    output:
+    tuple prefix, file(&amp;quot;${prefix}.kraken2.report&amp;quot;)
+    tuple prefix, file(&amp;quot;${prefix}.kraken2.tax&amp;quot;)
+    file &amp;quot;${prefix}.kraken2.out&amp;quot;
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpus \\
+    --output ${prefix}.kraken2.out \\
+    --report ${prefix}.kraken2.tax \\
+    $reads1 $reads2 \\
+    --use-mpa-style \\
+
+    ### run again for bracken
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpu \\
+    --report ${prefix}.kraken2.report \\
+    $reads1 $reads2 \\
+    --output -
+    &amp;quot;&amp;quot;&amp;quot;
+}
+
+process BRACKEN {
+    tag &amp;quot;${prefix}&amp;quot;
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path  // This must have the bracken database
+    tuple prefix, file(kraken2_report)
+    each tax
+
+    output:
+    file &amp;quot;${prefix}*.tsv&amp;quot;
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    TAX=$tax; \\
+
+    bracken -d $index_path \\
+    -i $kraken2_report \\
+    -o ${prefix}.bracken.${tax} \\
+    -l \${TAX^^}; \\
+
+    sed &amp;#39;s/ /_/g&amp;#39; ${prefix}.bracken.${tax} | \\
+    tail -n+2 | \\
+    cut -f 1,7 &amp;gt; ${prefix}.bracken.${tax}.tsv
+    &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中&lt;code&gt;each&lt;/code&gt;相当于上面脚本的&lt;code&gt;for&lt;/code&gt;循环，对于不同的分类&lt;code&gt;s&lt;/code&gt;（species），&lt;code&gt;g&lt;/code&gt;（genus）分别运行bracken。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;主脚本中调用模块&lt;/h2&gt;
+&lt;p&gt;接上一篇中的主脚本（&lt;code&gt;main.nf&lt;/code&gt;），我们可以直接使用DECONT过程的结果作为Kraken2+Bracken的输入：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// parameters decont
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;
+ch_bwa_idx = file(params.decont_refpath)
+// parameters kraken2                                              // ***
+params.kraken2_refpath = &amp;#39;/data/minikraken2_v2_8GB_201904_UPDATE/&amp;#39; // ***
+params.kraken2_outdir = &amp;#39;./pipeline_output/kraken2_out&amp;#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***
+
+include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)
+include &amp;#39;./kraken2&amp;#39; params(outdir: &amp;quot;$params.kraken2_outdir&amp;quot;)       // ***
+
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&amp;#39;s&amp;#39;, &amp;#39;g&amp;#39;)) // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;加入&lt;code&gt;// ***&lt;/code&gt;的部分为添加的内容&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;配置参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters kraken2                                              // ***
+params.kraken2_refpath = &amp;#39;/data/minikraken2_v2_8GB_201904_UPDATE/&amp;#39; // ***
+params.kraken2_outdir = &amp;#39;./pipeline_output/kraken2_out&amp;#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处于DECONT过程的配置类似，这里假设Bracken的索引和Kraken2的索引在同一个目录下。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;引用模块&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;include &amp;#39;./kraken2&amp;#39; params(outdir: &amp;quot;$params.kraken2_outdir&amp;quot;)      // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处与DECONT过程的配置类似&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程定义&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&amp;#39;s&amp;#39;, &amp;#39;g&amp;#39;)) // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在上一篇博文，DECONT的输出被定义为两个tuple：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;第一个tuple为去宿主DNA之后的fastq文件，第二个为fastp的质控文件，运行KRAKEN过程的时候，我们以&lt;code&gt;DECONT.out[0]&lt;/code&gt;来使用DECONT过程结果的第一个tuple。同样的，在BRACKEN过程调用时，我们以&lt;code&gt;KRAKEN2.out[0]&lt;/code&gt;来使用KRAKEN2过程结果的第一个tuple&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;执行&lt;/h2&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls data
+$ ./main.nf
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [jolly_heyrovsky] - revision: b913fda572
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+executor &amp;gt;  local (8)
+[6f/7c66ef] process &amp;gt; DECONT (SRR1950773)  [100%] 2 of 2 ✔
+[51/9f4f92] process &amp;gt; KRAKEN2 (SRR1950773) [100%] 2 of 2 ✔
+[c7/603e5e] process &amp;gt; BRACKEN (SRR1950772) [100%] 4 of 4 ✔
+Completed at: 17-Oct-2019 12:57:14
+Duration    : 3m 50s
+CPU hours   : 0.5
+Succeeded   : 8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看结果：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls pipeline_output/kraken2_out/
+SRR1950772.bracken.g.tsv  SRR1950772.kraken2.out     SRR1950772.kraken2.tax    SRR1950773.bracken.s.tsv  SRR1950773.kraken2.report
+SRR1950772.bracken.s.tsv  SRR1950772.kraken2.report  SRR1950773.bracken.g.tsv  SRR1950773.kraken2.out    SRR1950773.kraken2.tax&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>基于Nextflow的宏基因组有参分析-III 质控&#43;去宿主DNA</title>
       <link>/post/2019-10-01-nextflow-decont/</link>
       <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
@@ -211,7 +435,7 @@ WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN
 executor &amp;gt;  local (2)
 [f7/14223b] process &amp;gt; DECONT (SRR1950773) [100%] 2 of 2 ✔&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;查看结果：&lt;/p&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ls pipeline_output/decont_out/
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls pipeline_output/decont_out/
 SRR1950772_fastpdecont_1.fastq.gz  SRR1950772.html  SRR1950773_fastpdecont_1.fastq.gz  SRR1950773.html
 SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fastq.gz  SRR1950773.json&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;参考：
@@ -1215,63 +1439,6 @@ ell &amp;lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  &lt;/c
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Useful commands for Docker</title>
-      <link>/post/2017-12-31-bioinfo-docker_notes/</link>
-      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2017-12-31-bioinfo-docker_notes/</guid>
-      <description>&lt;section id=&#34;docker&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;改变Docker容器存储路径&lt;/h2&gt;
-&lt;p&gt;Linux下Docker的默认存储目录为&lt;code&gt;/var/lib/docker&lt;/code&gt;。显然这个目录属于&lt;code&gt;root&lt;/code&gt;分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于&lt;code&gt;/home&lt;/code&gt;下。我根据这篇博客进行了更改&lt;a href=&#34;https://sanenthusiast.com/change-default-image-container-location-docker/&#34; class=&#34;uri&#34;&gt;https://sanenthusiast.com/change-default-image-container-location-docker/&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;docker&#34; class=&#34;level2&#34;&gt;
-&lt;h2&gt;Docker常用操作&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;加载镜像：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;gunzip -c [docker.img.tar.gz] | docker load
-
-docker pull [docker_image_name]
-
-cat [docker_file] | docker build -t [image_name] -&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;启动容器&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;# 基本命令
-docker run -it [image_name] 
-# 退出时删除容器，加载host的文件路径
-docker run -it --rm -v /host/directory:/container/directory [image_name]&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;attach&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker attach [container_name/container_hash_ID]&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;detach（容器在后台运行）：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Ctrl+p Ctrl+q&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;列出所有容器（包括未在运行中的）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker ps -a 
-docker rm [container] # 删除容器&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;列出所有镜像&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker images
-docker rmi [image] # 删除镜像&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;host和容器文件转移&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker cp [source] [target] # use container hash id or name &lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Commit&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
 </description>
     </item>
     
