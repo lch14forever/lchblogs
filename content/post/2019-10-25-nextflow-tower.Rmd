@@ -48,6 +48,6 @@ executor >  local (8)
 
 运行完成后可以查看流程使用资源的情况
 
-![](nextlfow-finish.png)
+![](nextflow-finish.png)
 
 (未完)
