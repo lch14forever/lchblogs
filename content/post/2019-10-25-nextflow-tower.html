@@ -1,0 +1,33 @@
+---
+title: "基于Nextflow的宏基因组有参分析-V Nextflow tower"
+author: "Chenhao Li"
+output: html_document
+categories: ["Nextflow"]
+tags: ["Nextflow"]
+date: 2019-10-25
+summary: "使用Nextflow tower实时监控流程的运行情况"
+---
+
+
+
+<p>登录Nextflow Tower的<a href="tower.nf">官方网站</a></p>
+<p>点击“Sign in”并输入邮箱，会在邮箱中收到登录链接</p>
+<p><img src="nextflow-login.png" /></p>
+<p>登陆后看到如下界面</p>
+<p><img src="nextflow-token.png" /></p>
+<p>在运行nextflow前设置环境变量</p>
+<pre class="sh"><code>$ export TOWER_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxx</code></pre>
+<p>在运行上一篇的流程时，加入<code>-with-tower</code>参数</p>
+<pre class="sh"><code>$ ./main.nf --read_path data -with-tower
+
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [angry_venter] - revision: 72dddbcd1f
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+Monitor the execution with Nextflow Tower using this url https://tower.nf/watch/xxxxxx
+executor &gt;  local (8)
+</code></pre>
+<p>使用上面的链接或登录Nextflow Tower便可实时监控流程的运行</p>
+<p><img src="nextflow-tower.png" /></p>
+<p>运行完成后可以查看流程使用资源的情况</p>
+<p><img src="nextlfow-finish.png" /></p>
+<p>(未完)</p>
