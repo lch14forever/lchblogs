@@ -11,6 +11,15 @@
     <atom:link href="/publication/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment</title>
+      <link>/publication/hospital/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/hospital/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
       <link>/publication/predict_review/</link>
       <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>

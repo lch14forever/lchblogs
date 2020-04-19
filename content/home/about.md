@@ -34,4 +34,4 @@ weight = 5
 # Biography
 
 
-I am a PostDoc Fellow at Computational and System Biology Group 5 (CSB5), Genome Institute of Singapore (GIS). I obtained my Doctoral degree from National University of Singapore under the supervision of Dr. Niranjan Nagarajan and Professor Wong Lim Soon. I have a specific in studying microbial communities -- understanding their composition, function and dynamics.
+I am currently a reasearch associate at the Laboratory of Metagenomic Technologies and Microbial Systems (fomerly CSB5), Genome Institute of Singapore (GIS). I graduated from National University of Singapore under the supervision of Dr. Niranjan Nagarajan and Professor Wong Lim Soon. I have a specific in studying microbial communities -- understanding their composition, function and dynamics.
