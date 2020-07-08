@@ -25,54 +25,79 @@
       <pubDate>Tue, 29 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-10-29-nextflow-tower-deploy/</guid>
-      <description>&lt;div class=&#34;section level3&#34;&gt;
+      <description>&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;测试环境&lt;/h3&gt;
 &lt;p&gt;Ubuntu 18.04 （Root权限）&lt;/p&gt;
+&lt;p&gt;AWS安全组配置：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;Custom TCP&lt;/th&gt;
+&lt;th&gt;TCP&lt;/th&gt;
+&lt;th&gt;8000&lt;/th&gt;
+&lt;th&gt;0.0.0.0/0&lt;/th&gt;
+&lt;th&gt;ss&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Custom TCP&lt;/td&gt;
+&lt;td&gt;TCP&lt;/td&gt;
+&lt;td&gt;8000&lt;/td&gt;
+&lt;td&gt;::/0&lt;/td&gt;
+&lt;td&gt;ss&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;/div&gt;
-&lt;div id=&#34;jdk1.8&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;安装jdk1.8及编译依赖&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;安装jdk（&amp;gt;1.8）及编译依赖&lt;/h3&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt update
 sudo apt install openjdk-8-jdk-headless
 sudo apt install build-essential&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;dockerdocker-compose&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;安装dockerdocker-compose&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;安装docker，docker-compose&lt;/h3&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt install docker.io
 sudo curl -L &amp;quot;https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)&amp;quot; -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;docker&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;更改docker权限此处需要登出并重新登陆&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;更改docker权限（此处需要登出并重新登陆）&lt;/h3&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo usermod -a -G docker $USER&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;nf-tower&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;下载nf-tower&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;下载nf-tower&lt;/h3&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;## install git
 sudo apt install git
 git clone https://github.com/seqeralabs/nf-tower&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;配置环境变量&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;配置环境变量&lt;/h3&gt;
 &lt;p&gt;此处需要申请一个发邮件的服务器，nf推荐了https://sendgrid.com&lt;/p&gt;
 &lt;p&gt;在左侧选项栏点击&lt;code&gt;Settings&lt;/code&gt;–&amp;gt;&lt;code&gt;APIKeys&lt;/code&gt;–&amp;gt;&lt;code&gt;Create API Key&lt;/code&gt;–&amp;gt;输入key name并选择Full Access
 点击生成的秘钥直接拷贝到剪切板，如“SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx”&lt;/p&gt;
-&lt;p&gt;以下环境变量写入&lt;code&gt;~/.bashrc&lt;/code&gt;（Ubuntu下也可用&lt;code&gt;~/.bash_aliases&lt;/code&gt;）&lt;/p&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export TOWER_SMTP_HOST=&amp;quot;smtp.sendgrid.net&amp;quot;
-export TOWER_SMTP_PORT=&amp;quot;587&amp;quot;
-export TOWER_SMTP_USER=&amp;quot;apikey&amp;quot;
-export TOWER_SMTP_PASSWORD=&amp;quot;SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;编辑配置文件&lt;code&gt;nf-tower/tower-backend/src/main/resources/application.yml&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;...
+  smtp:
+    host: &amp;quot;smtp.sendgrid.net&amp;quot;
+    port: &amp;quot;587&amp;quot;
+    auth: &amp;quot;${TOWER_SMTP_AUTH:true}&amp;quot;
+    user: &amp;quot;apikey&amp;quot;
+    password: &amp;quot;SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx&amp;quot;
+...&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;tower&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;编译tower&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;编译tower&lt;/h3&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;make build
 make run&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;nextflow-tower&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;使用nextflow-tower&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;使用Nextflow Tower&lt;/h3&gt;
 &lt;p&gt;使用方法基本与tower.nf网站一致。有一点需要注意，如果nextflow部署在服务器上，需要修改邮件中的链接地址：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;邮件中链接为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;localhost&lt;/strong&gt;:8000/auth?email=用户名%40邮箱域名&amp;amp;authToken=c5618b821d6ccxxxxxxxxxxxx&lt;/li&gt;
-&lt;li&gt;修改为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;服务器地址&lt;/strong&gt;:8000/auth?email=用户名%40邮箱域名&amp;amp;authToken=c5618b821d6ccxxxxxxxxxxxx&lt;/li&gt;
+&lt;li&gt;邮件中链接为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;localhost&lt;/strong&gt;:8000/auth?uid=xxxx&lt;/li&gt;
+&lt;li&gt;修改为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;服务器地址&lt;/strong&gt;:8000/auth?uid=xxxx&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;(未完)&lt;/p&gt;
 &lt;/div&gt;

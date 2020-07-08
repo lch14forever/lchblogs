@@ -17,6 +17,12 @@ knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 
 Ubuntu 18.04 （Root权限）
 
+AWS安全组配置：
+
+| Custom TCP | TCP | 8000 | 0.0.0.0/0 | ss |
+|------------|-----|------|-----------|----|
+| Custom TCP | TCP | 8000 | ::/0      | ss |
+
 ### 安装jdk（>1.8）及编译依赖
 
 ```{sh}
@@ -54,12 +60,16 @@ git clone https://github.com/seqeralabs/nf-tower
 在左侧选项栏点击`Settings`-->`APIKeys`-->`Create API Key`-->输入key name并选择Full Access
 点击生成的秘钥直接拷贝到剪切板，如“SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx”
 
-以下环境变量写入`~/.bashrc`（Ubuntu下也可用`~/.bash_aliases`）
+编辑配置文件`nf-tower/tower-backend/src/main/resources/application.yml`
 ```{sh}
-export TOWER_SMTP_HOST="smtp.sendgrid.net"
-export TOWER_SMTP_PORT="587"
-export TOWER_SMTP_USER="apikey"
-export TOWER_SMTP_PASSWORD="SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx"
+...
+  smtp:
+    host: "smtp.sendgrid.net"
+    port: "587"
+    auth: "${TOWER_SMTP_AUTH:true}"
+    user: "apikey"
+    password: "SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx"
+...
 ```
 
 ### 编译tower
@@ -73,8 +83,8 @@ make run
 
 使用方法基本与tower.nf网站一致。有一点需要注意，如果nextflow部署在服务器上，需要修改邮件中的链接地址：
 
- - 邮件中链接为：http://**localhost**:8000/auth?email=用户名%40邮箱域名&authToken=c5618b821d6ccxxxxxxxxxxxx
- - 修改为：http://**服务器地址**:8000/auth?email=用户名%40邮箱域名&authToken=c5618b821d6ccxxxxxxxxxxxx
+ - 邮件中链接为：http://**localhost**:8000/auth?uid=xxxx
+ - 修改为：http://**服务器地址**:8000/auth?uid=xxxx
 
 
 
