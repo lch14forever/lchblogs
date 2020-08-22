@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 平日经常会分析shotgun宏基因组的数据，我们的[pipeline](https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics)使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
 
 ```{r}
-download.file("https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt", '~/Downloads/SRS014459-Stool_profile.txt')
+download.file("https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt", '~/Downloads/SRS014459-Stool_profile.txt')
 knitr::kable(head(read.table('~/Downloads/SRS014459-Stool_profile.txt')))
 ```
 
@@ -40,7 +40,7 @@ https://github.com/lch14forever/microbiomeViz
 
 #### 安装
 ```{r}
-devtools::install_github("lch14forever/microbiomeViz")
+devtools::install_github("lch14forever/microbiomeViz", dependencies = T)
 ```
 
 #### 使用

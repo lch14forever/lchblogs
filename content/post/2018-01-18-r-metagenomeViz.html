@@ -9,10 +9,10 @@ summary: "平日经常会分析shotgun宏基因组的数据，我们的[pipeline
 
 
 
-<div class="section level3">
+<div id="为啥写这个" class="section level3">
 <h3>为啥写这个</h3>
 <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
-<pre class="r"><code>download.file(&quot;https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
+<pre class="r"><code>download.file(&quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
 knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))</code></pre>
 <table>
 <thead>
@@ -49,32 +49,25 @@ knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;))
 </tbody>
 </table>
 <p>第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home">GraPhlAn</a>:</p>
-<div class="figure">
-<img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" />
-
-</div>
+<p><img src="https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png" /></p>
 <p>官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。<a href="https://github.com/marbl/Krona/wiki">Krona</a>可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404">Metacoder</a>，画出的图个人真心不是很喜欢：</p>
-<div class="figure">
-<img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" />
-
-</div>
+<p><img src="http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;id=info:doi/10.1371/journal.pcbi.1005404.g002" /></p>
 <p>跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。</p>
 </div>
-<div id="microbiomeviz" class="section level3">
+<div id="microbiomeviz千里之行始于足下" class="section level3">
 <h3>MicrobiomeViz–千里之行，始于足下</h3>
-<p>其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： <a href="https://github.com/lch14forever/microbiomeViz" class="uri">https://github.com/lch14forever/microbiomeViz</a></p>
+<p>其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）：
+<a href="https://github.com/lch14forever/microbiomeViz" class="uri">https://github.com/lch14forever/microbiomeViz</a></p>
 </div>
-<div id="metaphlanparser" class="section level3">
+<div id="metaphlan结果的parser" class="section level3">
 <h3>MetaPhlan结果的parser</h3>
-<div class="section level4">
+<div id="安装" class="section level4">
 <h4>安装</h4>
-<pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;)</code></pre>
-<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c.
-## 1.0/zoneinfo/Asia/Singapore&#39;</code></pre>
-<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (bff057bf) has not changed since last install.
+<pre class="r"><code>devtools::install_github(&quot;lch14forever/microbiomeViz&quot;, dependencies = T)</code></pre>
+<pre><code>## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (3db1d3a6) has not changed since last install.
 ##   Use `force = TRUE` to force installation</code></pre>
 </div>
-<div class="section level4">
+<div id="使用" class="section level4">
 <h4>使用</h4>
 <p>目前有三个函数：</p>
 <ul>
@@ -88,12 +81,30 @@ knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;))
 ## loading &#39;microbiomeViz&#39;</code></pre>
 <pre class="r"><code>data(&quot;SRS014459_Stool_profile&quot;)                    ## 上面的示例数据已经加如microbiomeViz
 tr &lt;- parseMetaphlanTSV(SRS014459_Stool_profile)   ## parsing</code></pre>
+<pre><code>## Warning: `select_()` is deprecated as of dplyr 0.7.0.
+## Please use `select()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<pre><code>## Warning: `as_data_frame()` is deprecated as of tibble 2.0.0.
+## Please use `as_tibble()` instead.
+## The signature and semantics have changed, see `?as_tibble`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
 </div>
-<div id="ggtree" class="section level4">
+<div id="基于ggtree的大戏" class="section level4">
 <h4>基于ggtree的大戏</h4>
 <p>做出树的骨架</p>
-<pre class="r"><code>p &lt;- tree.backbone(tr)
-p</code></pre>
+<pre class="r"><code>p &lt;- tree.backbone(tr)</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated as of tibble 1.1.0.
+## Please use `tibble()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<pre><code>## Warning: `mutate_()` is deprecated as of dplyr 0.7.0.
+## Please use `mutate()` instead.
+## See vignette(&#39;programming&#39;) for more help
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<pre class="r"><code>p</code></pre>
 <p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>微生物组常见的操作就是组间比较，我们可以向GraPhlAn那样把显著的节点高亮出来：</p>
 <pre class="r"><code>## 假设以下taxa在疾病组显著
@@ -101,16 +112,36 @@ anno.data &lt;- data.frame(node=c(&quot;g__Roseburia&quot;, &quot;c__Clostridia&
                        color=&#39;red&#39;, stringsAsFactors = FALSE)
 p &lt;- clade.anno(p, anno.data)
 p</code></pre>
+<pre><code>## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
+## returning -Inf</code></pre>
+<pre><code>## Warning in min(y): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(y): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
+## returning -Inf</code></pre>
+<pre><code>## Warning in min(y): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(y): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
+## returning -Inf</code></pre>
+<pre><code>## Warning in min(y): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(y): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
+## returning -Inf</code></pre>
+<pre><code>## Warning in min(y): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(y): no non-missing arguments to max; returning -Inf</code></pre>
 <p><img src="/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 </div>
-<div class="section level3">
+<div id="希望有更多的拓展" class="section level3">
 <h3>希望有更多的拓展</h3>
 <p>所有的操作均基于<code>treedata</code>和<code>ggtree</code>，正因为有了这些灵活的框架，上面的几个例子可拓展性还是很强的。</p>
 <ul>
-<li>[ ] 多个MetaPhlan表，节点大小取平均</li>
-<li>[ ] Biom数据支持</li>
-<li>[ ] 和heatmap结合</li>
-<li>[ ] …</li>
+<li><input type="checkbox" disabled="" />
+多个MetaPhlan表，节点大小取平均</li>
+<li><input type="checkbox" disabled="" />
+Biom数据支持</li>
+<li><input type="checkbox" disabled="" />
+和heatmap结合</li>
+<li><input type="checkbox" disabled="" />
+…</li>
 </ul>
 </div>
