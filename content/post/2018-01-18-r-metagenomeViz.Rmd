@@ -24,7 +24,7 @@ knitr::kable(head(read.table('~/Downloads/SRS014459-Stool_profile.txt')))
 
 ![](https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png)
 
-官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。[Krona](https://github.com/marbl/Krona/wiki)可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包[Metacoder](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404)，画出的图个人真心不是很喜欢：
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。[Krona](https://github.com/marbl/Krona/wiki)可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包[Metacoder](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404)，画出的图个人真心不是很喜欢：
 
 ![](http://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=info:doi/10.1371/journal.pcbi.1005404.g002)
 
