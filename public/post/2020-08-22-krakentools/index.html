@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
@@ -15,10 +13,18 @@
   
   
   
-  <meta name="description" content="Research associate">
+    
+      
+    
+  
+  <meta name="description" content="背景 Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用--use-mpa-style这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是运行两次Kraken2：
+### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null 经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。
+最近发现了Bracken的作者开发的很有用的工具集。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本kreport2mpa.py。
+ 使用kreport2mpa.py简化kraken流程 下面是简化后的Kraken2流程：
+kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.out \ --report ${prefix}.kraken2.report \ $reads1 $reads2 ### Convert kraken report to mpa file kreport2mpa.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/tags/bioinformatics/">
+  <link rel="alternate" hreflang="en-us" href="/post/2020-08-22-krakentools/">
 
   
 
@@ -79,7 +85,7 @@
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="/tags/bioinformatics/">
+  <link rel="canonical" href="/post/2020-08-22-krakentools/">
 
   <meta property="twitter:card" content="summary_large_image">
   
@@ -87,17 +93,23 @@
   <meta property="twitter:creator" content="@li_chenhao">
   
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
-  <meta property="og:url" content="/tags/bioinformatics/">
-  <meta property="og:title" content="Bioinformatics | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="Research associate">
+  <meta property="og:url" content="/post/2020-08-22-krakentools/">
+  <meta property="og:title" content="Kraken拓展工具KrakenTools | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="背景 Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用--use-mpa-style这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是运行两次Kraken2：
+### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null 经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。
+最近发现了Bracken的作者开发的很有用的工具集。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本kreport2mpa.py。
+ 使用kreport2mpa.py简化kraken流程 下面是简化后的Kraken2流程：
+kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.out \ --report ${prefix}.kraken2.report \ $reads1 $reads2 ### Convert kraken report to mpa file kreport2mpa.">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2020-08-22T00:00:00&#43;00:00">
+  <meta property="article:published_time" content="2020-08-22T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2020-08-22T00:00:00&#43;00:00">
   
 
   
 
-  <title>Bioinformatics | Chenhao&#39;s Personal Page</title>
+  <title>Kraken拓展工具KrakenTools | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -231,67 +243,194 @@
 </nav>
 
 
-
-
-
-<div class="universal-wrapper">
-
-  <h1>Bioinformatics</h1>
+<article class="article" itemscope itemtype="http://schema.org/Article">
 
   
 
-  
-  
-  <div>
-    <h2><a href="/post/2020-08-22-krakentools/">Kraken拓展工具KrakenTools</a></h2>
-    <div class="article-style">
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">Kraken拓展工具KrakenTools</h1>
+
       
-      KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2020-08-22 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Aug 22, 2020
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/metagenomics">Metagenomics</a
+    >, 
+    
+    <a href="/categories/bioinformatics">Bioinformatics</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <div id="背景" class="section level2">
+<h2>背景</h2>
+<p>Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用<code>--use-mpa-style</code>这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是<a href="https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/">运行两次Kraken2</a>：</p>
+<pre class="sh"><code>### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &gt; /dev/null</code></pre>
+<p>经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。</p>
+<p>最近发现了Bracken的作者开发的<a href="https://github.com/jenniferlu717/KrakenTools">很有用的工具集</a>。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本<code>kreport2mpa.py</code>。</p>
+</div>
+<div id="使用kreport2mpa.py简化kraken流程" class="section level2">
+<h2>使用<code>kreport2mpa.py</code>简化kraken流程</h2>
+<p>下面是简化后的Kraken2流程：</p>
+<pre class="sh"><code>kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.kraken2.out \
+    --report ${prefix}.kraken2.report \
+    $reads1 $reads2 
+    ### Convert kraken report to mpa file
+kreport2mpa.py \
+     -r ${prefix}.kraken2.report \
+     -o ${prefix}.kraken2.tax \
+     --no-intermediate-ranks</code></pre>
+<p>shotgunmetagenomics-nf流程的develop branch已经更新了对应的<a href="https://github.com/lch14forever/shotgunmetagenomics-nf/blob/develop/modules/profilers_kraken2_bracken.nf">module</a>。</p>
+</div>
+<div id="使用extract_kraken_reads.py提取对应taxid的序列" class="section level2">
+<h2>使用<code>extract_kraken_reads.py</code>提取对应TaxID的序列</h2>
+<p>这个程序可以用来快速过滤出属于一个物种（或其他分类等级）的序列。</p>
+<pre class="sh"><code>## 提取E. coli序列
+extract_kraken_reads.py \
+    -t 562 \ 
+    -k ${prefix}.kraken2.report \
+    -s1 $reads1 -s2 $reads2 \
+    -o $extracted1 -o2 $extracted2 \
+    --fastq-output</code></pre>
+</div>
+<div id="参考" class="section level2">
+<h2>参考</h2>
+<p>KrakenTools: <a href="https://github.com/jenniferlu717/KrakenTools" class="uri">https://github.com/jenniferlu717/KrakenTools</a></p>
+</div>
+
+      </div>
+
       
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/metagenomics">Metagenomics</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/kraken">Kraken</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/bioinformatics">Bioinformatics</a>
+  
+</div>
+
+
+
     </div>
   </div>
-  
-  <div>
-    <h2><a href="/post/2018-09-05-bioinfo-cheatsheet/">Frequently Googled Questions</a></h2>
-    <div class="article-style">
-      
-      一些从来都需要google的东西
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2018-04-39-r-pca_pcoa/">一（三）文你读不懂PCA和PCoA</a></h2>
-    <div class="article-style">
-      
-      今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html" target="_blank">一</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html" target="_blank">二</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html" target="_blank">三</a>》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2017-12-31-bioinfo-docker_notes/">Useful commands for Docker</a></h2>
-    <div class="article-style">
-      
-      我的Docker初学笔记
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2017-11-04-bioinfo-bioinforcollections/">A collection of useful tools (Keep updating)</a></h2>
-    <div class="article-style">
-      
-      A collection of bioinformatics resources
-      
-    </div>
-  </div>
-  
 
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2018-09-05-bioinfo-cheatsheet/">Frequently Googled Questions</a></li>
+    
+    <li><a href="/post/2018-04-39-r-pca_pcoa/">一（三）文你读不懂PCA和PCoA</a></li>
+    
+    <li><a href="/post/2017-12-31-bioinfo-docker_notes/">Useful commands for Docker</a></li>
+    
+    <li><a href="/post/2017-11-18-r-absolute/">有了绝对定量就完了？</a></li>
+    
+    <li><a href="/post/2017-11-04-bioinfo-bioinforcollections/">A collection of useful tools (Keep updating)</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
   
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
 
 
 </div>
+
 <footer class="site-footer">
   <div class="container">
     <p class="powered-by">
@@ -389,6 +528,4 @@
 
   </body>
 </html>
-
-
 

@@ -1,0 +1,67 @@
+---
+title: "Kraken拓展工具KrakenTools"
+author: "Chenhao Li"
+output: html_document
+categories: ["Metagenomics", "Bioinformatics"]
+tags: ["Metagenomics", "Kraken", "Bioinformatics"]
+date: 2020-08-22
+summary: "KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。"
+---
+
+
+
+<div id="背景" class="section level2">
+<h2>背景</h2>
+<p>Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用<code>--use-mpa-style</code>这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是<a href="https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/">运行两次Kraken2</a>：</p>
+<pre class="sh"><code>### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &gt; /dev/null</code></pre>
+<p>经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。</p>
+<p>最近发现了Bracken的作者开发的<a href="https://github.com/jenniferlu717/KrakenTools">很有用的工具集</a>。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本<code>kreport2mpa.py</code>。</p>
+</div>
+<div id="使用kreport2mpa.py简化kraken流程" class="section level2">
+<h2>使用<code>kreport2mpa.py</code>简化kraken流程</h2>
+<p>下面是简化后的Kraken2流程：</p>
+<pre class="sh"><code>kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.kraken2.out \
+    --report ${prefix}.kraken2.report \
+    $reads1 $reads2 
+    ### Convert kraken report to mpa file
+kreport2mpa.py \
+     -r ${prefix}.kraken2.report \
+     -o ${prefix}.kraken2.tax \
+     --no-intermediate-ranks</code></pre>
+<p>shotgunmetagenomics-nf流程的develop branch已经更新了对应的<a href="https://github.com/lch14forever/shotgunmetagenomics-nf/blob/develop/modules/profilers_kraken2_bracken.nf">module</a>。</p>
+</div>
+<div id="使用extract_kraken_reads.py提取对应taxid的序列" class="section level2">
+<h2>使用<code>extract_kraken_reads.py</code>提取对应TaxID的序列</h2>
+<p>这个程序可以用来快速过滤出属于一个物种（或其他分类等级）的序列。</p>
+<pre class="sh"><code>## 提取E. coli序列
+extract_kraken_reads.py \
+    -t 562 \ 
+    -k ${prefix}.kraken2.report \
+    -s1 $reads1 -s2 $reads2 \
+    -o $extracted1 -o2 $extracted2 \
+    --fastq-output</code></pre>
+</div>
+<div id="参考" class="section level2">
+<h2>参考</h2>
+<p>KrakenTools: <a href="https://github.com/jenniferlu717/KrakenTools" class="uri">https://github.com/jenniferlu717/KrakenTools</a></p>
+</div>

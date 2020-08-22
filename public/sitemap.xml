@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2020-08-22-krakentools/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/publication/hospital/</loc>
       <lastmod>2020-05-31T00:00:00+00:00</lastmod>
     </url>
@@ -351,7 +360,17 @@
     <url>
     
       <loc>/tags/bioinformatics/</loc>
-      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/bioinformatics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -361,6 +380,7 @@
     <url>
     
       <loc>/categories/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -409,7 +429,7 @@
     
     <url>
     
-      <loc>/categories/emacs/</loc>
+      <loc>/tags/emacs/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -419,7 +439,7 @@
     
     <url>
     
-      <loc>/tags/emacs/</loc>
+      <loc>/categories/emacs/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -449,8 +469,8 @@
     
     <url>
     
-      <loc>/categories/linux/</loc>
-      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <loc>/tags/kraken/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -469,8 +489,18 @@
     
     <url>
     
+      <loc>/categories/linux/</loc>
+      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/tags/metagenomics/</loc>
-      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -481,6 +511,16 @@
     
       <loc>/tags/metagenomics/</loc>
       <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/metagenomics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -509,7 +549,7 @@
     
     <url>
     
-      <loc>/categories/nextflow/</loc>
+      <loc>/tags/nextflow/</loc>
       <lastmod>2019-10-29T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -519,7 +559,7 @@
     
     <url>
     
-      <loc>/tags/nextflow/</loc>
+      <loc>/categories/nextflow/</loc>
       <lastmod>2019-10-29T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -559,16 +599,6 @@
     
     <url>
     
-      <loc>/categories/python/</loc>
-      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/tags/python/</loc>
       <lastmod>2019-08-17T00:00:00+00:00</lastmod>
       <priority>0</priority>
@@ -579,8 +609,8 @@
     
     <url>
     
-      <loc>/categories/r/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <loc>/categories/python/</loc>
+      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -592,6 +622,16 @@
       <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
     
       <loc>/tags/r/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/r/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>

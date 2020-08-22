@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## 数据准备
 此处我们使用[Metaphlan2 tutorial](https://bitbucket.org/biobakery/biobakery/wiki/metaphlan2)中的数据，来源于牙龈菌斑的宏基因组测序：
 ```{r data preparation}
-download.file('https://bitbucket.org/biobakery/biobakery/raw/tip/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt', destfile = 'SRS014476-Supragingival_plaque_profile.txt')
+download.file('https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt', destfile = 'SRS014476-Supragingival_plaque_profile.txt')
 taxtab <- read.table('SRS014476-Supragingival_plaque_profile.txt', sep='\t', stringsAsFactors=FALSE)
 ```
 ## 加载networkdD3包

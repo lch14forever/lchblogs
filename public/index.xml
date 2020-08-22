@@ -11,6 +11,70 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Kraken拓展工具KrakenTools</title>
+      <link>/post/2020-08-22-krakentools/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-08-22-krakentools/</guid>
+      <description>&lt;div id=&#34;背景&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;背景&lt;/h2&gt;
+&lt;p&gt;Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用&lt;code&gt;--use-mpa-style&lt;/code&gt;这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是&lt;a href=&#34;https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/&#34;&gt;运行两次Kraken2&lt;/a&gt;：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &amp;gt; /dev/null&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。&lt;/p&gt;
+&lt;p&gt;最近发现了Bracken的作者开发的&lt;a href=&#34;https://github.com/jenniferlu717/KrakenTools&#34;&gt;很有用的工具集&lt;/a&gt;。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本&lt;code&gt;kreport2mpa.py&lt;/code&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用kreport2mpa.py简化kraken流程&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用&lt;code&gt;kreport2mpa.py&lt;/code&gt;简化kraken流程&lt;/h2&gt;
+&lt;p&gt;下面是简化后的Kraken2流程：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.kraken2.out \
+    --report ${prefix}.kraken2.report \
+    $reads1 $reads2 
+    ### Convert kraken report to mpa file
+kreport2mpa.py \
+     -r ${prefix}.kraken2.report \
+     -o ${prefix}.kraken2.tax \
+     --no-intermediate-ranks&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;shotgunmetagenomics-nf流程的develop branch已经更新了对应的&lt;a href=&#34;https://github.com/lch14forever/shotgunmetagenomics-nf/blob/develop/modules/profilers_kraken2_bracken.nf&#34;&gt;module&lt;/a&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用extract_kraken_reads.py提取对应taxid的序列&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用&lt;code&gt;extract_kraken_reads.py&lt;/code&gt;提取对应TaxID的序列&lt;/h2&gt;
+&lt;p&gt;这个程序可以用来快速过滤出属于一个物种（或其他分类等级）的序列。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;## 提取E. coli序列
+extract_kraken_reads.py \
+    -t 562 \ 
+    -k ${prefix}.kraken2.report \
+    -s1 $reads1 -s2 $reads2 \
+    -o $extracted1 -o2 $extracted2 \
+    --fastq-output&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;参考&lt;/h2&gt;
+&lt;p&gt;KrakenTools: &lt;a href=&#34;https://github.com/jenniferlu717/KrakenTools&#34; class=&#34;uri&#34;&gt;https://github.com/jenniferlu717/KrakenTools&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment</title>
       <link>/publication/hospital/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
@@ -1036,25 +1100,6 @@ p2 &amp;lt;- base2grob(~plot(g2))
 
 plot_grid(p1, p2, labels=LETTERS[1:2])&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2018-03-29-r-base2grob_igraph_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>microbiomeViz--斜体显示taxon name</title>
-      <link>/post/2018-02-01-r-metagenomeviz-italictaxon/</link>
-      <pubDate>Thu, 01 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-02-01-r-metagenomeviz-italictaxon/</guid>
-      <description>&lt;p&gt;微生物种名属名经常需要&lt;em&gt;&lt;code&gt;斜体&lt;/code&gt;&lt;/em&gt;表示，现在microbiomeViz添加了一个生成&lt;code&gt;expression&lt;/code&gt;的函数，可以直接将一个短语中的&lt;strong&gt;一个&lt;/strong&gt;（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
-## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)
-ggplot(SRS014459_Stool_profile, aes(x=V2)) + 
-  geom_histogram(col=&amp;#39;black&amp;#39;) + theme_bw() + theme(axis.title = element_text(size=23)) +
-  labs(x=formatPhrase(&amp;quot;Hello E. coli! Good-bye!&amp;quot;,&amp;quot;E. coli&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-02-01-r-metagenomeViz-italicTaxon_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     

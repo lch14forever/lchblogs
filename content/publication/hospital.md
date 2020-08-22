@@ -17,7 +17,7 @@ authors = ["Chng", "Li", "Bertrand", "et al"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *NM*."
+publication = "In *Nature Medicine*."
 publication_short = ""
 
 # Abstract and optional shortened version.
