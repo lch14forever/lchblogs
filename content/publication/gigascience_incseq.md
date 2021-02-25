@@ -1,6 +1,6 @@
 +++
-title = "Predicting Microbial Interactions through Computational Approaches"
-date = "2016-06-01"
+title = "INC-Seq: accurate single molecule reads using nanopore sequencing"
+date = "2016-08-02"
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
 authors = ["Li", "et al"]
@@ -17,7 +17,7 @@ authors = ["Li", "et al"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *Methods*."
+publication = "In *GigaScience*"
 publication_short = ""
 
 # Abstract and optional shortened version.
@@ -35,8 +35,9 @@ selected = true
 #projects = [""]
 
 # Links (optional).
-url_pdf = "https://linkinghub.elsevier.com/retrieve/pii/S1046-2023(15)30094-3"
-
+url_pdf = "https://gigascience.biomedcentral.com/track/pdf/10.1186/s13742-016-0140-7?site=gigascience.biomedcentral.com"
+url_code = "https://github.com/CSB5/INC-Seq"
+url_dataset = "http://gigadb.org/dataset/100208"
 
 # Custom links (optional).
 #   Uncomment line below to enable. For multiple links, use the form `[{...}, {...}, {...}]`.

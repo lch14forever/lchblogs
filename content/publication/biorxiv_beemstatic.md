@@ -1,9 +1,9 @@
 +++
-title = "Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment"
-date = "2020-05-31"
+title = "BEEM-Static: Accurate inference of ecological interactions from cross-sectional metagenomic data"
+date = "2020-11-24"
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = ["Chng", "Li", "Bertrand", "et al"]
+authors = ["Li", "et al"]
 
 # Publication type.
 # Legend:
@@ -17,7 +17,7 @@ authors = ["Chng", "Li", "Bertrand", "et al"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *Nature Medicine*."
+publication = "In *BioRxiv*"
 publication_short = ""
 
 # Abstract and optional shortened version.

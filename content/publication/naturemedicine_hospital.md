@@ -1,9 +1,9 @@
 +++
-title = "An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data"
-date = "2019-08-31"
+title = "Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment"
+date = "2020-05-31"
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = ["Li", "et al"]
+authors = ["Chng", "Li", "Bertrand", "et al"]
 
 # Publication type.
 # Legend:
@@ -17,7 +17,7 @@ authors = ["Li", "et al"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *Microbiome*."
+publication = "In *Nature Medicine*"
 publication_short = ""
 
 # Abstract and optional shortened version.
@@ -35,8 +35,9 @@ selected = true
 #projects = [""]
 
 # Links (optional).
-url_pdf = ""
-url_code = "https://github.com/CSB5/BEEM"
+url_pdf = "https://www.biorxiv.org/content/10.1101/644740v2"
+url_code = "https://github.com/CSB5/hospital_microbiome"
+url_dataset = ""
 
 # Custom links (optional).
 #   Uncomment line below to enable. For multiple links, use the form `[{...}, {...}, {...}]`.

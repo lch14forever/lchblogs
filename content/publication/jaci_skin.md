@@ -1,9 +1,9 @@
 +++
-title = "INC-Seq: accurate single molecule reads using nanopore sequencing"
-date = "2016-08-02"
+title = "Atopic Dermatitis Microbiomes Stratify into Ecologic Dermotypes Enabling Microbial Virulence and Disease Severity"
+date = "2020-10-08"
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = ["Li", "et al"]
+authors = ["Tay", "Li", "et al"]
 
 # Publication type.
 # Legend:
@@ -17,7 +17,7 @@ authors = ["Li", "et al"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *GigaScience*."
+publication = "In *Journal of Allergy and Clinical Immunology*"
 publication_short = ""
 
 # Abstract and optional shortened version.
@@ -35,9 +35,8 @@ selected = true
 #projects = [""]
 
 # Links (optional).
-url_pdf = "https://gigascience.biomedcentral.com/track/pdf/10.1186/s13742-016-0140-7?site=gigascience.biomedcentral.com"
-url_code = "https://github.com/CSB5/INC-Seq"
-url_dataset = "http://gigadb.org/dataset/100208"
+url_pdf = "https://www.sciencedirect.com/science/article/pii/S0091674920313993"
+
 
 # Custom links (optional).
 #   Uncomment line below to enable. For multiple links, use the form `[{...}, {...}, {...}]`.
