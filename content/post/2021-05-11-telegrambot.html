@@ -1,0 +1,48 @@
+---
+title: "Telegram bot基础使用"
+author: "Chenhao Li"
+output: html_document
+categories: ["Linux"]
+tags: ["Linux", "Telegram"]
+date: 2021-05-11
+summary: "使用telegram bot api发送推送消息"
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="申请telegram-bot" class="section level2">
+<h2>申请telegram bot</h2>
+<ol style="list-style-type: decimal">
+<li>在telegram中搜索“BotFather”，进入与其聊天页面</li>
+<li>输入<code>/start</code>查看可用选项</li>
+<li>输入或点击<code>/newbot</code></li>
+<li>输入bot的名字（必须以<code>Bot</code>或<code>_bot</code>结尾）</li>
+</ol>
+<p>完成后收到如下消息，点击<code>t.me/xxxxxx_bot</code>即可进入与bot聊天页面</p>
+<p>Done! Congratulations on your new bot. You will find it at <code>t.me/xxxxxx_bot</code>. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you’ve finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.</p>
+<p>Use this token to access the HTTP API:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Keep your token secure and store it safely, it can be used by anyone to control your bot.</p>
+<p>For a description of the Bot API, see this page: <a href="https://core.telegram.org/bots/api" class="uri">https://core.telegram.org/bots/api</a></p>
+</div>
+<div id="使用curl发送消息" class="section level2">
+<h2>使用cURL发送消息</h2>
+<ol style="list-style-type: decimal">
+<li>在与bot聊天页面输入任意消息</li>
+<li>打开https://api.telegram.org/bot<code>{TOKEN}</code>/getUpdates （这里有这个bot的消息历史）</li>
+<li>在这个JSON文件中找到<code>CHAT_ID</code> (…“chat”:{“id”:{CHAT_ID}…)</li>
+</ol>
+<p>接下来使用如下命令发送消息（TOKEN和CHAT_ID替换为自己的），好像群组的chat ID为负数，个人的chat ID为正数</p>
+<pre class="sh"><code>TELEGRAM_BOT_TOKEN=TOKEN
+curl -X POST \
+     -H &#39;Content-Type: application/json&#39; \
+     -d &#39;{&quot;chat_id&quot;: &quot;CHAT_ID&quot;, &quot;text&quot;: &quot;测试消息！&quot;}&#39;
+     &quot;https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage&quot;</code></pre>
+<p>看到如下提示，并收到telegram消息</p>
+<pre class="sh"><code>{&quot;ok&quot;:true,&quot;result&quot;:{&quot;message_id&quot;:14,&quot;from&quot;:{&quot;id&quot;:BOT_ID,&quot;is_bot&quot;:true,&quot;first_name&quot;:&quot;xxxxxxx_bot&quot;,&quot;username&quot;:&quot;xxxxxxxx_bot&quot;},&quot;chat&quot;:{&quot;id&quot;:CHAT_ID,&quot;first_name&quot;:&quot;XXXX&quot;,&quot;type&quot;:&quot;private&quot;},&quot;date&quot;:1620736546,&quot;text&quot;:&quot;测试消息！&quot;}}%</code></pre>
+</div>
+<div id="参考" class="section level2">
+<h2>参考</h2>
+<p><a href="https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/" class="uri">https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/</a></p>
+</div>

@@ -1,0 +1,58 @@
+---
+title: "Telegram bot基础使用"
+author: "Chenhao Li"
+output: html_document
+categories: ["Linux"]
+tags: ["Linux", "Telegram"]
+date: 2021-05-11
+summary: "使用telegram bot api发送推送消息"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+## 申请telegram bot
+ 1. 在telegram中搜索"BotFather"，进入与其聊天页面
+ 2. 输入`/start`查看可用选项
+ 3. 输入或点击`/newbot`
+ 4. 输入bot的名字（必须以`Bot`或`_bot`结尾）
+ 
+完成后收到如下消息，点击`t.me/xxxxxx_bot`即可进入与bot聊天页面
+
+
+Done! Congratulations on your new bot. You will find it at `t.me/xxxxxx_bot`. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.
+
+Use this token to access the HTTP API:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Keep your token secure and store it safely, it can be used by anyone to control your bot.
+
+For a description of the Bot API, see this page: https://core.telegram.org/bots/api
+
+## 使用cURL发送消息
+
+ 1. 在与bot聊天页面输入任意消息
+ 2. 打开https://api.telegram.org/bot`{TOKEN}`/getUpdates （这里有这个bot的消息历史）
+ 3. 在这个JSON文件中找到`CHAT_ID` (..."chat":{"id":{CHAT_ID}...)
+
+接下来使用如下命令发送消息（TOKEN和CHAT_ID替换为自己的），好像群组的chat ID为负数，个人的chat ID为正数
+
+```sh
+TELEGRAM_BOT_TOKEN=TOKEN
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -d '{"chat_id": "CHAT_ID", "text": "测试消息！"}'
+     "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage"
+```
+
+看到如下提示，并收到telegram消息
+
+```sh
+{"ok":true,"result":{"message_id":14,"from":{"id":BOT_ID,"is_bot":true,"first_name":"xxxxxxx_bot","username":"xxxxxxxx_bot"},"chat":{"id":CHAT_ID,"first_name":"XXXX","type":"private"},"date":1620736546,"text":"测试消息！"}}%
+```
+
+
+
+## 参考
+
+https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/

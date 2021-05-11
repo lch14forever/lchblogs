@@ -11,6 +11,53 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Telegram bot基础使用</title>
+      <link>/post/2021-05-11-telegrambot/</link>
+      <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-11-telegrambot/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;申请telegram-bot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;申请telegram bot&lt;/h2&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;在telegram中搜索“BotFather”，进入与其聊天页面&lt;/li&gt;
+&lt;li&gt;输入&lt;code&gt;/start&lt;/code&gt;查看可用选项&lt;/li&gt;
+&lt;li&gt;输入或点击&lt;code&gt;/newbot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;输入bot的名字（必须以&lt;code&gt;Bot&lt;/code&gt;或&lt;code&gt;_bot&lt;/code&gt;结尾）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;完成后收到如下消息，点击&lt;code&gt;t.me/xxxxxx_bot&lt;/code&gt;即可进入与bot聊天页面&lt;/p&gt;
+&lt;p&gt;Done! Congratulations on your new bot. You will find it at &lt;code&gt;t.me/xxxxxx_bot&lt;/code&gt;. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you’ve finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.&lt;/p&gt;
+&lt;p&gt;Use this token to access the HTTP API:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Keep your token secure and store it safely, it can be used by anyone to control your bot.&lt;/p&gt;
+&lt;p&gt;For a description of the Bot API, see this page: &lt;a href=&#34;https://core.telegram.org/bots/api&#34; class=&#34;uri&#34;&gt;https://core.telegram.org/bots/api&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用curl发送消息&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用cURL发送消息&lt;/h2&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;在与bot聊天页面输入任意消息&lt;/li&gt;
+&lt;li&gt;打开https://api.telegram.org/bot&lt;code&gt;{TOKEN}&lt;/code&gt;/getUpdates （这里有这个bot的消息历史）&lt;/li&gt;
+&lt;li&gt;在这个JSON文件中找到&lt;code&gt;CHAT_ID&lt;/code&gt; (…“chat”:{“id”:{CHAT_ID}…)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;接下来使用如下命令发送消息（TOKEN和CHAT_ID替换为自己的），好像群组的chat ID为负数，个人的chat ID为正数&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;TELEGRAM_BOT_TOKEN=TOKEN
+curl -X POST \
+     -H &amp;#39;Content-Type: application/json&amp;#39; \
+     -d &amp;#39;{&amp;quot;chat_id&amp;quot;: &amp;quot;CHAT_ID&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;测试消息！&amp;quot;}&amp;#39;
+     &amp;quot;https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;看到如下提示，并收到telegram消息&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;{&amp;quot;ok&amp;quot;:true,&amp;quot;result&amp;quot;:{&amp;quot;message_id&amp;quot;:14,&amp;quot;from&amp;quot;:{&amp;quot;id&amp;quot;:BOT_ID,&amp;quot;is_bot&amp;quot;:true,&amp;quot;first_name&amp;quot;:&amp;quot;xxxxxxx_bot&amp;quot;,&amp;quot;username&amp;quot;:&amp;quot;xxxxxxxx_bot&amp;quot;},&amp;quot;chat&amp;quot;:{&amp;quot;id&amp;quot;:CHAT_ID,&amp;quot;first_name&amp;quot;:&amp;quot;XXXX&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;private&amp;quot;},&amp;quot;date&amp;quot;:1620736546,&amp;quot;text&amp;quot;:&amp;quot;测试消息！&amp;quot;}}%&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/&#34; class=&#34;uri&#34;&gt;https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Kraken拓展工具KrakenTools</title>
       <link>/post/2020-08-22-krakentools/</link>
       <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
@@ -1101,151 +1148,6 @@ ggplot(SRS014459_Stool_profile, aes(x=V2)) +
   labs(x=formatPhrase(&amp;quot;Hello E. coli! Good-bye!&amp;quot;,&amp;quot;E. coli&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2018-02-01-r-metagenomeViz-italicTaxon_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>microbiomeViz--人生第一个R包</title>
-      <link>/post/2018-01-18-r-metagenomeviz/</link>
-      <pubDate>Thu, 18 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-01-18-r-metagenomeviz/</guid>
-      <description>&lt;div id=&#34;为啥写这个&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;为啥写这个&lt;/h3&gt;
-&lt;p&gt;平日经常会分析shotgun宏基因组的数据，我们的&lt;a href=&#34;https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics&#34;&gt;pipeline&lt;/a&gt;使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download.file(&amp;quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&amp;quot;, &amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)
-knitr::kable(head(read.table(&amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)))&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;left&#34;&gt;V1&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;V2&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;100.00000&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria|p__Firmicutes&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;64.91753&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria|p__Bacteroidetes&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;35.08247&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria|p__Firmicutes|c__Clostridia&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;64.91753&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria|p__Bacteroidetes|c__Bacteroidia&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;35.08247&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;64.91753&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是&lt;a href=&#34;https://bitbucket.org/nsegata/graphlan/wiki/Home&#34;&gt;GraPhlAn&lt;/a&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://bytebucket.org/nsegata/graphlan/wiki/GraPhlAn_Fig1.png&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。&lt;a href=&#34;https://github.com/marbl/Krona/wiki&#34;&gt;Krona&lt;/a&gt;可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包&lt;a href=&#34;https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404&#34;&gt;Metacoder&lt;/a&gt;，画出的图个人真心不是很喜欢：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://journals.plos.org/ploscompbiol/article/figure/image?size=large&amp;amp;id=info:doi/10.1371/journal.pcbi.1005404.g002&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;microbiomeviz千里之行始于足下&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;MicrobiomeViz–千里之行，始于足下&lt;/h3&gt;
-&lt;p&gt;其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）：
-&lt;a href=&#34;https://github.com/lch14forever/microbiomeViz&#34; class=&#34;uri&#34;&gt;https://github.com/lch14forever/microbiomeViz&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;metaphlan结果的parser&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;MetaPhlan结果的parser&lt;/h3&gt;
-&lt;div id=&#34;安装&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;安装&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;lch14forever/microbiomeViz&amp;quot;, dependencies = T)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Skipping install of &amp;#39;microbiomeViz&amp;#39; from a github remote, the SHA1 (3db1d3a6) has not changed since last install.
-##   Use `force = TRUE` to force installation&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;使用&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;使用&lt;/h4&gt;
-&lt;p&gt;目前有三个函数：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;parseMetaphlanTSV&lt;/code&gt;: 将MetaPhlAn的表格转换成tree格式&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;tree.backbone&lt;/code&gt;: 做出树的骨架&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;clade.anno&lt;/code&gt;: 高亮一个节点及其下属所有节点&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这个其实是基于之前做桑基图时写的那些代码，将MetaPhlan表格转化为了phylobase的phylo4d类：&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
-## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(&amp;quot;SRS014459_Stool_profile&amp;quot;)                    ## 上面的示例数据已经加如microbiomeViz
-tr &amp;lt;- parseMetaphlanTSV(SRS014459_Stool_profile)   ## parsing&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: `select_()` is deprecated as of dplyr 0.7.0.
-## Please use `select()` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: `as_data_frame()` is deprecated as of tibble 2.0.0.
-## Please use `as_tibble()` instead.
-## The signature and semantics have changed, see `?as_tibble`.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;基于ggtree的大戏&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;基于ggtree的大戏&lt;/h4&gt;
-&lt;p&gt;做出树的骨架&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- tree.backbone(tr)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: `data_frame()` is deprecated as of tibble 1.1.0.
-## Please use `tibble()` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: `mutate_()` is deprecated as of dplyr 0.7.0.
-## Please use `mutate()` instead.
-## See vignette(&amp;#39;programming&amp;#39;) for more help
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;微生物组常见的操作就是组间比较，我们可以向GraPhlAn那样把显著的节点高亮出来：&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## 假设以下taxa在疾病组显著
-anno.data &amp;lt;- data.frame(node=c(&amp;quot;g__Roseburia&amp;quot;, &amp;quot;c__Clostridia&amp;quot;, &amp;quot;s__Bacteroides_ovatus&amp;quot;),
-                       color=&amp;#39;red&amp;#39;, stringsAsFactors = FALSE)
-p &amp;lt;- clade.anno(p, anno.data)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
-## returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in min(y): no non-missing arguments to min; returning Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(y): no non-missing arguments to max; returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
-## returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in min(y): no non-missing arguments to min; returning Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(y): no non-missing arguments to max; returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
-## returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in min(y): no non-missing arguments to min; returning Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(y): no non-missing arguments to max; returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(sp.df$x, na.rm = TRUE): no non-missing arguments to max;
-## returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in min(y): no non-missing arguments to min; returning Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in max(y): no non-missing arguments to max; returning -Inf&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;希望有更多的拓展&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;希望有更多的拓展&lt;/h3&gt;
-&lt;p&gt;所有的操作均基于&lt;code&gt;treedata&lt;/code&gt;和&lt;code&gt;ggtree&lt;/code&gt;，正因为有了这些灵活的框架，上面的几个例子可拓展性还是很强的。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled=&#34;&#34; /&gt;
-多个MetaPhlan表，节点大小取平均&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled=&#34;&#34; /&gt;
-Biom数据支持&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled=&#34;&#34; /&gt;
-和heatmap结合&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled=&#34;&#34; /&gt;
-…&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
 </description>
     </item>
     
