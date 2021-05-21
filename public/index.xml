@@ -11,6 +11,59 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>nf-core流程使用</title>
+      <link>/post/2021-05-20-nextflow-nfcore/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-20-nextflow-nfcore/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/&#34;&gt;nf-core&lt;/a&gt;是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。&lt;/p&gt;
+&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;测试环境&lt;/h3&gt;
+&lt;p&gt;Ubuntu 20.04 （Root权限）&lt;/p&gt;
+&lt;p&gt;安装Docker&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo snap install docker # 用snap安装
+sudo usermod -aG docker ${USER} # 修正权限问题&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装java&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt install default-jdk&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装nextflow&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -fsSL get.nextflow.io | bash
+sudo mv nextflow /usr/local/bin&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下载&lt;a href=&#34;https://nf-co.re/atacseq&#34;&gt;nf-core/atacseq&lt;/a&gt;流程并运行实例&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt; nextflow run nf-core/atacseq -profile test,docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行&lt;/h3&gt;
+&lt;p&gt;根据自己的样本，创建一个以下格式的csv文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;group,replicate,fastq_1,fastq_2
+control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz
+treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;group&lt;/code&gt;：实验组别，如实验组、对照组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;replicate&lt;/code&gt;：实验重复编号&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_1&lt;/code&gt;：fastq1绝对路径&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_2&lt;/code&gt;：fastq2绝对路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;运行&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export NXF_OPTS=&amp;#39;-Xms1g -Xmx4g&amp;#39; # 建议限制Java虚拟机的内存
+nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/pipelines&#34; class=&#34;uri&#34;&gt;https://nf-co.re/pipelines&lt;/a&gt;
+&lt;a href=&#34;https://nf-co.re/atacseq/1.2.1/usage&#34; class=&#34;uri&#34;&gt;https://nf-co.re/atacseq/1.2.1/usage&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Telegram bot基础使用</title>
       <link>/post/2021-05-11-telegrambot/</link>
       <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
@@ -950,49 +1003,6 @@ export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH&lt;/code&gt;&lt;/pre&gt;
 (global-set-key (kbd &amp;quot;C-c C-r&amp;quot;) &amp;#39;spawn-ess-remote)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/section&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Frequently Googled Questions</title>
-      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
-      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
-      <description>&lt;div id=&#34;linux&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Linux&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Extract (decompress) with a file pattern (wildcard) &lt;a href=&#34;https://superuser.com/questions/504798/extract-specific-files-in-a-tar-archive-using-a-wildcard&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;tar -xf MyTar.tar --wildcards &amp;quot;*.jpg&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ggplot2&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;ggplot2&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;rotate axis label &lt;a href=&#34;https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;remove legend title &lt;a href=&#34;http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#hiding-the-legend-title&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Remove title for fill legend
-p + 
-  guides(fill=guide_legend(title=NULL))
-
-# Remove title for all legends
-p + 
-  theme(legend.title=element_blank())&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;legends in multiple columns/rows &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/guide_legend.html&#34;&gt;ref&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;A lot of interesting and useful things in this ref&lt;/li&gt;
-&lt;li&gt;overriding the alpha value&lt;/li&gt;
-&lt;li&gt;customizing the legend text angle&lt;/li&gt;
-&lt;li&gt;etc&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + 
-  guides(col = guide_legend(nrow = 8))&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 </description>
     </item>
     

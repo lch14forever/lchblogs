@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2021-05-20-nextflow-nfcore/</loc>
+      <lastmod>2021-05-20T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/2021-05-11-telegrambot/</loc>
       <lastmod>2021-05-11T00:00:00+00:00</lastmod>
     </url>
@@ -386,7 +395,7 @@
     
     <url>
     
-      <loc>/tags/bioinformatics/</loc>
+      <loc>/categories/bioinformatics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -396,7 +405,7 @@
     
     <url>
     
-      <loc>/categories/bioinformatics/</loc>
+      <loc>/tags/bioinformatics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -456,7 +465,7 @@
     
     <url>
     
-      <loc>/tags/emacs/</loc>
+      <loc>/categories/emacs/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -466,7 +475,7 @@
     
     <url>
     
-      <loc>/categories/emacs/</loc>
+      <loc>/tags/emacs/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -506,16 +515,6 @@
     
     <url>
     
-      <loc>/tags/linux/</loc>
-      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/categories/linux/</loc>
       <lastmod>2021-05-11T00:00:00+00:00</lastmod>
       <priority>0</priority>
@@ -526,7 +525,17 @@
     
     <url>
     
-      <loc>/tags/metagenomics/</loc>
+      <loc>/tags/linux/</loc>
+      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/metagenomics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -546,7 +555,7 @@
     
     <url>
     
-      <loc>/categories/metagenomics/</loc>
+      <loc>/tags/metagenomics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -576,8 +585,8 @@
     
     <url>
     
-      <loc>/tags/nextflow/</loc>
-      <lastmod>2019-10-29T00:00:00+00:00</lastmod>
+      <loc>/categories/nextflow/</loc>
+      <lastmod>2021-05-20T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -586,8 +595,8 @@
     
     <url>
     
-      <loc>/categories/nextflow/</loc>
-      <lastmod>2019-10-29T00:00:00+00:00</lastmod>
+      <loc>/tags/nextflow/</loc>
+      <lastmod>2021-05-20T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -626,6 +635,16 @@
     
     <url>
     
+      <loc>/categories/python/</loc>
+      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/tags/python/</loc>
       <lastmod>2019-08-17T00:00:00+00:00</lastmod>
       <priority>0</priority>
@@ -636,8 +655,8 @@
     
     <url>
     
-      <loc>/categories/python/</loc>
-      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <loc>/categories/r/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -649,16 +668,6 @@
       <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
     
       <loc>/tags/r/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/r/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>

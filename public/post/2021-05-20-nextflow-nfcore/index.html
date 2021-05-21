@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30.2" />
+  <meta name="author" content="Chenhao Li">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="nf-core是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。
+测试环境 Ubuntu 20.04 （Root权限）
+安装Docker
+sudo snap install docker # 用snap安装 sudo usermod -aG docker ${USER} # 修正权限问题 安装java
+sudo apt install default-jdk 安装nextflow
+curl -fsSL get.nextflow.io | bash sudo mv nextflow /usr/local/bin 下载nf-core/atacseq流程并运行实例
+ nextflow run nf-core/atacseq -profile test,docker  运行 根据自己的样本，创建一个以下格式的csv文件
+group,replicate,fastq_1,fastq_2 control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz  group：实验组别，如实验组、对照组 replicate：实验重复编号 fastq_1：fastq1绝对路径 fastq_2：fastq2绝对路径  运行
+export NXF_OPTS=&#39;-Xms1g -Xmx4g&#39; # 建议限制Java虚拟机的内存 nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker  参考 https://nf-co.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2021-05-20-nextflow-nfcore/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2021-05-20-nextflow-nfcore/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
+  <meta property="og:url" content="/post/2021-05-20-nextflow-nfcore/">
+  <meta property="og:title" content="nf-core流程使用 | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="nf-core是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。
+测试环境 Ubuntu 20.04 （Root权限）
+安装Docker
+sudo snap install docker # 用snap安装 sudo usermod -aG docker ${USER} # 修正权限问题 安装java
+sudo apt install default-jdk 安装nextflow
+curl -fsSL get.nextflow.io | bash sudo mv nextflow /usr/local/bin 下载nf-core/atacseq流程并运行实例
+ nextflow run nf-core/atacseq -profile test,docker  运行 根据自己的样本，创建一个以下格式的csv文件
+group,replicate,fastq_1,fastq_2 control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz  group：实验组别，如实验组、对照组 replicate：实验重复编号 fastq_1：fastq1绝对路径 fastq_2：fastq2绝对路径  运行
+export NXF_OPTS=&#39;-Xms1g -Xmx4g&#39; # 建议限制Java虚拟机的内存 nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker  参考 https://nf-co.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2021-05-20T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2021-05-20T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>nf-core流程使用 | Chenhao&#39;s Personal Page</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">nf-core流程使用</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2021-05-20 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      May 20, 2021
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/nextflow">Nextflow</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><a href="https://nf-co.re/">nf-core</a>是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。</p>
+<div id="测试环境" class="section level3">
+<h3>测试环境</h3>
+<p>Ubuntu 20.04 （Root权限）</p>
+<p>安装Docker</p>
+<pre class="sh"><code>sudo snap install docker # 用snap安装
+sudo usermod -aG docker ${USER} # 修正权限问题</code></pre>
+<p>安装java</p>
+<pre class="sh"><code>sudo apt install default-jdk</code></pre>
+<p>安装nextflow</p>
+<pre class="sh"><code>curl -fsSL get.nextflow.io | bash
+sudo mv nextflow /usr/local/bin</code></pre>
+<p>下载<a href="https://nf-co.re/atacseq">nf-core/atacseq</a>流程并运行实例</p>
+<pre class="sh"><code> nextflow run nf-core/atacseq -profile test,docker</code></pre>
+</div>
+<div id="运行" class="section level3">
+<h3>运行</h3>
+<p>根据自己的样本，创建一个以下格式的csv文件</p>
+<pre><code>group,replicate,fastq_1,fastq_2
+control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz
+treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz</code></pre>
+<ul>
+<li><code>group</code>：实验组别，如实验组、对照组</li>
+<li><code>replicate</code>：实验重复编号</li>
+<li><code>fastq_1</code>：fastq1绝对路径</li>
+<li><code>fastq_2</code>：fastq2绝对路径</li>
+</ul>
+<p>运行</p>
+<pre class="sh"><code>export NXF_OPTS=&#39;-Xms1g -Xmx4g&#39; # 建议限制Java虚拟机的内存
+nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker</code></pre>
+</div>
+<div id="参考" class="section level3">
+<h3>参考</h3>
+<p><a href="https://nf-co.re/pipelines" class="uri">https://nf-co.re/pipelines</a>
+<a href="https://nf-co.re/atacseq/1.2.1/usage" class="uri">https://nf-co.re/atacseq/1.2.1/usage</a></p>
+</div>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/nextflow">Nextflow</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>Related</h3>
+  <ul>
+    
+    <li><a href="/post/2019-10-29-nextflow-tower-deploy/">基于Nextflow的宏基因组有参分析-VI Nextflow tower本地配置</a></li>
+    
+    <li><a href="/post/2019-10-25-nextflow-tower/">基于Nextflow的宏基因组有参分析-V Nextflow tower</a></li>
+    
+    <li><a href="/post/2019-10-17-nextflow-kraken/">基于Nextflow的宏基因组有参分析-IV Kraken2&#43;Bracken</a></li>
+    
+    <li><a href="/post/2019-10-01-nextflow-decont/">基于Nextflow的宏基因组有参分析-III 质控&#43;去宿主DNA</a></li>
+    
+    <li><a href="/post/2019-09-29-nextflow-main/">基于Nextflow的宏基因组有参分析-II 主函数和输入输出</a></li>
+    
+  </ul>
+</div>
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

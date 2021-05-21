@@ -1,0 +1,81 @@
+---
+title: "nf-core流程使用"
+author: "Chenhao Li"
+output: html_document
+categories: ["Nextflow"]
+tags: ["Nextflow"]
+date: 2021-05-20
+summary: "使用nf-core的atacseq流程进行ATAC-Seq分析"
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+[nf-core](https://nf-co.re/)是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。
+
+### 测试环境
+
+Ubuntu 20.04 （Root权限）
+
+安装Docker
+
+```{sh}
+sudo snap install docker # 用snap安装
+sudo usermod -aG docker ${USER} # 修正权限问题
+```
+
+安装java
+
+```{sh}
+sudo apt install default-jdk
+```
+
+安装nextflow
+
+```{sh}
+curl -fsSL get.nextflow.io | bash
+sudo mv nextflow /usr/local/bin
+```
+
+下载[nf-core/atacseq](https://nf-co.re/atacseq)流程并运行实例
+
+```{sh}
+ nextflow run nf-core/atacseq -profile test,docker
+```
+
+### 运行
+
+根据自己的样本，创建一个以下格式的csv文件
+
+```
+group,replicate,fastq_1,fastq_2
+control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz
+treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz
+```
+
+ - `group`：实验组别，如实验组、对照组
+ - `replicate`：实验重复编号
+ - `fastq_1`：fastq1绝对路径
+ - `fastq_2`：fastq2绝对路径
+ 
+运行
+ 
+ ```{sh}
+export NXF_OPTS='-Xms1g -Xmx4g' # 建议限制Java虚拟机的内存
+nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker
+ ```
+
+### 参考
+
+https://nf-co.re/pipelines
+https://nf-co.re/atacseq/1.2.1/usage
+
+
+

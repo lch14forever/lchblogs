@@ -11,6 +11,59 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>nf-core流程使用</title>
+      <link>/post/2021-05-20-nextflow-nfcore/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-20-nextflow-nfcore/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/&#34;&gt;nf-core&lt;/a&gt;是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。&lt;/p&gt;
+&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;测试环境&lt;/h3&gt;
+&lt;p&gt;Ubuntu 20.04 （Root权限）&lt;/p&gt;
+&lt;p&gt;安装Docker&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo snap install docker # 用snap安装
+sudo usermod -aG docker ${USER} # 修正权限问题&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装java&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt install default-jdk&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装nextflow&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -fsSL get.nextflow.io | bash
+sudo mv nextflow /usr/local/bin&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下载&lt;a href=&#34;https://nf-co.re/atacseq&#34;&gt;nf-core/atacseq&lt;/a&gt;流程并运行实例&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt; nextflow run nf-core/atacseq -profile test,docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行&lt;/h3&gt;
+&lt;p&gt;根据自己的样本，创建一个以下格式的csv文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;group,replicate,fastq_1,fastq_2
+control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz
+treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;group&lt;/code&gt;：实验组别，如实验组、对照组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;replicate&lt;/code&gt;：实验重复编号&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_1&lt;/code&gt;：fastq1绝对路径&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_2&lt;/code&gt;：fastq2绝对路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;运行&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export NXF_OPTS=&amp;#39;-Xms1g -Xmx4g&amp;#39; # 建议限制Java虚拟机的内存
+nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/pipelines&#34; class=&#34;uri&#34;&gt;https://nf-co.re/pipelines&lt;/a&gt;
+&lt;a href=&#34;https://nf-co.re/atacseq/1.2.1/usage&#34; class=&#34;uri&#34;&gt;https://nf-co.re/atacseq/1.2.1/usage&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Telegram bot基础使用</title>
       <link>/post/2021-05-11-telegrambot/</link>
       <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
@@ -1129,25 +1182,6 @@ p2 &amp;lt;- base2grob(~plot(g2))
 
 plot_grid(p1, p2, labels=LETTERS[1:2])&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2018-03-29-r-base2grob_igraph_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>microbiomeViz--斜体显示taxon name</title>
-      <link>/post/2018-02-01-r-metagenomeviz-italictaxon/</link>
-      <pubDate>Thu, 01 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-02-01-r-metagenomeviz-italictaxon/</guid>
-      <description>&lt;p&gt;微生物种名属名经常需要&lt;em&gt;&lt;code&gt;斜体&lt;/code&gt;&lt;/em&gt;表示，现在microbiomeViz添加了一个生成&lt;code&gt;expression&lt;/code&gt;的函数，可以直接将一个短语中的&lt;strong&gt;一个&lt;/strong&gt;（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
-## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)
-ggplot(SRS014459_Stool_profile, aes(x=V2)) + 
-  geom_histogram(col=&amp;#39;black&amp;#39;) + theme_bw() + theme(axis.title = element_text(size=23)) +
-  labs(x=formatPhrase(&amp;quot;Hello E. coli! Good-bye!&amp;quot;,&amp;quot;E. coli&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-02-01-r-metagenomeViz-italicTaxon_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
