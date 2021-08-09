@@ -1,0 +1,41 @@
+---
+title: "Nextflow长命令segmentation fault的解决"
+author: "Chenhao Li"
+output: html_document
+categories: ["Nextflow"]
+tags: ["Nextflow"]
+date: 2021-08-08
+summary: "在Mac上运行长命令导致segmentation fault"
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>最近在Mac上运行nextflow的一个流程，流程下载上千个文件，然后其中一步涉及将这上千个文件拷贝到一个文件夹下，运行的命令大概如下</p>
+<pre class="sh"><code>cp d0001.rds d0002.rds d0003.rds ... d1000.rds data_rds/</code></pre>
+<p>在nextflow的流程中这样实现</p>
+<pre class="nextflow"><code>process gatherRDS {
+    input:
+      file rds
+    output:
+      path &quot;data&quot;
+    script:
+      &quot;&quot;&quot;
+      mkdir data
+      cp $rds data/
+      &quot;&quot;&quot;
+}</code></pre>
+<p>但是运行时不断遇到segmentation fault的情况（MacOS Big Sur 11.5）。在github找到了<a href="https://github.com/nextflow-io/nextflow/issues/1364">答案</a>。加入<code>ulimit -Ss unlimited</code>，可以解除对程序的内存限制，解决问题。</p>
+<pre class="nextflow"><code>process gatherRDS {
+    beforeScript &#39;ulimit -Ss unlimited&#39; // avoid long input segfault
+
+    input:
+      file rds
+    output:
+      path &quot;data&quot;
+    script:
+      &quot;&quot;&quot;
+      mkdir data
+      cp $rds data/
+      &quot;&quot;&quot;
+}</code></pre>
