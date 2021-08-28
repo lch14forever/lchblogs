@@ -9,7 +9,7 @@ summary: "用ggforce注释Seurat UMAP"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的`geom_mark_ellipse`，实践中遇到一些问题，于是有了第一篇Single cell的记录。
@@ -90,13 +90,37 @@ DimPlot(pbmc3k.final) +
 
 ```{r fig.height=8, fig.width=7}
 DimPlot(pbmc3k.final) + 
-  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
-                    lwd=0,
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
+                    color=NA,
                     inherit.aes = F) + 
   NoLegend()
 ```
 
 Voila!
+
+### 彩蛋
+
+我在`ggesentials`中写了`geom_reduction_axes`和`geom_reduction_axes_label`两个函数，用来画UMAP的小坐标。
+
+```{r fig.height=8, fig.width=8}
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
+                    color=NA,
+                    inherit.aes = F) + 
+  ggessentials:::geom_reduction_axes(aes(x=UMAP_1, y=UMAP_2), 
+                                     len = 0.1, 
+                                     arrow=arrow(length = unit(0.3,"cm"), 
+                                                 type = "closed")) + 
+  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
+                                           vjust=1.5, 
+                                           label="UMAP 1") + 
+  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
+                                           vjust=-0.5, 
+                                           label="UMAP 2", axis=2, angle=90) +
+  theme_void() +   NoLegend() 
+
+```
+
 
 ### 运行信息
 
