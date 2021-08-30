@@ -4,7 +4,7 @@ author: "Chenhao Li"
 output: html_document
 categories: ["Single cell"]
 tags: ["Single cell"]
-date: 2021-08-12
+date: 2021-08-30
 summary: "用ggforce注释Seurat UMAP"
 ---
 
@@ -104,21 +104,7 @@ Voila!
 
 ```{r fig.height=8, fig.width=8}
 DimPlot(pbmc3k.final) + 
-  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
-                    color=NA,
-                    inherit.aes = F) + 
-  ggessentials:::geom_reduction_axes(aes(x=UMAP_1, y=UMAP_2), 
-                                     len = 0.1, 
-                                     arrow=arrow(length = unit(0.3,"cm"), 
-                                                 type = "closed")) + 
-  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
-                                           vjust=1.5, 
-                                           label="UMAP 1") + 
-  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
-                                           vjust=-0.5, 
-                                           label="UMAP 2", axis=2, angle=90) +
-  theme_void() +   NoLegend() 
-
+  theme_umap_ge(aes_x = "UMAP_1", aes_y = "UMAP_2")
 ```
 
 

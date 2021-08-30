@@ -4,7 +4,7 @@ author: "Chenhao Li"
 output: html_document
 categories: ["Single cell"]
 tags: ["Single cell"]
-date: 2021-08-12
+date: 2021-08-30
 summary: "用ggforce注释Seurat UMAP"
 ---
 
@@ -119,69 +119,63 @@ DimPlot(pbmc3k.final) +
 <div id="运行信息" class="section level3">
 <h3>运行信息</h3>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 4.0.4 (2021-02-15)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 21.04
+<pre><code>## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
-## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
-##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] plyr_1.8.6                ggforce_0.3.3            
-##  [3] ggplot2_3.3.5             patchwork_1.1.1          
-##  [5] stxBrain.SeuratData_0.1.1 pbmc3k.SeuratData_3.1.4  
-##  [7] ifnb.SeuratData_3.1.0     SeuratData_0.2.1         
-##  [9] SeuratObject_4.0.2        Seurat_4.0.3.9013        
-## [11] dplyr_1.0.6              
+## [1] plyr_1.8.6              ggforce_0.3.3           ggplot2_3.3.5          
+## [4] patchwork_1.1.1         pbmc3k.SeuratData_3.1.4 SeuratData_0.2.1       
+## [7] SeuratObject_4.0.2      Seurat_4.0.3            dplyr_1.0.7            
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] Rtsne_0.15            colorspace_2.0-1      deldir_0.2-10        
+##   [1] Rtsne_0.15            colorspace_2.0-2      deldir_0.2-10        
 ##   [4] ellipsis_0.3.2        ggridges_0.5.3        rstudioapi_0.13      
-##   [7] spatstat.data_2.1-0   farver_2.1.0          leiden_0.3.7         
-##  [10] listenv_0.8.0         ggrepel_0.9.1         fansi_0.4.2          
-##  [13] codetools_0.2-18      splines_4.0.4         knitr_1.33           
+##   [7] spatstat.data_2.1-0   farver_2.1.0          leiden_0.3.9         
+##  [10] listenv_0.8.0         ggrepel_0.9.1         fansi_0.5.0          
+##  [13] codetools_0.2-18      splines_4.0.5         knitr_1.33           
 ##  [16] polyclip_1.10-0       jsonlite_1.7.2        ica_1.0-2            
 ##  [19] cluster_2.1.1         png_0.1-7             uwot_0.1.10          
 ##  [22] shiny_1.6.0           sctransform_0.3.2     spatstat.sparse_2.0-0
-##  [25] compiler_4.0.4        httr_1.4.2            assertthat_0.2.1     
-##  [28] Matrix_1.3-4          fastmap_1.1.0         lazyeval_0.2.2       
-##  [31] cli_2.5.0             tweenr_1.0.2          later_1.2.0          
-##  [34] htmltools_0.5.1.1     tools_4.0.4           igraph_1.2.6         
-##  [37] gtable_0.3.0          glue_1.4.2            RANN_2.6.1           
-##  [40] reshape2_1.4.4        rappdirs_0.3.3        Rcpp_1.0.6           
-##  [43] scattermore_0.7       jquerylib_0.1.4       vctrs_0.3.8          
-##  [46] nlme_3.1-152          blogdown_1.4          lmtest_0.9-38        
-##  [49] xfun_0.22             stringr_1.4.0         globals_0.14.0       
-##  [52] mime_0.10             miniUI_0.1.1.1        lifecycle_1.0.0      
-##  [55] irlba_2.3.3           goftest_1.2-2         future_1.21.0        
-##  [58] MASS_7.3-53.1         zoo_1.8-9             scales_1.1.1         
-##  [61] spatstat.core_2.1-2   promises_1.2.0.1      spatstat.utils_2.1-0 
-##  [64] parallel_4.0.4        RColorBrewer_1.1-2    yaml_2.2.1           
-##  [67] reticulate_1.20       pbapply_1.4-3         gridExtra_2.3        
-##  [70] sass_0.3.1            rpart_4.1-15          stringi_1.5.3        
-##  [73] highr_0.9             rlang_0.4.11          pkgconfig_2.0.3      
-##  [76] matrixStats_0.58.0    evaluate_0.14         lattice_0.20-41      
-##  [79] ROCR_1.0-11           purrr_0.3.4           tensor_1.5           
-##  [82] labeling_0.4.2        htmlwidgets_1.5.3     cowplot_1.1.1        
-##  [85] tidyselect_1.1.1      ggsci_2.9             parallelly_1.25.0    
-##  [88] RcppAnnoy_0.0.18      magrittr_2.0.1        bookdown_0.22        
-##  [91] R6_2.5.0              generics_0.1.0        DBI_1.1.1            
-##  [94] withr_2.4.2           pillar_1.6.0          mgcv_1.8-34          
-##  [97] fitdistrplus_1.1-3    survival_3.2-7        abind_1.4-5          
-## [100] tibble_3.1.1          future.apply_1.7.0    crayon_1.4.1         
-## [103] KernSmooth_2.23-18    utf8_1.2.1            spatstat.geom_2.1-0  
-## [106] plotly_4.9.4.1        rmarkdown_2.8         grid_4.0.4           
-## [109] data.table_1.14.0     digest_0.6.27         xtable_1.8-4         
-## [112] tidyr_1.1.3           httpuv_1.6.1          munsell_0.5.0        
-## [115] viridisLite_0.4.0     bslib_0.2.4           ggessentials_0.1.0</code></pre>
+##  [25] compiler_4.0.5        httr_1.4.2            Matrix_1.3-4         
+##  [28] fastmap_1.1.0         lazyeval_0.2.2        cli_3.0.1            
+##  [31] tweenr_1.0.2          later_1.2.0           htmltools_0.5.1.1    
+##  [34] tools_4.0.5           igraph_1.2.6          gtable_0.3.0         
+##  [37] glue_1.4.2            RANN_2.6.1            reshape2_1.4.4       
+##  [40] rappdirs_0.3.3        Rcpp_1.0.7            scattermore_0.7      
+##  [43] jquerylib_0.1.4       vctrs_0.3.8           nlme_3.1-152         
+##  [46] blogdown_1.4          lmtest_0.9-38         xfun_0.22            
+##  [49] stringr_1.4.0         globals_0.14.0        mime_0.11            
+##  [52] miniUI_0.1.1.1        lifecycle_1.0.0       irlba_2.3.3          
+##  [55] goftest_1.2-2         future_1.21.0         MASS_7.3-53.1        
+##  [58] zoo_1.8-9             scales_1.1.1          spatstat.core_2.3-0  
+##  [61] promises_1.2.0.1      spatstat.utils_2.2-0  parallel_4.0.5       
+##  [64] RColorBrewer_1.1-2    yaml_2.2.1            reticulate_1.20      
+##  [67] pbapply_1.4-3         gridExtra_2.3         sass_0.4.0           
+##  [70] rpart_4.1-15          stringi_1.7.3         highr_0.9            
+##  [73] rlang_0.4.11          pkgconfig_2.0.3       matrixStats_0.60.0   
+##  [76] evaluate_0.14         lattice_0.20-41       ROCR_1.0-11          
+##  [79] purrr_0.3.4           tensor_1.5            labeling_0.4.2       
+##  [82] htmlwidgets_1.5.3     cowplot_1.1.1         tidyselect_1.1.1     
+##  [85] ggsci_2.9             parallelly_1.27.0     RcppAnnoy_0.0.19     
+##  [88] magrittr_2.0.1        bookdown_0.23         R6_2.5.0             
+##  [91] generics_0.1.0        withr_2.4.2           pillar_1.6.2         
+##  [94] mgcv_1.8-34           fitdistrplus_1.1-5    survival_3.2-10      
+##  [97] abind_1.4-5           tibble_3.1.3          future.apply_1.8.1   
+## [100] crayon_1.4.1          KernSmooth_2.23-18    utf8_1.2.2           
+## [103] spatstat.geom_2.2-2   plotly_4.9.4.1        rmarkdown_2.10       
+## [106] grid_4.0.5            data.table_1.14.0     digest_0.6.27        
+## [109] xtable_1.8-4          tidyr_1.1.3           httpuv_1.6.1         
+## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1        
+## [115] ggessentials_0.1.0</code></pre>
 </div>
