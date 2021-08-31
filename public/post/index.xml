@@ -11,6 +11,174 @@
     <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>让Single cell UMAP注释支棱起来</title>
+      <link>/post/2021-08-12-singlecell-annotation-ggforce/</link>
+      <pubDate>Mon, 30 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-08-12-singlecell-annotation-ggforce/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的&lt;code&gt;geom_mark_ellipse&lt;/code&gt;，实践中遇到一些问题，于是有了第一篇Single cell的记录。&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://ggforce.data-imaginist.com/reference/geom_mark_ellipse-2.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;ggforee&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;尝试用ggforce注释&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;尝试用ggforce注释&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+library(Seurat)
+library(SeuratData)
+library(patchwork)
+library(ggforce)
+##InstallData(&amp;quot;pbmc3k&amp;quot;)
+data(&amp;quot;pbmc3k&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points &amp;lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;864&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;修改&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;修改&lt;/h3&gt;
+&lt;p&gt;思路如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对每一个cluster计算一个尽量小的置信椭圆&lt;/li&gt;
+&lt;li&gt;用置信椭圆上的点来画geom_mark_ellipse&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points &amp;lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
+theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle &amp;lt;- cbind(cos(theta), sin(theta))
+
+library(plyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## You have loaded plyr after dplyr - this is likely to cause problems.
+## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+## library(plyr); library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;plyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aux &amp;lt;- function(x, one, two, prob=0.8) {
+    if(nrow(x) &amp;lt;= 2) {
+      return(NULL)
+    }
+    sigma &amp;lt;- var(cbind(x[,one], x[,two]))
+    mu &amp;lt;- c(mean(x[,one]), mean(x[,two]))
+    ed &amp;lt;- sqrt(qchisq(prob, df = 2))
+    data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
+}
+ell &amp;lt;- plyr::ddply(points, &amp;quot;cluster&amp;quot;, aux, one=&amp;quot;UMAP_1&amp;quot;, two=&amp;quot;UMAP_2&amp;quot;)
+
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;864&#34; /&gt;
+### 微调&lt;/p&gt;
+&lt;p&gt;下面就是进行一些微调，将椭圆缩小使注释指在亚群上更好的位置&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## 调整prob参数
+ell &amp;lt;- plyr::ddply(points, &amp;quot;cluster&amp;quot;, aux, one=&amp;quot;UMAP_1&amp;quot;, two=&amp;quot;UMAP_2&amp;quot;, prob=0.1)
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;768&#34; /&gt;
+把椭圆隐藏&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
+                    color=NA,
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Voila!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;彩蛋&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;彩蛋&lt;/h3&gt;
+&lt;p&gt;我在&lt;code&gt;ggesentials&lt;/code&gt;中写了&lt;code&gt;theme_umap_ge&lt;/code&gt;函数，用来画UMAP的小坐标。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggessentials)
+DimPlot(pbmc3k.final) + 
+  theme_umap_ge(aes_x = &amp;quot;UMAP_1&amp;quot;, aes_y = &amp;quot;UMAP_2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行信息&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行信息&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] ggessentials_0.1.0      plyr_1.8.6              ggforce_0.3.3          
+##  [4] ggplot2_3.3.5           patchwork_1.1.1         pbmc3k.SeuratData_3.1.4
+##  [7] SeuratData_0.2.1        SeuratObject_4.0.2      Seurat_4.0.3           
+## [10] dplyr_1.0.7            
+## 
+## loaded via a namespace (and not attached):
+##   [1] Rtsne_0.15            colorspace_2.0-2      deldir_0.2-10        
+##   [4] ellipsis_0.3.2        ggridges_0.5.3        rstudioapi_0.13      
+##   [7] spatstat.data_2.1-0   farver_2.1.0          leiden_0.3.9         
+##  [10] listenv_0.8.0         ggrepel_0.9.1         fansi_0.5.0          
+##  [13] codetools_0.2-18      splines_4.0.5         knitr_1.33           
+##  [16] polyclip_1.10-0       jsonlite_1.7.2        ica_1.0-2            
+##  [19] cluster_2.1.1         png_0.1-7             uwot_0.1.10          
+##  [22] shiny_1.6.0           sctransform_0.3.2     spatstat.sparse_2.0-0
+##  [25] compiler_4.0.5        httr_1.4.2            Matrix_1.3-4         
+##  [28] fastmap_1.1.0         lazyeval_0.2.2        cli_3.0.1            
+##  [31] tweenr_1.0.2          later_1.2.0           htmltools_0.5.1.1    
+##  [34] tools_4.0.5           igraph_1.2.6          gtable_0.3.0         
+##  [37] glue_1.4.2            RANN_2.6.1            reshape2_1.4.4       
+##  [40] rappdirs_0.3.3        Rcpp_1.0.7            scattermore_0.7      
+##  [43] jquerylib_0.1.4       vctrs_0.3.8           nlme_3.1-152         
+##  [46] blogdown_1.4          lmtest_0.9-38         xfun_0.22            
+##  [49] stringr_1.4.0         globals_0.14.0        mime_0.11            
+##  [52] miniUI_0.1.1.1        lifecycle_1.0.0       irlba_2.3.3          
+##  [55] goftest_1.2-2         future_1.21.0         MASS_7.3-53.1        
+##  [58] zoo_1.8-9             scales_1.1.1          spatstat.core_2.3-0  
+##  [61] promises_1.2.0.1      spatstat.utils_2.2-0  parallel_4.0.5       
+##  [64] RColorBrewer_1.1-2    yaml_2.2.1            reticulate_1.20      
+##  [67] pbapply_1.4-3         gridExtra_2.3         sass_0.4.0           
+##  [70] rpart_4.1-15          stringi_1.7.3         highr_0.9            
+##  [73] rlang_0.4.11          pkgconfig_2.0.3       matrixStats_0.60.0   
+##  [76] evaluate_0.14         lattice_0.20-41       ROCR_1.0-11          
+##  [79] purrr_0.3.4           tensor_1.5            labeling_0.4.2       
+##  [82] htmlwidgets_1.5.3     cowplot_1.1.1         tidyselect_1.1.1     
+##  [85] ggsci_2.9             parallelly_1.27.0     RcppAnnoy_0.0.19     
+##  [88] magrittr_2.0.1        bookdown_0.23         R6_2.5.0             
+##  [91] generics_0.1.0        withr_2.4.2           pillar_1.6.2         
+##  [94] mgcv_1.8-34           fitdistrplus_1.1-5    survival_3.2-10      
+##  [97] abind_1.4-5           tibble_3.1.3          future.apply_1.8.1   
+## [100] crayon_1.4.1          KernSmooth_2.23-18    utf8_1.2.2           
+## [103] spatstat.geom_2.2-2   plotly_4.9.4.1        rmarkdown_2.10       
+## [106] grid_4.0.5            data.table_1.14.0     digest_0.6.27        
+## [109] xtable_1.8-4          tidyr_1.1.3           httpuv_1.6.1         
+## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Nextflow长命令segmentation fault的解决</title>
       <link>/post/2021-08-08-nextflow-trick/</link>
       <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
@@ -1122,66 +1290,6 @@ plot(as.vector(dist(pca$x[,1:2])) - as.vector(dist(pcoa)),
 &lt;p&gt;很明显，在基于欧氏距离的&lt;code&gt;cmdscale&lt;/code&gt;和PCA在前两个维度上并没有什么区别。我个人一度以为PCA和基于欧式距离的PCoA其实是等同的，但是后来我们在一些PCoA的实现中确实看到了和PCA结果的差异，但是其实这个差异并不是很大。网上其实有很多的讨论，比如&lt;a href=&#34;https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional&#34;&gt;这个&lt;/a&gt;。&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
-      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
-      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
-      <description>&lt;section id=&#34;data-downloading-and-preprocessing&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Data downloading and preprocessing&lt;/h3&gt;
-&lt;p&gt;Now let’s try to generate a figure like this:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Sample processed by MetaPhlAn:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Script to merge samples:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&#34; class=&#34;uri&#34;&gt;https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Merge files into a single table&lt;/p&gt;
-&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;python merge_metaphlan_tables.py profiled_samples/*.txt &amp;gt; profiled_samples/merged_abundance_table.txt&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;now-switch-to-r&#34; class=&#34;level3&#34;&gt;
-&lt;h3&gt;Now switch to R&lt;/h3&gt;
-&lt;section id=&#34;load-data-and-library&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Load data and library&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- read.table(&amp;quot;~/Downloads/profiled_samples/merged_abundance_table.txt&amp;quot;, head=TRUE, stringsAsFactors = FALSE)
-df &amp;lt;- df[,-ncol(df)]
-## Use row means as a proxy for node size
-dat &amp;lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE)
-
-library(microbiomeViz)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when
-## loading &amp;#39;microbiomeViz&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;parse-data-and-create-a-backbone&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Parse data and create a backbone&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tr &amp;lt;- parseMetaphlanTSV(dat, node.size.offset=2, node.size.scale=0.8)
-p &amp;lt;- tree.backbone(tr, size=0.5)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;section id=&#34;hard-coded-lefse-results&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Hard-coded lefse results&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lefse_lists = data.frame(node=c(&amp;#39;s__Haemophilus_parainfluenzae&amp;#39;,&amp;#39;p__Proteobacteria&amp;#39;,
-                              &amp;#39;f__Veillonellaceae&amp;#39;,&amp;#39;o__Selenomonadales&amp;#39;,
-                              &amp;#39;c__Negativicutes&amp;#39;, &amp;#39;s__Streptococcus_parasanguinis&amp;#39;,
-
-                              &amp;#39;p__Firmicutes&amp;#39;,&amp;#39;f__Streptococcaceae&amp;#39;,
-                              &amp;#39;g__Streptococcus&amp;#39;,&amp;#39;o__Lactobacillales&amp;#39;,
-                              &amp;#39;c__Bacilli&amp;#39;,&amp;#39;s__Streptococcus_mitis&amp;#39;),
-                         color=c(rep(&amp;#39;darkgreen&amp;#39;,6), rep(&amp;#39;red&amp;#39;,&amp;#39;6&amp;#39;)),
-                         stringsAsFactors = FALSE
-                         )&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;
-&lt;section id=&#34;annotate-the-tree&#34; class=&#34;level4&#34;&gt;
-&lt;h4&gt;Annotate the tree&lt;/h4&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- clade.anno(p, lefse_lists, alpha=0.3)
-p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;960&#34; /&gt;&lt;/p&gt;
-&lt;/section&gt;
-&lt;/section&gt;
 </description>
     </item>
     

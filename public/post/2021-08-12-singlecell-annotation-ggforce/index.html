@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.30" />
+  <meta name="author" content="Chenhao Li">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的geom_mark_ellipse，实践中遇到一些问题，于是有了第一篇Single cell的记录。
+ggforee
+ 尝试用ggforce注释 library(dplyr) library(Seurat) library(SeuratData) library(patchwork) library(ggforce) ##InstallData(&quot;pbmc3k&quot;) data(&quot;pbmc3k&quot;) points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) DimPlot(pbmc3k.final) &#43; geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster), inherit.aes = F) &#43; NoLegend() 非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。
+ 修改 思路如下：
+ 对每一个cluster计算一个尽量小的置信椭圆 用置信椭圆上的点来画geom_mark_ellipse  points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50)) circle &lt;- cbind(cos(theta), sin(theta)) library(plyr) ## ------------------------------------------------------------------------------ ## You have loaded plyr after dplyr - this is likely to cause problems.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2021-08-12-singlecell-annotation-ggforce/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-108829179-1', 'auto');
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2021-08-12-singlecell-annotation-ggforce/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@li_chenhao">
+  <meta property="twitter:creator" content="@li_chenhao">
+  
+  <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
+  <meta property="og:url" content="/post/2021-08-12-singlecell-annotation-ggforce/">
+  <meta property="og:title" content="让Single cell UMAP注释支棱起来 | Chenhao&#39;s Personal Page">
+  <meta property="og:description" content="最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的geom_mark_ellipse，实践中遇到一些问题，于是有了第一篇Single cell的记录。
+ggforee
+ 尝试用ggforce注释 library(dplyr) library(Seurat) library(SeuratData) library(patchwork) library(ggforce) ##InstallData(&quot;pbmc3k&quot;) data(&quot;pbmc3k&quot;) points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) DimPlot(pbmc3k.final) &#43; geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster), inherit.aes = F) &#43; NoLegend() 非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。
+ 修改 思路如下：
+ 对每一个cluster计算一个尽量小的置信椭圆 用置信椭圆上的点来画geom_mark_ellipse  points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50)) circle &lt;- cbind(cos(theta), sin(theta)) library(plyr) ## ------------------------------------------------------------------------------ ## You have loaded plyr after dplyr - this is likely to cause problems.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2021-08-30T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2021-08-30T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>让Single cell UMAP注释支棱起来 | Chenhao&#39;s Personal Page</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Chenhao&#39;s Personal Page</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">让Single cell UMAP注释支棱起来</h1>
+
+      
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2021-08-30 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Aug 30, 2021
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    3 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/single-cell">Single cell</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+      <div class="article-style" itemprop="articleBody">
+        <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的<code>geom_mark_ellipse</code>，实践中遇到一些问题，于是有了第一篇Single cell的记录。</p>
+<div class="figure">
+<img src="https://ggforce.data-imaginist.com/reference/geom_mark_ellipse-2.png" alt="" />
+<p class="caption">ggforee</p>
+</div>
+<div id="尝试用ggforce注释" class="section level3">
+<h3>尝试用ggforce注释</h3>
+<pre class="r"><code>library(dplyr)
+library(Seurat)
+library(SeuratData)
+library(patchwork)
+library(ggforce)
+##InstallData(&quot;pbmc3k&quot;)
+data(&quot;pbmc3k&quot;)</code></pre>
+<pre class="r"><code>points &lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()</code></pre>
+<p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-2-1.png" width="864" /></p>
+<p>非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。</p>
+</div>
+<div id="修改" class="section level3">
+<h3>修改</h3>
+<p>思路如下：</p>
+<ul>
+<li>对每一个cluster计算一个尽量小的置信椭圆</li>
+<li>用置信椭圆上的点来画geom_mark_ellipse</li>
+</ul>
+<pre class="r"><code>points &lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
+theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle &lt;- cbind(cos(theta), sin(theta))
+
+library(plyr)</code></pre>
+<pre><code>## ------------------------------------------------------------------------------</code></pre>
+<pre><code>## You have loaded plyr after dplyr - this is likely to cause problems.
+## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+## library(plyr); library(dplyr)</code></pre>
+<pre><code>## ------------------------------------------------------------------------------</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize</code></pre>
+<pre class="r"><code>aux &lt;- function(x, one, two, prob=0.8) {
+    if(nrow(x) &lt;= 2) {
+      return(NULL)
+    }
+    sigma &lt;- var(cbind(x[,one], x[,two]))
+    mu &lt;- c(mean(x[,one]), mean(x[,two]))
+    ed &lt;- sqrt(qchisq(prob, df = 2))
+    data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &#39;+&#39;))
+}
+ell &lt;- plyr::ddply(points, &quot;cluster&quot;, aux, one=&quot;UMAP_1&quot;, two=&quot;UMAP_2&quot;)
+
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()</code></pre>
+<p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-3-1.png" width="864" />
+### 微调</p>
+<p>下面就是进行一些微调，将椭圆缩小使注释指在亚群上更好的位置</p>
+<pre class="r"><code>## 调整prob参数
+ell &lt;- plyr::ddply(points, &quot;cluster&quot;, aux, one=&quot;UMAP_1&quot;, two=&quot;UMAP_2&quot;, prob=0.1)
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()</code></pre>
+<p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-4-1.png" width="768" />
+把椭圆隐藏</p>
+<pre class="r"><code>DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
+                    color=NA,
+                    inherit.aes = F) + 
+  NoLegend()</code></pre>
+<p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Voila!</p>
+</div>
+<div id="彩蛋" class="section level3">
+<h3>彩蛋</h3>
+<p>我在<code>ggesentials</code>中写了<code>theme_umap_ge</code>函数，用来画UMAP的小坐标。</p>
+<pre class="r"><code>library(ggessentials)
+DimPlot(pbmc3k.final) + 
+  theme_umap_ge(aes_x = &quot;UMAP_1&quot;, aes_y = &quot;UMAP_2&quot;)</code></pre>
+<p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
+</div>
+<div id="运行信息" class="section level3">
+<h3>运行信息</h3>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] ggessentials_0.1.0      plyr_1.8.6              ggforce_0.3.3          
+##  [4] ggplot2_3.3.5           patchwork_1.1.1         pbmc3k.SeuratData_3.1.4
+##  [7] SeuratData_0.2.1        SeuratObject_4.0.2      Seurat_4.0.3           
+## [10] dplyr_1.0.7            
+## 
+## loaded via a namespace (and not attached):
+##   [1] Rtsne_0.15            colorspace_2.0-2      deldir_0.2-10        
+##   [4] ellipsis_0.3.2        ggridges_0.5.3        rstudioapi_0.13      
+##   [7] spatstat.data_2.1-0   farver_2.1.0          leiden_0.3.9         
+##  [10] listenv_0.8.0         ggrepel_0.9.1         fansi_0.5.0          
+##  [13] codetools_0.2-18      splines_4.0.5         knitr_1.33           
+##  [16] polyclip_1.10-0       jsonlite_1.7.2        ica_1.0-2            
+##  [19] cluster_2.1.1         png_0.1-7             uwot_0.1.10          
+##  [22] shiny_1.6.0           sctransform_0.3.2     spatstat.sparse_2.0-0
+##  [25] compiler_4.0.5        httr_1.4.2            Matrix_1.3-4         
+##  [28] fastmap_1.1.0         lazyeval_0.2.2        cli_3.0.1            
+##  [31] tweenr_1.0.2          later_1.2.0           htmltools_0.5.1.1    
+##  [34] tools_4.0.5           igraph_1.2.6          gtable_0.3.0         
+##  [37] glue_1.4.2            RANN_2.6.1            reshape2_1.4.4       
+##  [40] rappdirs_0.3.3        Rcpp_1.0.7            scattermore_0.7      
+##  [43] jquerylib_0.1.4       vctrs_0.3.8           nlme_3.1-152         
+##  [46] blogdown_1.4          lmtest_0.9-38         xfun_0.22            
+##  [49] stringr_1.4.0         globals_0.14.0        mime_0.11            
+##  [52] miniUI_0.1.1.1        lifecycle_1.0.0       irlba_2.3.3          
+##  [55] goftest_1.2-2         future_1.21.0         MASS_7.3-53.1        
+##  [58] zoo_1.8-9             scales_1.1.1          spatstat.core_2.3-0  
+##  [61] promises_1.2.0.1      spatstat.utils_2.2-0  parallel_4.0.5       
+##  [64] RColorBrewer_1.1-2    yaml_2.2.1            reticulate_1.20      
+##  [67] pbapply_1.4-3         gridExtra_2.3         sass_0.4.0           
+##  [70] rpart_4.1-15          stringi_1.7.3         highr_0.9            
+##  [73] rlang_0.4.11          pkgconfig_2.0.3       matrixStats_0.60.0   
+##  [76] evaluate_0.14         lattice_0.20-41       ROCR_1.0-11          
+##  [79] purrr_0.3.4           tensor_1.5            labeling_0.4.2       
+##  [82] htmlwidgets_1.5.3     cowplot_1.1.1         tidyselect_1.1.1     
+##  [85] ggsci_2.9             parallelly_1.27.0     RcppAnnoy_0.0.19     
+##  [88] magrittr_2.0.1        bookdown_0.23         R6_2.5.0             
+##  [91] generics_0.1.0        withr_2.4.2           pillar_1.6.2         
+##  [94] mgcv_1.8-34           fitdistrplus_1.1-5    survival_3.2-10      
+##  [97] abind_1.4-5           tibble_3.1.3          future.apply_1.8.1   
+## [100] crayon_1.4.1          KernSmooth_2.23-18    utf8_1.2.2           
+## [103] spatstat.geom_2.2-2   plotly_4.9.4.1        rmarkdown_2.10       
+## [106] grid_4.0.5            data.table_1.14.0     digest_0.6.27        
+## [109] xtable_1.8-4          tidyr_1.1.3           httpuv_1.6.1         
+## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1</code></pre>
+</div>
+
+      </div>
+
+      
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/single-cell">Single cell</a>
+  
+</div>
+
+
+
+    </div>
+  </div>
+
+</article>
+
+
+
+
+
+
+<div class="article-container">
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lichenhao" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      © This site was created with R BlogDown and HuGo by Chenhao Li. &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/sh.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

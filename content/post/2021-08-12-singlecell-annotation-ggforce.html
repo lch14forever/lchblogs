@@ -98,22 +98,10 @@ DimPlot(pbmc3k.final) +
 </div>
 <div id="彩蛋" class="section level3">
 <h3>彩蛋</h3>
-<p>我在<code>ggesentials</code>中写了<code>geom_reduction_axes</code>和<code>geom_reduction_axes_label</code>两个函数，用来画UMAP的小坐标。</p>
-<pre class="r"><code>DimPlot(pbmc3k.final) + 
-  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
-                    color=NA,
-                    inherit.aes = F) + 
-  ggessentials:::geom_reduction_axes(aes(x=UMAP_1, y=UMAP_2), 
-                                     len = 0.1, 
-                                     arrow=arrow(length = unit(0.3,&quot;cm&quot;), 
-                                                 type = &quot;closed&quot;)) + 
-  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
-                                           vjust=1.5, 
-                                           label=&quot;UMAP 1&quot;) + 
-  ggessentials:::geom_reduction_axes_label(aes(x=UMAP_1, y=UMAP_2), 
-                                           vjust=-0.5, 
-                                           label=&quot;UMAP 2&quot;, axis=2, angle=90) +
-  theme_void() +   NoLegend() </code></pre>
+<p>我在<code>ggesentials</code>中写了<code>theme_umap_ge</code>函数，用来画UMAP的小坐标。</p>
+<pre class="r"><code>library(ggessentials)
+DimPlot(pbmc3k.final) + 
+  theme_umap_ge(aes_x = &quot;UMAP_1&quot;, aes_y = &quot;UMAP_2&quot;)</code></pre>
 <p><img src="/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
 </div>
 <div id="运行信息" class="section level3">
@@ -134,9 +122,10 @@ DimPlot(pbmc3k.final) +
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] plyr_1.8.6              ggforce_0.3.3           ggplot2_3.3.5          
-## [4] patchwork_1.1.1         pbmc3k.SeuratData_3.1.4 SeuratData_0.2.1       
-## [7] SeuratObject_4.0.2      Seurat_4.0.3            dplyr_1.0.7            
+##  [1] ggessentials_0.1.0      plyr_1.8.6              ggforce_0.3.3          
+##  [4] ggplot2_3.3.5           patchwork_1.1.1         pbmc3k.SeuratData_3.1.4
+##  [7] SeuratData_0.2.1        SeuratObject_4.0.2      Seurat_4.0.3           
+## [10] dplyr_1.0.7            
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] Rtsne_0.15            colorspace_2.0-2      deldir_0.2-10        
@@ -176,6 +165,5 @@ DimPlot(pbmc3k.final) +
 ## [103] spatstat.geom_2.2-2   plotly_4.9.4.1        rmarkdown_2.10       
 ## [106] grid_4.0.5            data.table_1.14.0     digest_0.6.27        
 ## [109] xtable_1.8-4          tidyr_1.1.3           httpuv_1.6.1         
-## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1        
-## [115] ggessentials_0.1.0</code></pre>
+## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1</code></pre>
 </div>

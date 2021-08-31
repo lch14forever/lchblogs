@@ -100,9 +100,10 @@ Voila!
 
 ### 彩蛋
 
-我在`ggesentials`中写了`geom_reduction_axes`和`geom_reduction_axes_label`两个函数，用来画UMAP的小坐标。
+我在`ggesentials`中写了`theme_umap_ge`函数，用来画UMAP的小坐标。
 
 ```{r fig.height=8, fig.width=8}
+library(ggessentials)
 DimPlot(pbmc3k.final) + 
   theme_umap_ge(aes_x = "UMAP_1", aes_y = "UMAP_2")
 ```
