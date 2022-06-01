@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,7 @@
       
     
   
-  <meta name="description" content="再次尝试桑基图">
+  <meta name="description" content="使用plotly 预处理 taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE) second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;t__.*unclassified&#39;, taxtab$V1), ] ## remove strain level tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-11-02-r-sankeyplot2/">
@@ -91,7 +91,7 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-11-02-r-sankeyplot2/">
   <meta property="og:title" content="桑基图（Sankey diagram）II | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="再次尝试桑基图">
+  <meta property="og:description" content="使用plotly 预处理 taxtab &lt;- read.table(&#39;SRS014476-Supragingival_plaque_profile.txt&#39;, sep=&#39;\t&#39;, stringsAsFactors=FALSE) second_last &lt;- function(x) ifelse(length(x)&gt;1, x[length(x)-1], NA) taxtab &lt;- taxtab[-grep(&#39;t__.*unclassified&#39;, taxtab$V1), ] ## remove strain level tax_split &lt;- strsplit(taxtab$V1, &#39;\\|&#39;) ## split into different taxonomy levels target &lt;- sapply(tax_split, tail, n=1) ## target node mapping &lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &lt;- mapping$id source &lt;- sapply(tax_split, second_last) ## source node source_id &lt;- mapping[source,] value &lt;- taxtab$V2 ## width of flow links &lt;- data.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-11-02T00:00:00&#43;00:00">
@@ -291,8 +291,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+        <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
 <script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
 <script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
 <script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
@@ -427,7 +426,7 @@ p</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

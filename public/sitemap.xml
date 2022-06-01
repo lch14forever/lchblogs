@@ -1,85 +1,5 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-    
-    
-    <url>
-    
-      <loc>/categories/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/ggplot2/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/ggplot2/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/r/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/single-cell/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/single-cell/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/post/2022-05-31-round-corner-barplot/</loc>
-      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
   
     
     
@@ -87,24 +7,6 @@
     
       <loc>/post/2021-08-12-singlecell-annotation-ggforce/</loc>
       <lastmod>2021-08-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/nextflow/</loc>
-      <lastmod>2021-08-08T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/nextflow/</loc>
-      <lastmod>2021-08-08T00:00:00+00:00</lastmod>
     </url>
     
   
@@ -130,33 +32,6 @@
     
     <url>
     
-      <loc>/tags/linux/</loc>
-      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/linux/</loc>
-      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/telegram/</loc>
-      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2021-05-11-telegrambot/</loc>
       <lastmod>2021-05-11T00:00:00+00:00</lastmod>
     </url>
@@ -166,25 +41,7 @@
     
     <url>
     
-      <loc>/publication_types/2/</loc>
-      <lastmod>2020-11-24T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/publication/biorxiv_beemstatic/</loc>
-      <lastmod>2020-11-24T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/publication_types/</loc>
       <lastmod>2020-11-24T00:00:00+00:00</lastmod>
     </url>
     
@@ -202,52 +59,7 @@
     
     <url>
     
-      <loc>/tags/bioinformatics/</loc>
-      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/bioinformatics/</loc>
-      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/kraken/</loc>
-      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2020-08-22-krakentools/</loc>
-      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/metagenomics/</loc>
-      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/metagenomics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
     </url>
     
@@ -328,44 +140,8 @@
     
     <url>
     
-      <loc>/tags/python/</loc>
-      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/python/</loc>
-      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2019-08-17-conda-activate/</loc>
       <lastmod>2019-08-17T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/emacs/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/emacs/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
     </url>
     
   
@@ -391,15 +167,6 @@
     
     <url>
     
-      <loc>/categories/general/</loc>
-      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2018-04-39-r-pca_pcoa/</loc>
       <lastmod>2018-04-30T00:00:00+00:00</lastmod>
     </url>
@@ -410,15 +177,6 @@
     <url>
     
       <loc>/post/2018-04-20-r-microbiomeviz_example/</loc>
-      <lastmod>2018-04-20T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/microbiomeviz/</loc>
       <lastmod>2018-04-20T00:00:00+00:00</lastmod>
     </url>
     
@@ -447,15 +205,6 @@
     
       <loc>/post/2018-01-18-r-metagenomeviz/</loc>
       <lastmod>2018-01-18T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/microbiome/</loc>
-      <lastmod>2018-01-12T00:00:00+00:00</lastmod>
     </url>
     
   
@@ -508,15 +257,6 @@
     
     <url>
     
-      <loc>/tags/correlation-network/</loc>
-      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2017-11-18-r-absolute/</loc>
       <lastmod>2017-11-28T00:00:00+00:00</lastmod>
     </url>
@@ -526,25 +266,7 @@
     
     <url>
     
-      <loc>/categories/%E8%AF%BB%E6%96%87%E7%8C%AE/</loc>
-      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2017-11-15-r-glv/</loc>
-      <lastmod>2017-11-15T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/ode/</loc>
       <lastmod>2017-11-15T00:00:00+00:00</lastmod>
     </url>
     
@@ -580,15 +302,6 @@
     
     <url>
     
-      <loc>/tags/sankey/</loc>
-      <lastmod>2017-10-30T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/post/2017-10-30-r-curatedmetagenomicdata/</loc>
       <lastmod>2017-10-30T00:00:00+00:00</lastmod>
     </url>
@@ -607,17 +320,8 @@
     
     <url>
     
-      <loc>/tags/r/</loc>
-      <lastmod>2017-01-01T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/talk/example-talk/</loc>
-      <lastmod>2017-01-01T00:00:00+00:00</lastmod>
+      <lastmod>2017-01-01T00:00:00-05:00</lastmod>
     </url>
     
   
@@ -626,6 +330,17 @@
     <url>
     
       <loc>/post/</loc>
+      <lastmod>2017-01-01T00:00:00-05:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
+    
+      <loc>/tags/r/</loc>
       <lastmod>2017-01-01T00:00:00+00:00</lastmod>
     </url>
     
@@ -679,24 +394,6 @@
     
     <url>
     
-      <loc>/tags/deep-learning/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/demo/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/project/example-external-project/</loc>
       <lastmod>2016-04-27T00:00:00+00:00</lastmod>
     </url>
@@ -706,8 +403,351 @@
     
     <url>
     
+      <loc>/publication_types/2/</loc>
+      <lastmod>2020-11-24T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/bioinformatics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/bioinformatics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/</loc>
+      <lastmod>2017-10-15T00:00:00-04:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/correlation-network/</loc>
+      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/deep-learning/</loc>
+      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/demo/</loc>
+      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/emacs/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/emacs/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/general/</loc>
+      <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/ggplot2/</loc>
+      <lastmod>2018-01-09T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/kraken/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/linux/</loc>
+      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/linux/</loc>
+      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/metagenomics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/metagenomics/</loc>
+      <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/metagenomics/</loc>
+      <lastmod>2020-08-22T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/microbiome/</loc>
+      <lastmod>2018-01-12T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/microbiomeviz/</loc>
+      <lastmod>2018-04-20T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/nextflow/</loc>
+      <lastmod>2021-08-08T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/nextflow/</loc>
+      <lastmod>2021-08-08T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/ode/</loc>
+      <lastmod>2017-11-15T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/project/</loc>
       <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/publication_types/</loc>
+      <lastmod>2020-11-24T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/python/</loc>
+      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/python/</loc>
+      <lastmod>2019-08-17T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
+    
+      <loc>/tags/r/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/r/</loc>
+      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/sankey/</loc>
+      <lastmod>2017-10-30T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/single-cell/</loc>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/single-cell/</loc>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/</loc>
+      <lastmod>2017-01-01T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/telegram/</loc>
+      <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/%E8%AF%BB%E6%96%87%E7%8C%AE/</loc>
+      <lastmod>2017-11-28T00:00:00+00:00</lastmod>
+      <priority>0</priority>
     </url>
     
   

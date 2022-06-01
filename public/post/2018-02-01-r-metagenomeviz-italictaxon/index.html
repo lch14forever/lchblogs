@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,8 @@
       
     
   
-  <meta name="description" content="微生物种名属名经常需要*斜体*表示，现在microbiomeViz添加了一个生成expression的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。">
+  <meta name="description" content="微生物种名属名经常需要斜体表示，现在microbiomeViz添加了一个生成expression的函数，可以直接将一个短语中的一个（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。
+library(microbiomeViz) ## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when ## loading &#39;microbiomeViz&#39; library(ggplot2) ggplot(SRS014459_Stool_profile, aes(x=V2)) &#43; geom_histogram(col=&#39;black&#39;) &#43; theme_bw() &#43; theme(axis.title = element_text(size=23)) &#43; labs(x=formatPhrase(&quot;Hello E. coli! Good-bye!&quot;,&quot;E. coli&quot;)) ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`. ">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2018-02-01-r-metagenomeviz-italictaxon/">
@@ -91,7 +92,8 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-02-01-r-metagenomeviz-italictaxon/">
   <meta property="og:title" content="microbiomeViz--斜体显示taxon name | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="微生物种名属名经常需要*斜体*表示，现在microbiomeViz添加了一个生成expression的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。">
+  <meta property="og:description" content="微生物种名属名经常需要斜体表示，现在microbiomeViz添加了一个生成expression的函数，可以直接将一个短语中的一个（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。
+library(microbiomeViz) ## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when ## loading &#39;microbiomeViz&#39; library(ggplot2) ggplot(SRS014459_Stool_profile, aes(x=V2)) &#43; geom_histogram(col=&#39;black&#39;) &#43; theme_bw() &#43; theme(axis.title = element_text(size=23)) &#43; labs(x=formatPhrase(&quot;Hello E. coli! Good-bye!&quot;,&quot;E. coli&quot;)) ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`. ">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-02-01T00:00:00&#43;00:00">
@@ -279,10 +281,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<p>微生物种名属名经常需要<em><code>斜体</code></em>表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的<strong>一个</strong>（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</p>
+        <p>微生物种名属名经常需要<em><code>斜体</code></em>表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的<strong>一个</strong>（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</p>
 <pre class="r"><code>library(microbiomeViz)</code></pre>
 <pre><code>## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when
 ## loading &#39;microbiomeViz&#39;</code></pre>
@@ -340,7 +339,7 @@ ggplot(SRS014459_Stool_profile, aes(x=V2)) +
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

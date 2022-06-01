@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,8 @@
       
     
   
-  <meta name="description" content="测试了一下Y叔的新包base2grob。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。">
+  <meta name="description" content="测试了一下Y叔的新包base2grob。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。
+library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## decompose, spectrum ## The following object is masked from &#39;package:base&#39;: ## ## union library(cowplot) ## Loading required package: ggplot2 ## ## Attaching package: &#39;cowplot&#39; ## The following object is masked from &#39;package:ggplot2&#39;: ## ## ggsave g1 &lt;- erdos.renyi.game(10, 0.2) g2 &lt;- erdos.renyi.game(10, 0.5) E(g1)$width &lt;- E(g2)$width &lt;- 5 E(g1)$label.cex &lt;- E(g2)$label.cex &lt;- 1e-16 ## 这个我承认有点傻，但是没有找到更好的方法 V(g1)$color &lt;- &#39;cyan&#39; V(g2)$color &lt;- &#39;green&#39; p1 &lt;- base2grob(~plot(g1)) p2 &lt;- base2grob(~plot(g2)) plot_grid(p1, p2, labels=LETTERS[1:2]) ">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2018-03-29-r-base2grob_igraph/">
@@ -91,7 +92,8 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-03-29-r-base2grob_igraph/">
   <meta property="og:title" content="Y叔的新包base2grob | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="测试了一下Y叔的新包base2grob。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。">
+  <meta property="og:description" content="测试了一下Y叔的新包base2grob。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。
+library(base2grob) library(igraph) ## ## Attaching package: &#39;igraph&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## decompose, spectrum ## The following object is masked from &#39;package:base&#39;: ## ## union library(cowplot) ## Loading required package: ggplot2 ## ## Attaching package: &#39;cowplot&#39; ## The following object is masked from &#39;package:ggplot2&#39;: ## ## ggsave g1 &lt;- erdos.renyi.game(10, 0.2) g2 &lt;- erdos.renyi.game(10, 0.5) E(g1)$width &lt;- E(g2)$width &lt;- 5 E(g1)$label.cex &lt;- E(g2)$label.cex &lt;- 1e-16 ## 这个我承认有点傻，但是没有找到更好的方法 V(g1)$color &lt;- &#39;cyan&#39; V(g2)$color &lt;- &#39;green&#39; p1 &lt;- base2grob(~plot(g1)) p2 &lt;- base2grob(~plot(g2)) plot_grid(p1, p2, labels=LETTERS[1:2]) ">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-03-29T00:00:00&#43;00:00">
@@ -279,10 +281,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<p>测试了一下Y叔的新包<a href="https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html">base2grob</a>。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。</p>
+        <p>测试了一下Y叔的新包<a href="https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html">base2grob</a>。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。</p>
 <pre class="r"><code>library(base2grob)
 library(igraph)</code></pre>
 <pre><code>## 
@@ -359,7 +358,7 @@ plot_grid(p1, p2, labels=LETTERS[1:2])</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

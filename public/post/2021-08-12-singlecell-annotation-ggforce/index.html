@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,11 @@
       
     
   
-  <meta name="description" content="用ggforce注释Seurat UMAP">
+  <meta name="description" content="最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的geom_mark_ellipse，实践中遇到一些问题，于是有了第一篇Single cell的记录。
+ggforee
+ 尝试用ggforce注释 library(dplyr) library(Seurat) library(SeuratData) library(patchwork) library(ggforce) ##InstallData(&quot;pbmc3k&quot;) data(&quot;pbmc3k&quot;) points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) DimPlot(pbmc3k.final) &#43; geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster), inherit.aes = F) &#43; NoLegend() 非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。
+ 修改 思路如下：
+ 对每一个cluster计算一个尽量小的置信椭圆 用置信椭圆上的点来画geom_mark_ellipse  points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50)) circle &lt;- cbind(cos(theta), sin(theta)) library(plyr) ## ------------------------------------------------------------------------------ ## You have loaded plyr after dplyr - this is likely to cause problems.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2021-08-12-singlecell-annotation-ggforce/">
@@ -91,7 +95,11 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2021-08-12-singlecell-annotation-ggforce/">
   <meta property="og:title" content="让Single cell UMAP注释支棱起来 | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="用ggforce注释Seurat UMAP">
+  <meta property="og:description" content="最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的geom_mark_ellipse，实践中遇到一些问题，于是有了第一篇Single cell的记录。
+ggforee
+ 尝试用ggforce注释 library(dplyr) library(Seurat) library(SeuratData) library(patchwork) library(ggforce) ##InstallData(&quot;pbmc3k&quot;) data(&quot;pbmc3k&quot;) points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) DimPlot(pbmc3k.final) &#43; geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster), inherit.aes = F) &#43; NoLegend() 非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。
+ 修改 思路如下：
+ 对每一个cluster计算一个尽量小的置信椭圆 用置信椭圆上的点来画geom_mark_ellipse  points &lt;- data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final)) ## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R theta &lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50)) circle &lt;- cbind(cos(theta), sin(theta)) library(plyr) ## ------------------------------------------------------------------------------ ## You have loaded plyr after dplyr - this is likely to cause problems.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2021-08-30T00:00:00&#43;00:00">
@@ -291,8 +299,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+        <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的<code>geom_mark_ellipse</code>，实践中遇到一些问题，于是有了第一篇Single cell的记录。</p>
@@ -479,7 +486,7 @@ DimPlot(pbmc3k.final) +
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

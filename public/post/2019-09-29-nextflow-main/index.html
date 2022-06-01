@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,9 @@
       
     
   
-  <meta name="description" content="极简的Nextflow程序">
+  <meta name="description" content="第一个Nextflow程序 创建以下名为main.nf的Nextflow文件
+#!/usr/bin/env nextflow // DSL 2 syntax nextflow.preview.dsl=2 // parameters params.help = false params.read_path = &quot;${workflow.projectDir}/data&quot; // help message def helpMessage() { log.info&quot;&quot;&quot; ================================================================= Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS ================================================================= &quot;&quot;&quot;.stripIndent() } if (params.help){ helpMessage() exit 0 } // Create channel for reads ch_reads = Channel .fromFilePairs(params.read_path &#43; &#39;/**{1,2}.f*q*&#39;, flat: true) ch_reads.view()  逐行解析 Shebang #!/usr/bin/env nextflow 同很多Unix-like脚本一样，第一行叫做“shebang” (Hash bang)，出现在脚本第一行并以#!开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：
+通过Interpreter来调用脚本（shebang不存在时也可使用）：  nextflow run ./main.nf 直接调用（需要shebang）：  chmod u&#43;x ./main.nf ## 添加可执行权限 .">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-09-29-nextflow-main/">
@@ -91,7 +93,9 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2019-09-29-nextflow-main/">
   <meta property="og:title" content="基于Nextflow的宏基因组有参分析-II 主函数和输入输出 | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="极简的Nextflow程序">
+  <meta property="og:description" content="第一个Nextflow程序 创建以下名为main.nf的Nextflow文件
+#!/usr/bin/env nextflow // DSL 2 syntax nextflow.preview.dsl=2 // parameters params.help = false params.read_path = &quot;${workflow.projectDir}/data&quot; // help message def helpMessage() { log.info&quot;&quot;&quot; ================================================================= Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS ================================================================= &quot;&quot;&quot;.stripIndent() } if (params.help){ helpMessage() exit 0 } // Create channel for reads ch_reads = Channel .fromFilePairs(params.read_path &#43; &#39;/**{1,2}.f*q*&#39;, flat: true) ch_reads.view()  逐行解析 Shebang #!/usr/bin/env nextflow 同很多Unix-like脚本一样，第一行叫做“shebang” (Hash bang)，出现在脚本第一行并以#!开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：
+通过Interpreter来调用脚本（shebang不存在时也可使用）：  nextflow run ./main.nf 直接调用（需要shebang）：  chmod u&#43;x ./main.nf ## 添加可执行权限 .">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-09-29T00:00:00&#43;00:00">
@@ -291,10 +295,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<div id="nextflow" class="section level2">
+        <div id="nextflow" class="section level2">
 <h2>第一个Nextflow程序</h2>
 <p>创建以下名为main.nf的Nextflow文件</p>
 <pre class="groovy"><code>#!/usr/bin/env nextflow
@@ -444,7 +445,7 @@ WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

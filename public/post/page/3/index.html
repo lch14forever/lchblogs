@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -85,7 +85,7 @@
   <meta property="og:description" content="Research Fellow">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2017-01-01T00:00:00&#43;00:00">
+  <meta property="og:updated_time" content="2018-01-09T00:00:00&#43;00:00">
   
 
   
@@ -242,74 +242,6 @@
   
   
   <h3 class="article-title" itemprop="headline">
-    <a href="/post/2018-01-12-r-compositional/" itemprop="url">成分之咒与ReBoot算法</a>
-  </h3>
-  
-
-<div class="article-metadata">
-
-  <span class="article-date">
-    
-    <time datetime="2018-01-12 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
-      Jan 12, 2018
-    </time>
-  </span>
-  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Chenhao Li">
-  </span>
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 min read
-  </span>
-  
-
-  
-  
-
-  
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fa fa-folder"></i>
-    
-    <a href="/categories/r">R</a
-    >
-    
-  </span>
-  
-  
-
-  
-
-</div>
-
-  <div class="article-style" itemprop="articleBody">
-    
-    <p><h1 id="写在前面">写在前面</h1>
-<p>本文的大部分内容都来自我们之前的一篇综述文章<a href="http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub">Li et al, 2016</a>。</p>
-<h1 id="微生物组测序与成分数据">微生物组测序与成分数据</h1>
-<p>微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息&ndash;微生物总量（total abundance）。</p>
-</p>
-    
-  </div>
-  <p class="read-more" itemprop="mainEntityOfPage">
-    <a href="/post/2018-01-12-r-compositional/" class="btn btn-primary btn-outline">
-      CONTINUE READING
-    </a>
-  </p>
-</div>
-
-  
-    
-    
-
-<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
-  
-  
-  <h3 class="article-title" itemprop="headline">
     <a href="/post/2018-01-09-r-ordellipsecode/" itemprop="url">ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</a>
   </h3>
   
@@ -359,7 +291,7 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>看到Y叔为<a href="https://github.com/fawda123/ggord">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。</p>
+    <p>看到Y叔为<a href="https://github.com/fawda123/ggord" target="_blank">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R" target="_blank">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/" target="_blank">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -464,7 +396,8 @@
   <div class="article-style" itemprop="articleBody">
     
     <p><h2 id="为排序图添加置信范围曲线">为排序图添加置信范围曲线</h2>
-<p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/">文章</a>我们利用<a href="https://github.com/fawda123/ggord">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。</p>
+
+<p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/" target="_blank">文章</a>我们利用<a href="https://github.com/fawda123/ggord" target="_blank">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/" target="_blank">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot" target="_blank">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -580,7 +513,7 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>Jeroen Raes研究组上周在Nature发表<a href="https://www.nature.com/articles/nature24460">文章</a>，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。</p>
+    <p>Jeroen Raes研究组上周在Nature发表<a href="https://www.nature.com/articles/nature24460" target="_blank">文章</a>，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -709,14 +642,12 @@
   <div class="article-style" itemprop="articleBody">
     
     <p><h2 id="简介">简介</h2>
-<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：</p>
-<ol>
-<li>作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。</li>
-<li>用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。</li>
-<li>因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-当然最基础的操作，就是要从数据库中提取数据。</li>
-</ol>
-</p>
+
+<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article" target="_blank">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+1. 作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106" target="_blank">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+2. 用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614" target="_blank">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+3. 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+当然最基础的操作，就是要从数据库中提取数据。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -849,6 +780,72 @@
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
     <a href="/post/2017-11-02-r-sankeyplot2/" class="btn btn-primary btn-outline">
+      CONTINUE READING
+    </a>
+  </p>
+</div>
+
+  
+    
+    
+
+<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
+  
+  
+  <h3 class="article-title" itemprop="headline">
+    <a href="/post/2017-10-30-r-curatedmetagenomicdata/" itemprop="url">超大宏基因组数据集CuratedMetagenomicData</a>
+  </h3>
+  
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2017-10-30 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Oct 30, 2017
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    6 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+
+</div>
+
+  <div class="article-style" itemprop="articleBody">
+    
+    <p><h1 id="简介">简介</h1>
+
+<p>CuratedMetagenomicData(<a href="https://waldronlab.github.io/curatedMetagenomicData/" target="_blank">https://waldronlab.github.io/curatedMetagenomicData/</a>)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-included/" target="_blank">6000余个样本</a>并在持续<a href="https://waldronlab.github.io/curatedMetagenomicData/datasets-ongoing/" target="_blank">扩建</a>当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。</p>
+    
+  </div>
+  <p class="read-more" itemprop="mainEntityOfPage">
+    <a href="/post/2017-10-30-r-curatedmetagenomicdata/" class="btn btn-primary btn-outline">
       CONTINUE READING
     </a>
   </p>
