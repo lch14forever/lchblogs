@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -85,7 +85,7 @@
   <meta property="og:description" content="Research Fellow">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2019-09-27T00:00:00&#43;00:00">
+  <meta property="og:updated_time" content="2017-01-01T00:00:00&#43;00:00">
   
 
   
@@ -234,6 +234,70 @@
   
 
   
+  
+    
+    
+
+<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
+  
+  
+  <h3 class="article-title" itemprop="headline">
+    <a href="/post/2019-09-29-nextflow-main/" itemprop="url">基于Nextflow的宏基因组有参分析-II 主函数和输入输出</a>
+  </h3>
+  
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2019-09-29 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Sep 29, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Chenhao Li">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/nextflow">Nextflow</a
+    >
+    
+  </span>
+  
+  
+
+  
+
+</div>
+
+  <div class="article-style" itemprop="articleBody">
+    
+    <p>极简的Nextflow程序</p>
+    
+  </div>
+  <p class="read-more" itemprop="mainEntityOfPage">
+    <a href="/post/2019-09-29-nextflow-main/" class="btn btn-primary btn-outline">
+      CONTINUE READING
+    </a>
+  </p>
+</div>
+
   
     
     
@@ -550,7 +614,7 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html" target="_blank">一</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html" target="_blank">二</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html" target="_blank">三</a>》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。</p>
+    <p>今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html">一</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html">二</a>》,《<a href="http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html">三</a>》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -654,7 +718,7 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>测试了一下Y叔的新包<a href="https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html" target="_blank">base2grob</a>。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。</p>
+    <p>测试了一下Y叔的新包<a href="https://cran.r-project.org/web/packages/base2grob/vignettes/base2grob.html">base2grob</a>。这个包提供了base2grob函数，可以把base plot转换成grob对象。对于我来说最大的方便就是可以把一些igraph画出的网络图通过cowplot和其他ggplot做出的图自由组合。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -706,7 +770,7 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>微生物种名属名经常需要*<code>斜体</code>*表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的<strong>一个</strong>（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</p>
+    <p>微生物种名属名经常需要*<code>斜体</code>*表示，现在microbiomeViz添加了一个生成<code>expression</code>的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
@@ -758,81 +822,11 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics" target="_blank">pipeline</a>使用MetaPhlAn，Kraken等profiler。一直觉得<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home" target="_blank">GraPhlAn</a>的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。</p>
+    <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。一直觉得<a href="https://bitbucket.org/nsegata/graphlan/wiki/Home">GraPhlAn</a>的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。</p>
     
   </div>
   <p class="read-more" itemprop="mainEntityOfPage">
     <a href="/post/2018-01-18-r-metagenomeviz/" class="btn btn-primary btn-outline">
-      CONTINUE READING
-    </a>
-  </p>
-</div>
-
-  
-    
-    
-
-<div class="article-list-item" itemscope itemprop="blogPost" itemtype="http://schema.org/BlogPosting">
-  
-  
-  <h3 class="article-title" itemprop="headline">
-    <a href="/post/2018-01-12-r-compositional/" itemprop="url">成分之咒与ReBoot算法</a>
-  </h3>
-  
-
-<div class="article-metadata">
-
-  <span class="article-date">
-    
-    <time datetime="2018-01-12 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
-      Jan 12, 2018
-    </time>
-  </span>
-  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Chenhao Li">
-  </span>
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 min read
-  </span>
-  
-
-  
-  
-
-  
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fa fa-folder"></i>
-    
-    <a href="/categories/r">R</a
-    >
-    
-  </span>
-  
-  
-
-  
-
-</div>
-
-  <div class="article-style" itemprop="articleBody">
-    
-    <p><p># 写在前面
-本文的大部分内容都来自我们之前的一篇综述文章<a href="http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub" target="_blank">Li et al, 2016</a>。</p>
-
-<h1 id="微生物组测序与成分数据">微生物组测序与成分数据</h1>
-
-<p>微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息&ndash;微生物总量（total abundance）。</p>
-</p>
-    
-  </div>
-  <p class="read-more" itemprop="mainEntityOfPage">
-    <a href="/post/2018-01-12-r-compositional/" class="btn btn-primary btn-outline">
       CONTINUE READING
     </a>
   </p>

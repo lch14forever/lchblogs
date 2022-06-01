@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,13 +17,15 @@
       
     
   
-  <meta name="description" content="简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+  <meta name="description" content="简介
+有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+
 作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
- 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
- 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-  当然最基础的操作，就是要从数据库中提取数据。
- 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
-加载R package suppressMessages(library(curatedMetagenomicData)) suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.stool&quot;, dryrun=FALSE) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; skinData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.skin&quot;, dryrun=FALSE) ## merge stoolDataMerged &lt;- mergeData(stoolData) skinDataMerged &lt;- mergeData(skinData)  验证元数据与样本对应关系 table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged))) ## ## TRUE ## 4810 table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged))) ## ## TRUE ## 466  通过元数据来提取健康样本的数据 顺便过滤掉整行、整列为0的数据">
+用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+当然最基础的操作，就是要从数据库中提取数据。
+
+">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/">
@@ -97,13 +99,15 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/">
   <meta property="og:title" content="从curatedMetagenoimcData提取健康样本的微生物组 | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+  <meta property="og:description" content="简介
+有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+
 作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
- 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
- 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-  当然最基础的操作，就是要从数据库中提取数据。
- 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
-加载R package suppressMessages(library(curatedMetagenomicData)) suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.stool&quot;, dryrun=FALSE) ## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&#39; skinData &lt;- curatedMetagenomicData(&quot;*.metaphlan_bugs_list.skin&quot;, dryrun=FALSE) ## merge stoolDataMerged &lt;- mergeData(stoolData) skinDataMerged &lt;- mergeData(skinData)  验证元数据与样本对应关系 table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged))) ## ## TRUE ## 4810 table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged))) ## ## TRUE ## 466  通过元数据来提取健康样本的数据 顺便过滤掉整行、整列为0的数据">
+用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+当然最基础的操作，就是要从数据库中提取数据。
+
+">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-11-07T00:00:00&#43;00:00">
@@ -303,7 +307,10 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <section class="level2">
+        
+
+
+<section class="level2">
 <h2>简介</h2>
 <p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：</p>
 <ol type="1">
@@ -455,7 +462,7 @@ write.table(skinDataHealthy[rowSums(skinDataHealthy)!=0,], &#39;~/Desktop/curate
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

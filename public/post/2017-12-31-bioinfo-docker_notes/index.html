@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,9 +17,7 @@
       
     
   
-  <meta name="description" content="改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
- Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl&#43;p Ctrl&#43;q
- 列出所有容器（包括未在运行中的）  docker ps -a docker rm [container] # 删除容器  列出所有镜像  docker images docker rmi [image] # 删除镜像  host和容器文件转移  docker cp [source] [target] # use container hash id or name   Commit  docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]  ">
+  <meta name="description" content="我的Docker初学笔记">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-12-31-bioinfo-docker_notes/">
@@ -93,9 +91,7 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-12-31-bioinfo-docker_notes/">
   <meta property="og:title" content="Useful commands for Docker | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
- Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl&#43;p Ctrl&#43;q
- 列出所有容器（包括未在运行中的）  docker ps -a docker rm [container] # 删除容器  列出所有镜像  docker images docker rmi [image] # 删除镜像  host和容器文件转移  docker cp [source] [target] # use container hash id or name   Commit  docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]  ">
+  <meta property="og:description" content="我的Docker初学笔记">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-12-31T00:00:00&#43;00:00">
@@ -283,7 +279,10 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <section id="docker" class="level2">
+        
+
+
+<section id="docker" class="level2">
 <h2>改变Docker容器存储路径</h2>
 <p>Linux下Docker的默认存储目录为<code>/var/lib/docker</code>。显然这个目录属于<code>root</code>分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于<code>/home</code>下。我根据这篇博客进行了更改<a href="https://sanenthusiast.com/change-default-image-container-location-docker/" class="uri">https://sanenthusiast.com/change-default-image-container-location-docker/</a></p>
 </section>
@@ -369,7 +368,7 @@ docker rmi [image] # 删除镜像</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

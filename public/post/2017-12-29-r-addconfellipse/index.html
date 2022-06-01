@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,8 +17,8 @@
       
     
   
-  <meta name="description" content="为排序图添加置信范围曲线 上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
-library(ggord) library(yyplot) library(MASS) LDA ord &lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) ggord(ord, iris$Species) &#43; geom_ord_ellipse(lty=2)  PCA ord &lt;- prcomp(iris[, 1:4]) ggord(ord, iris$Species) &#43; geom_ord_ellipse(lty=2)  MDS library(vegan) ## Loading required package: permute ## Loading required package: lattice ## This is vegan 2.4-4 ord &lt;- metaMDS(iris[, 1:4]) ## Run 0 stress 0.03775523 ## Run 1 stress 0.05879963 ## Run 2 stress 0.05771902 ## Run 3 stress 0.">
+  <meta name="description" content="为排序图添加置信范围曲线
+上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-12-29-r-addconfellipse/">
@@ -92,8 +92,8 @@ library(ggord) library(yyplot) library(MASS) LDA ord &lt;- lda(Species ~ ., iris
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-12-29-r-addconfellipse/">
   <meta property="og:title" content="Add confidence ellipse to LDA ordination plot II | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="为排序图添加置信范围曲线 上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。
-library(ggord) library(yyplot) library(MASS) LDA ord &lt;- lda(Species ~ ., iris, prior = rep(1, 3)/3) ggord(ord, iris$Species) &#43; geom_ord_ellipse(lty=2)  PCA ord &lt;- prcomp(iris[, 1:4]) ggord(ord, iris$Species) &#43; geom_ord_ellipse(lty=2)  MDS library(vegan) ## Loading required package: permute ## Loading required package: lattice ## This is vegan 2.4-4 ord &lt;- metaMDS(iris[, 1:4]) ## Run 0 stress 0.03775523 ## Run 1 stress 0.05879963 ## Run 2 stress 0.05771902 ## Run 3 stress 0.">
+  <meta property="og:description" content="为排序图添加置信范围曲线
+上一篇文章我们利用ggord的源代码改写了一个为LDA排序图添加置信曲线的函数，现在Y叔已经把它改写成了一个geom添加在了他的yyplot包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-12-29T00:00:00&#43;00:00">
@@ -281,7 +281,10 @@ library(ggord) library(yyplot) library(MASS) LDA ord &lt;- lda(Species ~ ., iris
 
 
       <div class="article-style" itemprop="articleBody">
-        <section class="level2">
+        
+
+
+<section class="level2">
 <h2>为排序图添加置信范围曲线</h2>
 <p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/">文章</a>我们利用<a href="https://github.com/fawda123/ggord">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。</p>
 <pre class="r"><code>library(ggord)
@@ -392,7 +395,7 @@ ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

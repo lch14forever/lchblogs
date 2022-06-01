@@ -1,0 +1,184 @@
+---
+title: "圆角barplot"
+author: "Chenhao Li"
+output: html_document
+categories: ["R", "ggplot2"]
+tags: ["R", "ggplot2"]
+date: 2021-08-30
+summary: "不同方法实现ggplot2圆角barplot"
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="依赖" class="section level3">
+<h3>依赖</h3>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+</div>
+<div id="数据" class="section level3">
+<h3>数据</h3>
+<pre class="r"><code>dat &lt;-  mutate(mtcars, index=1:n())
+dat</code></pre>
+<pre><code>##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb index
+## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4     1
+## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4     2
+## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1     3
+## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1     4
+## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2     5
+## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1     6
+## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4     7
+## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2     8
+## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2     9
+## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4    10
+## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4    11
+## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3    12
+## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3    13
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3    14
+## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4    15
+## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4    16
+## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4    17
+## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1    18
+## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2    19
+## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1    20
+## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1    21
+## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2    22
+## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2    23
+## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4    24
+## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2    25
+## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1    26
+## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2    27
+## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2    28
+## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4    29
+## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6    30
+## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8    31
+## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2    32</code></pre>
+</div>
+<div id="基础作图" class="section level3">
+<h3>基础作图</h3>
+<p>欧式坐标</p>
+<pre class="r"><code>ggplot(dat, aes(x=index, y=mpg)) + 
+  geom_bar(stat=&quot;identity&quot;) + 
+  theme(axis.text.x = element_blank())</code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+极坐标</p>
+<pre class="r"><code>ggplot(dat, aes(x=index, y=mpg)) + 
+  geom_bar(stat=&quot;identity&quot;) + 
+  theme(axis.text.x = element_blank()) + 
+  coord_polar()</code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="方法1geom_segment-lineend-round" class="section level3">
+<h3>方法1：<code>geom_segment</code> + <code>lineend = "round"</code></h3>
+<pre class="r"><code>ggplot(dat, aes(x=index, xend=index,  y=0,yend=mpg)) + 
+  geom_segment(lwd=4, lineend = &quot;round&quot;)  +
+  theme(axis.text.x = element_blank()) </code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(dat, aes(x=index, xend=index,  y=0,yend=mpg)) + 
+  geom_segment(lwd=4, lineend = &quot;round&quot;) + 
+  theme(axis.text.x = element_blank())  + 
+  coord_polar()</code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+在极坐标中似乎不是我们想要的，因为线段的宽度不能极坐标化</p>
+</div>
+<div id="方法2ggchicklet" class="section level3">
+<h3>方法2：<code>ggchicklet</code></h3>
+<pre class="r"><code>#remotes::install_gitlab(&quot;hrbrmstr/ggchicklet&quot;)
+
+ggplot(dat, aes(x=index,  y=mpg)) + 
+  ggchicklet::geom_chicklet() + 
+  theme(axis.text.x = element_blank())  </code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(dat, aes(x=index,  y=mpg)) + 
+  ggchicklet::geom_chicklet() + 
+  coord_polar() + 
+  theme(axis.text.x = element_blank()) </code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+在极坐标下出现错误</p>
+</div>
+<div id="方法3elementalist" class="section level3">
+<h3>方法3：<code>elementalist</code></h3>
+<pre class="r"><code>#remotes::install_github(&quot;teunbrand/elementalist&quot;)
+ggplot(dat, aes(x=index, y = mpg)) +
+  elementalist::geom_bar_theme(stat=&quot;identity&quot;,
+    element = elementalist::element_rect_round(radius = 0.25)) +
+  theme(axis.text.x = element_blank()) </code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(dat, aes(x=index, y = mpg)) +
+  elementalist::geom_bar_theme(stat=&quot;identity&quot;,
+    element = elementalist::element_rect_round(radius = 0.25)) +
+  theme(axis.text.x = element_blank()) +
+  coord_polar()</code></pre>
+<pre><code>## Error: Polar coordinates not implemented yet. Feel free to leave an issue on the github tracker.</code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>作者说，极坐标这个功能还没有实现😅</p>
+</div>
+<div id="最终方法ggforcegeom_shape" class="section level3">
+<h3>最终方法：<code>ggforce::geom_shape()</code></h3>
+<p>对<code>x</code>，<code>y</code>进行处理</p>
+<pre class="r"><code>w &lt;- 0.4
+
+dat2 &lt;- rbind(
+  mutate(dat, index.new=index-w, mpg=0),
+  mutate(dat, index.new=index+w, mpg=0),
+  mutate(dat, index.new=index+w, mpg=mpg),
+  mutate(dat, index.new=index-w, mpg=mpg)
+  ) </code></pre>
+<pre class="r"><code>ggplot(dat2, aes(x=index.new, y=mpg, group=index)) + 
+  ggforce::geom_shape(radius = unit(1.2, &#39;mm&#39;) ) +
+  theme(axis.text.x = element_blank())</code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(dat2, aes(x=index.new, y=mpg, group=index)) + 
+  ggforce::geom_shape( radius = unit(1.2, &#39;mm&#39;)) +
+  coord_polar() + 
+  labs(x=NULL, y=NULL) + 
+  theme(axis.text = element_blank(), axis.ticks = element_blank()) </code></pre>
+<p><img src="/post/2022-05-31-round-corner-barplot_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
+</div>
+<div id="运行信息" class="section level3">
+<h3>运行信息</h3>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] ggplot2_3.3.5 dplyr_1.0.7  
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.7              highr_0.9               pillar_1.6.2           
+##  [4] bslib_0.2.5.1           compiler_4.0.5          jquerylib_0.1.4        
+##  [7] tools_4.0.5             elementalist_0.0.0.9000 ggchicklet_0.5.2       
+## [10] digest_0.6.27           jsonlite_1.7.2          evaluate_0.14          
+## [13] lifecycle_1.0.0         tibble_3.1.3            gtable_0.3.0           
+## [16] pkgconfig_2.0.3         rlang_0.4.11            DBI_1.1.1              
+## [19] yaml_2.2.1              blogdown_1.4            xfun_0.22              
+## [22] withr_2.4.2             stringr_1.4.0           knitr_1.33             
+## [25] generics_0.1.0          vctrs_0.3.8             sass_0.4.0             
+## [28] grid_4.0.5              tidyselect_1.1.1        glue_1.4.2             
+## [31] R6_2.5.0                fansi_0.5.0             rmarkdown_2.10         
+## [34] bookdown_0.23           polyclip_1.10-0         tweenr_1.0.2           
+## [37] farver_2.1.0            purrr_0.3.4             magrittr_2.0.1         
+## [40] MASS_7.3-53.1           scales_1.1.1            ellipsis_0.3.2         
+## [43] htmltools_0.5.1.1       assertthat_0.2.1        ggforce_0.3.3          
+## [46] colorspace_2.0-2        labeling_0.4.2          utf8_1.2.2             
+## [49] stringi_1.7.3           munsell_0.5.0           crayon_1.4.1</code></pre>
+</div>

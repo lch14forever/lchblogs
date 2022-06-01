@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Metagenomics on Chenhao&#39;s Personal Page</title>
+    <link>/categories/metagenomics/</link>
+    <description>Recent content in Metagenomics on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sat, 22 Aug 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/metagenomics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kraken拓展工具KrakenTools</title>
+      <link>/post/2020-08-22-krakentools/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-08-22-krakentools/</guid>
+      <description>KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。</description>
+    </item>
+    
+  </channel>
+</rss>
