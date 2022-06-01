@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>General on Chenhao&#39;s Personal Page</title>
+    <link>/categories/general/</link>
+    <description>Recent content in General on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Wed, 05 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/general/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Frequently Googled Questions</title>
+      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
+      <description> Linux  Extract (decompress) with a file pattern (wildcard) ref  tar -xf MyTar.tar --wildcards &amp;quot;*.jpg&amp;quot;  ggplot2  rotate axis label ref  p + theme(axis.text.x = element_text(angle = 90, hjust = 1))  remove legend title ref  # Remove title for fill legend p + guides(fill=guide_legend(title=NULL)) # Remove title for all legends p + theme(legend.title=element_blank())  legends in multiple columns/rows ref A lot of interesting and useful things in this ref overriding the alpha value customizing the legend text angle etc  p + guides(col = guide_legend(nrow = 8))  </description>
+    </item>
+    
+    <item>
+      <title>A collection of useful tools (Keep updating)</title>
+      <link>/post/2017-11-04-bioinfo-bioinforcollections/</link>
+      <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-04-bioinfo-bioinforcollections/</guid>
+      <description> General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 + Miniasm ) or Canu + Racon + Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </description>
+    </item>
+    
+  </channel>
+</rss>

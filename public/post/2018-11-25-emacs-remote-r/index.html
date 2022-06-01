@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,7 @@
       
     
   
-  <meta name="description" content="本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
+  <meta name="description" content=" 本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
 打开本地shell/eshell (M-x shell/eshell) 在打开的shell中连接远程服务器（ssh -X user@remote.machine.ip 或 ssh -Y）并运行R 使用ESS remote（M-x ess-remote） 打开本地或远程（Tramp mode）的R脚本 使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行  在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。
 为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：
 (defun spawn-ess-remote (login) &quot;connect to remote server and open ssh&quot; (interactive &quot;sUser login (uname@server.ip): &quot;) (pop-to-buffer (get-buffer-create (generate-new-buffer-name &quot;Remote-R&quot;))) (shell (current-buffer)) (process-send-string nil (format&quot;ssh -Y %s \n&quot; login) ) (process-send-string nil &quot;R\n&quot;) (ess-remote nil &quot;R&quot;)) (global-set-key (kbd &quot;C-c C-r&quot;) &#39;spawn-ess-remote)   ">
@@ -94,7 +94,7 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-11-25-emacs-remote-r/">
   <meta property="og:title" content="Emacs远程连接R | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
+  <meta property="og:description" content=" 本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
 打开本地shell/eshell (M-x shell/eshell) 在打开的shell中连接远程服务器（ssh -X user@remote.machine.ip 或 ssh -Y）并运行R 使用ESS remote（M-x ess-remote） 打开本地或远程（Tramp mode）的R脚本 使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行  在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。
 为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：
 (defun spawn-ess-remote (login) &quot;connect to remote server and open ssh&quot; (interactive &quot;sUser login (uname@server.ip): &quot;) (pop-to-buffer (get-buffer-create (generate-new-buffer-name &quot;Remote-R&quot;))) (shell (current-buffer)) (process-send-string nil (format&quot;ssh -Y %s \n&quot; login) ) (process-send-string nil &quot;R\n&quot;) (ess-remote nil &quot;R&quot;)) (global-set-key (kbd &quot;C-c C-r&quot;) &#39;spawn-ess-remote)   ">
@@ -300,7 +300,10 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <section id="r" class="level2">
+        
+
+
+<section id="r" class="level2">
 <h2>本地的R脚本，远程执行</h2>
 <p>从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：</p>
 <ol type="1">
@@ -371,7 +374,7 @@
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

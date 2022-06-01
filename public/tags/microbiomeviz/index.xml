@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>microbiomeViz on Chenhao&#39;s Personal Page</title>
+    <link>/tags/microbiomeviz/</link>
+    <description>Recent content in microbiomeViz on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/microbiomeviz/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
+      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
+      <description>Data downloading and preprocessing Now let’s try to generate a figure like this:
+Sample processed by MetaPhlAn:
+https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2
+Script to merge samples:
+https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py
+Merge files into a single table
+python merge_metaphlan_tables.py profiled_samples/*.txt &amp;gt; profiled_samples/merged_abundance_table.txt  Now switch to R Load data and library df &amp;lt;- read.table(&amp;quot;~/Downloads/profiled_samples/merged_abundance_table.txt&amp;quot;, head=TRUE, stringsAsFactors = FALSE) df &amp;lt;- df[,-ncol(df)] ## Use row means as a proxy for node size dat &amp;lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE) library(microbiomeViz) ## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when ## loading &amp;#39;microbiomeViz&amp;#39;  Parse data and create a backbone tr &amp;lt;- parseMetaphlanTSV(dat, node.</description>
+    </item>
+    
+    <item>
+      <title>microbiomeViz--斜体显示taxon name</title>
+      <link>/post/2018-02-01-r-metagenomeviz-italictaxon/</link>
+      <pubDate>Thu, 01 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-02-01-r-metagenomeviz-italictaxon/</guid>
+      <description> 微生物种名属名经常需要斜体表示，现在microbiomeViz添加了一个生成expression的函数，可以直接将一个短语中的一个（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。
+library(microbiomeViz) ## Warning: replacing previous import &amp;#39;ape::rotate&amp;#39; by &amp;#39;ggtree::rotate&amp;#39; when ## loading &amp;#39;microbiomeViz&amp;#39; library(ggplot2) ggplot(SRS014459_Stool_profile, aes(x=V2)) + geom_histogram(col=&amp;#39;black&amp;#39;) + theme_bw() + theme(axis.title = element_text(size=23)) + labs(x=formatPhrase(&amp;quot;Hello E. coli! Good-bye!&amp;quot;,&amp;quot;E. coli&amp;quot;)) ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`. </description>
+    </item>
+    
+    <item>
+      <title>microbiomeViz--人生第一个R包</title>
+      <link>/post/2018-01-18-r-metagenomeviz/</link>
+      <pubDate>Thu, 18 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-18-r-metagenomeviz/</guid>
+      <description>为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
+download.file(&amp;quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&amp;quot;, &amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;) knitr::kable(head(read.table(&amp;#39;~/Downloads/SRS014459-Stool_profile.txt&amp;#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
+ MetaPhlan结果的parser 安装 devtools::install_github(&amp;quot;lch14forever/microbiomeViz&amp;quot;, dependencies = T) ## Skipping install of &amp;#39;microbiomeViz&amp;#39; from a github remote, the SHA1 (3db1d3a6) has not changed since last install. ## Use `force = TRUE` to force installation  使用 目前有三个函数：</description>
+    </item>
+    
+  </channel>
+</rss>

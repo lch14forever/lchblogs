@@ -11,12 +11,197 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>圆角barplot</title>
+      <link>/post/2022-05-32-r-round-corner/</link>
+      <pubDate>Mon, 30 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2022-05-32-r-round-corner/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;依赖&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;依赖&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggplot2)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;数据&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;数据&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dat &amp;lt;-  mutate(mtcars, index=1:n())
+dat&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb index
+## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4     1
+## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4     2
+## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1     3
+## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1     4
+## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2     5
+## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1     6
+## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4     7
+## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2     8
+## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2     9
+## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4    10
+## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4    11
+## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3    12
+## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3    13
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3    14
+## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4    15
+## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4    16
+## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4    17
+## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1    18
+## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2    19
+## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1    20
+## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1    21
+## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2    22
+## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2    23
+## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4    24
+## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2    25
+## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1    26
+## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2    27
+## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2    28
+## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4    29
+## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6    30
+## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8    31
+## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2    32&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;基础作图&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;基础作图&lt;/h3&gt;
+&lt;p&gt;欧式坐标&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index, y=mpg)) + 
+  geom_bar(stat=&amp;quot;identity&amp;quot;) + 
+  theme(axis.text.x = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;
+极坐标&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index, y=mpg)) + 
+  geom_bar(stat=&amp;quot;identity&amp;quot;) + 
+  theme(axis.text.x = element_blank()) + 
+  coord_polar()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;方法1geom_segment-lineend-round&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;方法1：&lt;code&gt;geom_segment&lt;/code&gt; + &lt;code&gt;lineend = &#34;round&#34;&lt;/code&gt;&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index, xend=index,  y=0,yend=mpg)) + 
+  geom_segment(lwd=4, lineend = &amp;quot;round&amp;quot;)  +
+  theme(axis.text.x = element_blank()) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index, xend=index,  y=0,yend=mpg)) + 
+  geom_segment(lwd=4, lineend = &amp;quot;round&amp;quot;) + 
+  theme(axis.text.x = element_blank())  + 
+  coord_polar()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;
+在极坐标中似乎不是我们想要的，因为线段的宽度不能极坐标化&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;方法2ggchicklet&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;方法2：&lt;code&gt;ggchicklet&lt;/code&gt;&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#remotes::install_gitlab(&amp;quot;hrbrmstr/ggchicklet&amp;quot;)
+
+ggplot(dat, aes(x=index,  y=mpg)) + 
+  ggchicklet::geom_chicklet() + 
+  theme(axis.text.x = element_blank())  &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index,  y=mpg)) + 
+  ggchicklet::geom_chicklet() + 
+  coord_polar() + 
+  theme(axis.text.x = element_blank()) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;
+在极坐标下出现错误&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;方法3elementalist&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;方法3：&lt;code&gt;elementalist&lt;/code&gt;&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#remotes::install_github(&amp;quot;teunbrand/elementalist&amp;quot;)
+ggplot(dat, aes(x=index, y = mpg)) +
+  elementalist::geom_bar_theme(stat=&amp;quot;identity&amp;quot;,
+    element = elementalist::element_rect_round(radius = 0.25)) +
+  theme(axis.text.x = element_blank()) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat, aes(x=index, y = mpg)) +
+  elementalist::geom_bar_theme(stat=&amp;quot;identity&amp;quot;,
+    element = elementalist::element_rect_round(radius = 0.25)) +
+  theme(axis.text.x = element_blank()) +
+  coord_polar()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Error: Polar coordinates not implemented yet. Feel free to leave an issue on the github tracker.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;作者说，极坐标这个功能还没有实现😅&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;最终方法ggforcegeom_shape&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;最终方法：&lt;code&gt;ggforce::geom_shape()&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;对&lt;code&gt;x&lt;/code&gt;，&lt;code&gt;y&lt;/code&gt;进行处理&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;w &amp;lt;- 0.4
+
+dat2 &amp;lt;- rbind(
+  mutate(dat, index.new=index-w, mpg=0),
+  mutate(dat, index.new=index+w, mpg=0),
+  mutate(dat, index.new=index+w, mpg=mpg),
+  mutate(dat, index.new=index-w, mpg=mpg)
+  ) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat2, aes(x=index.new, y=mpg, group=index)) + 
+  ggforce::geom_shape(radius = unit(1.2, &amp;#39;mm&amp;#39;) ) +
+  theme(axis.text.x = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(dat2, aes(x=index.new, y=mpg, group=index)) + 
+  ggforce::geom_shape( radius = unit(1.2, &amp;#39;mm&amp;#39;)) +
+  coord_polar() + 
+  labs(x=NULL, y=NULL) + 
+  theme(axis.text = element_blank(), axis.ticks = element_blank()) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2022-05-32-r-round-corner_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行信息&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行信息&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] ggplot2_3.3.5 dplyr_1.0.7  
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.7              highr_0.9               pillar_1.6.2           
+##  [4] bslib_0.2.5.1           compiler_4.0.5          jquerylib_0.1.4        
+##  [7] tools_4.0.5             elementalist_0.0.0.9000 ggchicklet_0.5.2       
+## [10] digest_0.6.27           jsonlite_1.7.2          evaluate_0.14          
+## [13] lifecycle_1.0.0         tibble_3.1.3            gtable_0.3.0           
+## [16] pkgconfig_2.0.3         rlang_0.4.11            DBI_1.1.1              
+## [19] yaml_2.2.1              blogdown_1.4            xfun_0.22              
+## [22] withr_2.4.2             stringr_1.4.0           knitr_1.33             
+## [25] generics_0.1.0          vctrs_0.3.8             sass_0.4.0             
+## [28] grid_4.0.5              tidyselect_1.1.1        glue_1.4.2             
+## [31] R6_2.5.0                fansi_0.5.0             rmarkdown_2.10         
+## [34] bookdown_0.23           polyclip_1.10-0         tweenr_1.0.2           
+## [37] farver_2.1.0            purrr_0.3.4             magrittr_2.0.1         
+## [40] MASS_7.3-53.1           scales_1.1.1            ellipsis_0.3.2         
+## [43] htmltools_0.5.1.1       assertthat_0.2.1        ggforce_0.3.3          
+## [46] colorspace_2.0-2        labeling_0.4.2          utf8_1.2.2             
+## [49] stringi_1.7.3           munsell_0.5.0           crayon_1.4.1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>让Single cell UMAP注释支棱起来</title>
       <link>/post/2021-08-12-singlecell-annotation-ggforce/</link>
       <pubDate>Mon, 30 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021-08-12-singlecell-annotation-ggforce/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的&lt;code&gt;geom_mark_ellipse&lt;/code&gt;，实践中遇到一些问题，于是有了第一篇Single cell的记录。&lt;/p&gt;
@@ -184,7 +369,8 @@ DimPlot(pbmc3k.final) +
       <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021-08-08-nextflow-trick/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;最近在Mac上运行nextflow的一个流程，流程下载上千个文件，然后其中一步涉及将这上千个文件拷贝到一个文件夹下，运行的命令大概如下&lt;/p&gt;
@@ -224,7 +410,8 @@ DimPlot(pbmc3k.final) +
       <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021-05-20-nextflow-nfcore/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;a href=&#34;https://nf-co.re/&#34;&gt;nf-core&lt;/a&gt;是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。&lt;/p&gt;
@@ -277,7 +464,8 @@ nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker&
       <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021-05-11-telegrambot/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;div id=&#34;申请telegram-bot&#34; class=&#34;section level2&#34;&gt;
@@ -342,7 +530,10 @@ curl -X POST \
       <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020-08-22-krakentools/</guid>
-      <description>&lt;div id=&#34;背景&#34; class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;背景&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;背景&lt;/h2&gt;
 &lt;p&gt;Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用&lt;code&gt;--use-mpa-style&lt;/code&gt;这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是&lt;a href=&#34;https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/&#34;&gt;运行两次Kraken2&lt;/a&gt;：&lt;/p&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;### run it twice...
@@ -415,7 +606,10 @@ extract_kraken_reads.py \
       <pubDate>Tue, 29 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-10-29-nextflow-tower-deploy/</guid>
-      <description>&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;测试环境&lt;/h3&gt;
 &lt;p&gt;Ubuntu 18.04 （Root权限）&lt;/p&gt;
 &lt;p&gt;AWS安全组配置：&lt;/p&gt;
@@ -500,7 +694,10 @@ make run&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Fri, 25 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-10-25-nextflow-tower/</guid>
-      <description>&lt;p&gt;登录Nextflow Tower的&lt;a href=&#34;tower.nf&#34;&gt;官方网站&lt;/a&gt;&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;登录Nextflow Tower的&lt;a href=&#34;tower.nf&#34;&gt;官方网站&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;点击“Sign in”并输入邮箱，会在邮箱中收到登录链接&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;nextflow-login.png&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;登陆后看到如下界面&lt;/p&gt;
@@ -530,7 +727,10 @@ executor &amp;gt;  local (8)
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-10-17-nextflow-kraken/</guid>
-      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Shell脚本&lt;/h2&gt;
 &lt;p&gt;和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：&lt;/p&gt;
 &lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/bash
@@ -754,7 +954,10 @@ SRR1950772.bracken.s.tsv  SRR1950772.kraken2.report  SRR1950773.bracken.g.tsv  S
       <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-10-01-nextflow-decont/</guid>
-      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Shell脚本&lt;/h2&gt;
 &lt;p&gt;质控和去宿主主要由以下工具完成：&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -965,7 +1168,10 @@ SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fas
       <pubDate>Sun, 29 Sep 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-09-29-nextflow-main/</guid>
-      <description>&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;第一个Nextflow程序&lt;/h2&gt;
 &lt;p&gt;创建以下名为main.nf的Nextflow文件&lt;/p&gt;
 &lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
@@ -1086,7 +1292,10 @@ WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN
       <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/2019-09-27-nextflow-install/</guid>
-      <description>&lt;div class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div class=&#34;section level2&#34;&gt;
 &lt;h2&gt;开一个坑&lt;/h2&gt;
 &lt;p&gt;本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个&lt;a href=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline&#34;&gt;流程&lt;/a&gt;。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.nextflow.io/&#34;&gt;Nextflow&lt;/a&gt;作为后起之秀迅速成长，拥有很好的社区支持（&lt;a href=&#34;https://groups.google.com/forum/#!forum/nextflow&#34;&gt;google group&lt;/a&gt;，&lt;a href=&#34;https://gitter.im/nextflow-io/nextflow&#34;&gt;gitter&lt;/a&gt;），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程&lt;a href=&#34;https://github.com/nf-core&#34;&gt;nf-core&lt;/a&gt;。最近的一次更新推出了模块化的&lt;a href=&#34;https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html&#34;&gt;DSL 2架构&lt;/a&gt;，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。&lt;/p&gt;
@@ -1121,15 +1330,6 @@ make pack&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;(未完)&lt;/p&gt;
 &lt;/div&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
-      <link>/publication/microbiome_beem/</link>
-      <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/publication/microbiome_beem/</guid>
-      <description></description>
     </item>
     
   </channel>

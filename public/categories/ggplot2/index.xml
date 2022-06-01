@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ggplot2 on Chenhao&#39;s Personal Page</title>
+    <link>/categories/ggplot2/</link>
+    <description>Recent content in ggplot2 on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Mon, 30 Aug 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/ggplot2/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>圆角barplot</title>
+      <link>/post/2022-05-32-r-round-corner/</link>
+      <pubDate>Mon, 30 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2022-05-32-r-round-corner/</guid>
+      <description>依赖 library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2)  数据 dat &amp;lt;- mutate(mtcars, index=1:n()) dat ## mpg cyl disp hp drat wt qsec vs am gear carb index ## Mazda RX4 21.0 6 160.0 110 3.90 2.620 16.46 0 1 4 4 1 ## Mazda RX4 Wag 21.</description>
+    </item>
+    
+    <item>
+      <title>ggplot扩展学习笔记--逐行解析Y叔的&#34;geom_ord_ellipse.R&#34;</title>
+      <link>/post/2018-01-09-r-ordellipsecode/</link>
+      <pubDate>Tue, 09 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-09-r-ordellipsecode/</guid>
+      <description>介绍 看到Y叔为ggord做的添加置信椭圆的geom_ord_ellipse.R（用法见上一篇文章），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。
+以下为geom_ord_ellipse.R代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。
+##&amp;#39; add confidence ellipse to ordinary plot produced by ggord ##&amp;#39; ##&amp;#39; ##&amp;#39; @title geom_ord_ellipse ##&amp;#39; @param mapping aes mapping ##&amp;#39; @param ellipse_pro confidence value for the ellipse ##&amp;#39; @param fill color to fill the ellipse, NA by default ##&amp;#39; @param ... additional parameters ##&amp;#39; @return ggplot layer ##&amp;#39; @importFrom ggplot2 aes_ ##&amp;#39; @importFrom ggplot2 layer ##&amp;#39; @importFrom utils modifyList ##&amp;#39; @export ##&amp;#39; @author Guangchuang Yu ##&amp;#39; @references \url{http://lchblogs.</description>
+    </item>
+    
+  </channel>
+</rss>

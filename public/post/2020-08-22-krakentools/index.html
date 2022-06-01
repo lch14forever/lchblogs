@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -302,7 +302,10 @@ kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.
 
 
       <div class="article-style" itemprop="articleBody">
-        <div id="背景" class="section level2">
+        
+
+
+<div id="背景" class="section level2">
 <h2>背景</h2>
 <p>Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用<code>--use-mpa-style</code>这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是<a href="https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/">运行两次Kraken2</a>：</p>
 <pre class="sh"><code>### run it twice...
@@ -407,7 +410,7 @@ extract_kraken_reads.py \
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

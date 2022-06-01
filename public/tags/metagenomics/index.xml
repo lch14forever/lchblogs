@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>metagenomics on Chenhao&#39;s Personal Page</title>
+    <link>/tags/metagenomics/</link>
+    <description>Recent content in metagenomics on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Tue, 07 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/metagenomics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>从curatedMetagenoimcData提取健康样本的微生物组</title>
+      <link>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</link>
+      <pubDate>Tue, 07 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/</guid>
+      <description>简介 有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见NEJM社论)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+作为validation cohort来验证已发现的结论。如我们的这篇文章都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+ 用来测试新方法，发现新的生物问题。如这篇文章中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+ 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+  当然最基础的操作，就是要从数据库中提取数据。
+ 演示 我们从curatedMetagenomicData中提取健康人的粪便及皮肤微生物组。
+加载R package suppressMessages(library(curatedMetagenomicData)) suppressMessages(library(foreach))  下载并合并所有粪便、皮肤数据（下载数据缓存于~/.ExperimentHub中，第二次以后会直接读取缓存） ## download all stool samples stoolData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.stool&amp;quot;, dryrun=FALSE) ## Warning in strptime(x, fmt, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/2017c. ## 1.0/zoneinfo/Asia/Singapore&amp;#39; skinData &amp;lt;- curatedMetagenomicData(&amp;quot;*.metaphlan_bugs_list.skin&amp;quot;, dryrun=FALSE) ## merge stoolDataMerged &amp;lt;- mergeData(stoolData) skinDataMerged &amp;lt;- mergeData(skinData)  验证元数据与样本对应关系 table(rownames(pData(stoolDataMerged)) == colnames(exprs(stoolDataMerged))) ## ## TRUE ## 4810 table(rownames(pData(skinDataMerged)) == colnames(exprs(skinDataMerged))) ## ## TRUE ## 466  通过元数据来提取健康样本的数据 顺便过滤掉整行、整列为0的数据</description>
+    </item>
+    
+  </channel>
+</rss>

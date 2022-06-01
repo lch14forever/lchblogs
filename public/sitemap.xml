@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/2022-05-32-r-round-corner/</loc>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/2021-08-12-singlecell-annotation-ggforce/</loc>
       <lastmod>2021-08-30T00:00:00+00:00</lastmod>
     </url>
@@ -338,8 +347,6 @@
     
     <url>
     
-      <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
-    
       <loc>/tags/r/</loc>
       <lastmod>2017-01-01T00:00:00+00:00</lastmod>
     </url>
@@ -463,26 +470,6 @@
     
     <url>
     
-      <loc>/tags/deep-learning/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/demo/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/tags/emacs/</loc>
       <lastmod>2018-11-25T00:00:00+00:00</lastmod>
       <priority>0</priority>
@@ -505,16 +492,6 @@
     
       <loc>/categories/general/</loc>
       <lastmod>2018-09-05T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/categories/ggplot2/</loc>
-      <lastmod>2018-01-09T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -563,16 +540,6 @@
     
     <url>
     
-      <loc>/tags/metagenomics/</loc>
-      <lastmod>2017-11-07T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/categories/metagenomics/</loc>
       <lastmod>2020-08-22T00:00:00+00:00</lastmod>
       <priority>0</priority>
@@ -585,16 +552,6 @@
     
       <loc>/tags/microbiome/</loc>
       <lastmod>2018-01-12T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/tags/microbiomeviz/</loc>
-      <lastmod>2018-04-20T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -673,20 +630,8 @@
     
     <url>
     
-      <xhtml:link rel="alternate" href="/tags/r/" hreflang="en"/>
-    
-      <loc>/tags/r/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/categories/r/</loc>
-      <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -737,6 +682,66 @@
     
       <loc>/tags/telegram/</loc>
       <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/deep-learning/</loc>
+      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/demo/</loc>
+      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/ggplot2/</loc>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/ggplot2/</loc>
+      <lastmod>2021-08-30T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/metagenomics/</loc>
+      <lastmod>2017-11-07T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/microbiomeviz/</loc>
+      <lastmod>2018-04-20T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

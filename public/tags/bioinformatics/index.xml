@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bioinformatics on Chenhao&#39;s Personal Page</title>
+    <link>/tags/bioinformatics/</link>
+    <description>Recent content in Bioinformatics on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sat, 22 Aug 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/bioinformatics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kraken拓展工具KrakenTools</title>
+      <link>/post/2020-08-22-krakentools/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-08-22-krakentools/</guid>
+      <description>背景 Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用--use-mpa-style这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是运行两次Kraken2：
+### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &amp;gt; /dev/null 经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。
+最近发现了Bracken的作者开发的很有用的工具集。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本kreport2mpa.py。
+ 使用kreport2mpa.py简化kraken流程 下面是简化后的Kraken2流程：
+kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.out \ --report ${prefix}.kraken2.report \ $reads1 $reads2 ### Convert kraken report to mpa file kreport2mpa.</description>
+    </item>
+    
+    <item>
+      <title>Frequently Googled Questions</title>
+      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
+      <description> Linux  Extract (decompress) with a file pattern (wildcard) ref  tar -xf MyTar.tar --wildcards &amp;quot;*.jpg&amp;quot;  ggplot2  rotate axis label ref  p + theme(axis.text.x = element_text(angle = 90, hjust = 1))  remove legend title ref  # Remove title for fill legend p + guides(fill=guide_legend(title=NULL)) # Remove title for all legends p + theme(legend.title=element_blank())  legends in multiple columns/rows ref A lot of interesting and useful things in this ref overriding the alpha value customizing the legend text angle etc  p + guides(col = guide_legend(nrow = 8))  </description>
+    </item>
+    
+    <item>
+      <title>一（三）文你读不懂PCA和PCoA</title>
+      <link>/post/2018-04-39-r-pca_pcoa/</link>
+      <pubDate>Mon, 30 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-39-r-pca_pcoa/</guid>
+      <description>三文读懂PCA和PCoA？ 今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《一》,《二》,《三》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。
+特别指出在第二篇文章中：
+“PCA基于物种丰度矩阵就意味着PCA分析的矩阵维度是就等于物种数目。换句话说，你要分析的样本如果要做PCA分析，那么一般来说有多少个物种就有多少个维度”。  既然说到丰度，那有一个很容易忽视的点，就是所有物种丰度相加为常数（1或100%），所以说数据的维数其实是物种数-1。而相对丰度其实并不在传统意义的欧式空间中（参见Aitchison的《The Statistical Analysis of Compositional Data》）。PCA涉及到的变换其实是会保持数据点之间欧式距离不变（考虑所有PC的话），那么PCA分析是否适用于丰度（成分）数据，是一个存在争议的课题（参见Aitchison的《Principal Component Analysis of Compositional Data》）。所以在成分数据（测序数据，特别是microbiome）数据的时候，我们常采用一些生态距离，然后做PCoA。
+“同样的道理，PCoA基于样本间的距离矩阵就意味着PCoA分析的矩阵维度与样本数目相关。如果你要分析的样本做PCoA分析的话，那么一般来说有n个样本就至多有n-1个维度”。  这是一个n（样本数目）和p（维度）的问题，维度就是维度，p就是p，不能混淆。
+“多数情况下，我们在做降维处理的时候，期望维数越低越好，这样我们就可以最大程度地保真原始数据”  天下没有免费的午餐，维数越低，保真度自然越低。而PCA、PCoA所做的是在低维空间中尽量多的保存数据之间的差异。
+“如果样本数目比较多，而物种数目比较少，那肯定首选PCA；如果样本数目比较少，而物种数目比较多，那肯定首选PCoA”  这是一个很有意思的问题，其实PCoA和PCA的结果取决于PCoA的实现，但是直觉上想，既然PCA的变换会保存数据点间的欧氏距离，那么它和基于欧式距离的PCoA有什么区别呢？
+下面做一个实验，我们用两组数据（样本数目&amp;gt;维度，纬度&amp;gt;样本数目）来看看R中常见的PCA和PCoA实现的结果有何不同。
+iris：样本数目&amp;gt;维度 ## Low dimensional data (n&amp;gt;&amp;gt;p) data(iris) par(mfrow=c(2,2),cex=0.7, pch=19) ## PCA pca &amp;lt;- prcomp(iris[,-5]) plot(pca$x[,1:2], col=iris[,5], xlab=&amp;#39;PC1&amp;#39;,ylab=&amp;#39;PC2&amp;#39;, main=&amp;#39;PCA&amp;#39;) ## PCoA pcoa &amp;lt;- cmdscale(dist(iris[,-5], method = &amp;quot;euclidean&amp;quot;)) plot(pcoa, xlab=&amp;#39;MDS1&amp;#39;,ylab=&amp;#39;MDS2&amp;#39;, col=iris[,5], main=&amp;#39;PCoA&amp;#39;) ## pairwise distances plot(as.vector(dist(pca$x[,1:2])), as.vector(dist(pcoa)), xlab=&amp;#39;PCA&amp;#39;, ylab=&amp;#39;PCoA&amp;#39;, main=&amp;#39;Pairwise distances&amp;#39;, pch=19, col=rgb(0,0,0,0.3), cex=0.5) plot(as.vector(dist(pca$x[,1:2])) - as.</description>
+    </item>
+    
+    <item>
+      <title>Useful commands for Docker</title>
+      <link>/post/2017-12-31-bioinfo-docker_notes/</link>
+      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-12-31-bioinfo-docker_notes/</guid>
+      <description> 改变Docker容器存储路径 Linux下Docker的默认存储目录为/var/lib/docker。显然这个目录属于root分区（如果安装时进行过分区的话）。而一般这个分区会较小，我们更希望把容器和镜像存储于/home下。我根据这篇博客进行了更改https://sanenthusiast.com/change-default-image-container-location-docker/
+ Docker常用操作  加载镜像：  gunzip -c [docker.img.tar.gz] | docker load docker pull [docker_image_name] cat [docker_file] | docker build -t [image_name] -  启动容器  # 基本命令 docker run -it [image_name] # 退出时删除容器，加载host的文件路径 docker run -it --rm -v /host/directory:/container/directory [image_name]  attach  docker attach [container_name/container_hash_ID]  detach（容器在后台运行）：  Ctrl+p Ctrl+q
+ 列出所有容器（包括未在运行中的）  docker ps -a docker rm [container] # 删除容器  列出所有镜像  docker images docker rmi [image] # 删除镜像  host和容器文件转移  docker cp [source] [target] # use container hash id or name   Commit  docker commit [container_name/container_hash_ID] [image_ID/image_name:image_tag]  </description>
+    </item>
+    
+    <item>
+      <title>A collection of useful tools (Keep updating)</title>
+      <link>/post/2017-11-04-bioinfo-bioinforcollections/</link>
+      <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-04-bioinfo-bioinforcollections/</guid>
+      <description> General bioinformatics  Applied genomics course from Michael Schatz https://github.com/schatzlab/appliedgenomics Data science from Rafael A. Irizarry (built with R bookdown) https://rafalab.github.io/dsbook/   Nanopore seqeuncing data analysis  Assembly best practice QC Adaptor removal with Porechop (Minimap2 + Miniasm ) or Canu + Racon + Nanopolish    Metagenomics  Coming soon …   Single cell analysis  Tool collection for SC data https://github.com/seandavi/awesome-single-cell   </description>
+    </item>
+    
+  </channel>
+</rss>

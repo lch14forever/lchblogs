@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -298,7 +298,10 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <div class="section level2">
+        
+
+
+<div class="section level2">
 <h2>介绍</h2>
 <p>看到Y叔为<a href="https://github.com/fawda123/ggord">ggord</a>做的添加置信椭圆的<a href="https://github.com/GuangchuangYu/yyplot/blob/master/R/geom_ord_ellipse.R">geom_ord_ellipse.R</a>（用法见<a href="http://lchblogs.netlify.com/post/2017-12-29-r-addconfellipse/">上一篇文章</a>），决定学习一点ggplot图形的语言，对于初学者最好的方法就是照葫芦画瓢，而Y叔的代码自然是最好的模板。我对Y叔的代码进行了逐行的分析，希望以后有需要可以套用。</p>
 <p>以下为<code>geom_ord_ellipse.R</code>代码。这个图层的代码其实很短，很简洁，但是如果想要透彻理解还是需要下些功夫的。</p>
@@ -589,7 +592,7 @@ ell &lt;- ddply(ell, .(group), function(x) x[chull(x$one, x$two), ])  </code></p
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>读文献 on Chenhao&#39;s Personal Page</title>
+    <link>/categories/%E8%AF%BB%E6%96%87%E7%8C%AE/</link>
+    <description>Recent content in 读文献 on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Tue, 28 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/%E8%AF%BB%E6%96%87%E7%8C%AE/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>有了绝对定量就完了？</title>
+      <link>/post/2017-11-18-r-absolute/</link>
+      <pubDate>Tue, 28 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-18-r-absolute/</guid>
+      <description>微生物组研究走向绝对定量 Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算\(\beta\) -diversity，然后进行基于距离矩阵的分析（PCoA）。
+似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。
+ 使用Flow cytometry测定的肠道微生物总量的variation有多大？ 下载Nature文章中的Supplementary Table，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。
+加载R包，ggplot2主题 library(tidyverse) ## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.3.4 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.2.0 ## ✔ readr 1.1.1 ✔ forcats 0.2.0 ## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() library(data.</description>
+    </item>
+    
+  </channel>
+</rss>

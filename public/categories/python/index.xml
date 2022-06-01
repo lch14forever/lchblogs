@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Chenhao&#39;s Personal Page</title>
+    <link>/categories/python/</link>
+    <description>Recent content in Python on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sat, 17 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>启动Conda环境时自动更改环境变量</title>
+      <link>/post/2019-08-17-conda-activate/</link>
+      <pubDate>Sat, 17 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-08-17-conda-activate/</guid>
+      <description>这是一个神奇的路径 我们在服务器上用conda创建了一个叫metagenomics的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：
+export PATH=/opt/gcc-4.9.3/bin/:$PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64/:$LD_LIBRARY_PATH 那么如果我希望以上环境变量仅对我特定的Conda环境起效（metagenomics）应该怎么办呢？我们需要像.bashrc (.bash_profile)和.bash_logout这样在环境activate和deactivate时自动执行的脚本。在Conda中，我们需要如下目录：
+ANACONDA_PATH/envs/ENV_PATH/etc/conda/ ├── activate.d │ └── env_vars.sh ## &amp;lt;- sourced when you do `conda activate` └── deactivate.d └── env_vars.sh ## &amp;lt;- sourced when you do `conda deactivate` 剩下的就是shell脚本的编写了，在下面的例子中，我们创建了一个叫做metagenomics的环境，并在其中安装了metaphlan2，kraken2，strainphlan。
+activate.d/env_vars.sh #!/bin/sh ## CANU export OLD_PATH=$PATH export PATH=$(echo $PATH | sed &amp;#39;s;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:;/mnt/software/unstowable/anaconda/envs/metagenomics/bin:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/utils/:/mnt/software/unstowable/biobakery-metaphlan2-26610e07f840/strainphlan_src/:;&amp;#39;) export R_LIBS=/mnt/software/unstowable/anaconda/envs/metagenomics/lib/R/library export BOWTIE2_INDEXES=/mnt/genomeDB/misc/softwareDB/metaphlan/huttenhower.sph.harvard.edu/metaphlan/bowtie2db/ ## Kraken2 export OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH export LD_LIBRARY_PATH=/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH  deactivate.d/env_vars.sh #!/bin/sh export PATH=$OLD_PATH export R_LIBS= export BOWTIE2_INDEXES= export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH 在旧版的Anaconda中，source deactivate默认会把PATH变量中的第一个目录删掉，所以上面使用了sed来把新目录插到第二个的位置。现在的conda版本(使用conda deactivate)好像不存在这样的问题了。</description>
+    </item>
+    
+  </channel>
+</rss>

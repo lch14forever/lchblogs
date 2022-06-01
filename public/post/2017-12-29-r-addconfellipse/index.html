@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -281,7 +281,10 @@ library(ggord) library(yyplot) library(MASS) LDA ord &lt;- lda(Species ~ ., iris
 
 
       <div class="article-style" itemprop="articleBody">
-        <section class="level2">
+        
+
+
+<section class="level2">
 <h2>为排序图添加置信范围曲线</h2>
 <p>上一篇<a href="http://lchblogs.netlify.com/post/2017-12-22-r-addconfellipselda/">文章</a>我们利用<a href="https://github.com/fawda123/ggord">ggord</a>的源代码改写了一个为LDA排序图添加置信曲线的函数，现在<a href="https://guangchuangyu.github.io/">Y叔</a>已经把它改写成了一个geom添加在了他的<a href="https://github.com/GuangchuangYu/yyplot">yyplot</a>包中。y叔扩展了它的功能，现在支持ggord中的其他排序图（我没有进行全面的测试）。</p>
 <pre class="r"><code>library(ggord)
@@ -392,7 +395,7 @@ ggord(ord, iris$Species) + geom_ord_ellipse(lty=2)</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

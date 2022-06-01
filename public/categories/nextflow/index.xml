@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nextflow on Chenhao&#39;s Personal Page</title>
+    <link>/categories/nextflow/</link>
+    <description>Recent content in Nextflow on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sun, 08 Aug 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/nextflow/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Nextflow长命令segmentation fault的解决</title>
+      <link>/post/2021-08-08-nextflow-trick/</link>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-08-08-nextflow-trick/</guid>
+      <description>  最近在Mac上运行nextflow的一个流程，流程下载上千个文件，然后其中一步涉及将这上千个文件拷贝到一个文件夹下，运行的命令大概如下
+cp d0001.rds d0002.rds d0003.rds ... d1000.rds data_rds/ 在nextflow的流程中这样实现
+process gatherRDS { input: file rds output: path &amp;quot;data&amp;quot; script: &amp;quot;&amp;quot;&amp;quot; mkdir data cp $rds data/ &amp;quot;&amp;quot;&amp;quot; } 但是运行时不断遇到segmentation fault的情况（MacOS Big Sur 11.5）。在github找到了答案。加入ulimit -Ss unlimited，可以解除对程序的内存限制，解决问题。
+process gatherRDS { beforeScript &amp;#39;ulimit -Ss unlimited&amp;#39; // avoid long input segfault input: file rds output: path &amp;quot;data&amp;quot; script: &amp;quot;&amp;quot;&amp;quot; mkdir data cp $rds data/ &amp;quot;&amp;quot;&amp;quot; } </description>
+    </item>
+    
+    <item>
+      <title>nf-core流程使用</title>
+      <link>/post/2021-05-20-nextflow-nfcore/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-20-nextflow-nfcore/</guid>
+      <description>nf-core是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。
+测试环境 Ubuntu 20.04 （Root权限）
+安装Docker
+sudo snap install docker # 用snap安装 sudo usermod -aG docker ${USER} # 修正权限问题 安装java
+sudo apt install default-jdk 安装nextflow
+curl -fsSL get.nextflow.io | bash sudo mv nextflow /usr/local/bin 下载nf-core/atacseq流程并运行实例
+ nextflow run nf-core/atacseq -profile test,docker  运行 根据自己的样本，创建一个以下格式的csv文件
+group,replicate,fastq_1,fastq_2 control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz  group：实验组别，如实验组、对照组 replicate：实验重复编号 fastq_1：fastq1绝对路径 fastq_2：fastq2绝对路径  运行
+export NXF_OPTS=&amp;#39;-Xms1g -Xmx4g&amp;#39; # 建议限制Java虚拟机的内存 nextflow run nf-core/atacseq --input design.</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-VI Nextflow tower本地配置</title>
+      <link>/post/2019-10-29-nextflow-tower-deploy/</link>
+      <pubDate>Tue, 29 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-29-nextflow-tower-deploy/</guid>
+      <description>测试环境 Ubuntu 18.04 （Root权限）
+AWS安全组配置：
+  Custom TCP TCP 8000 0.0.0.0/0 ss    Custom TCP TCP 8000 ::/0 ss     安装jdk（&amp;gt;1.8）及编译依赖 sudo apt update sudo apt install openjdk-8-jdk-headless sudo apt install build-essential  安装docker，docker-compose sudo apt install docker.io sudo curl -L &amp;quot;https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)&amp;quot; -o /usr/local/bin/docker-compose sudo chmod +x /usr/local/bin/docker-compose  更改docker权限（此处需要登出并重新登陆） sudo usermod -a -G docker $USER  下载nf-tower ## install git sudo apt install git git clone https://github.</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-V Nextflow tower</title>
+      <link>/post/2019-10-25-nextflow-tower/</link>
+      <pubDate>Fri, 25 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-25-nextflow-tower/</guid>
+      <description>登录Nextflow Tower的官方网站
+点击“Sign in”并输入邮箱，会在邮箱中收到登录链接
+登陆后看到如下界面
+在运行nextflow前设置环境变量
+$ export TOWER_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxx 在运行上一篇的流程时，加入-with-tower参数
+$ ./main.nf --read_path data -with-tower N E X T F L O W ~ version 19.09.0-edge Launching `./main.nf` [angry_venter] - revision: 72dddbcd1f WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE Monitor the execution with Nextflow Tower using this url https://tower.nf/watch/xxxxxx executor &amp;gt; local (8)  使用上面的链接或登录Nextflow Tower便可实时监控流程的运行
+运行完成后可以查看流程使用资源的情况
+(未完)</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-IV Kraken2&#43;Bracken</title>
+      <link>/post/2019-10-17-nextflow-kraken/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-17-nextflow-kraken/</guid>
+      <description>Shell脚本 和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：
+#!/bin/bash set -e -o pipefail source activate metagenomics fq1=$1 fq2=$2 prefix=$3 KRAKEN_DB=/data/minikraken2_v2_8GB ### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &amp;gt; /dev/null for tax in s g; do bracken -d ${KRAKEN_DB} \ -i ${prefix}.</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-III 质控&#43;去宿主DNA</title>
+      <link>/post/2019-10-01-nextflow-decont/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-01-nextflow-decont/</guid>
+      <description>Shell脚本 质控和去宿主主要由以下工具完成：
+fastp: 去接头，修剪低质量序列 BWA + samtools：去宿主  参照这篇教程，我们可以设计如下简单的流程：
+#!/bin/bash ## requirement: ## fastp, BWA, samtools &amp;gt;= 1.7 ref=$1 reads1=$2 reads2=$3 prefix=$4 threads=${5:-4} fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | bwa mem -p -t $threads $ref - | samtools fastq -f12 -F256 -1 ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz - 此处尽可能地使用管道来避免硬盘读写和不必要的数据存储。
+ Nextflow模块 我们可以把以上脚本写成简单的nextflow模块decont.nf：
+params.index = &amp;#39;hg19.fa&amp;#39; params.outdir = &amp;#39;./&amp;#39; process DECONT { tag &amp;quot;${prefix}&amp;quot; cpus 8 publishDir params.</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-II 主函数和输入输出</title>
+      <link>/post/2019-09-29-nextflow-main/</link>
+      <pubDate>Sun, 29 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-29-nextflow-main/</guid>
+      <description>第一个Nextflow程序 创建以下名为main.nf的Nextflow文件
+#!/usr/bin/env nextflow // DSL 2 syntax nextflow.preview.dsl=2 // parameters params.help = false params.read_path = &amp;quot;${workflow.projectDir}/data&amp;quot; // help message def helpMessage() { log.info&amp;quot;&amp;quot;&amp;quot; ================================================================= Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS ================================================================= &amp;quot;&amp;quot;&amp;quot;.stripIndent() } if (params.help){ helpMessage() exit 0 } // Create channel for reads ch_reads = Channel .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true) ch_reads.view()  逐行解析 Shebang #!/usr/bin/env nextflow 同很多Unix-like脚本一样，第一行叫做“shebang” (Hash bang)，出现在脚本第一行并以#!开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：
+通过Interpreter来调用脚本（shebang不存在时也可使用）：  nextflow run ./main.nf 直接调用（需要shebang）：  chmod u+x .</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-I 安装Nextflow</title>
+      <link>/post/2019-09-27-nextflow-install/</link>
+      <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-27-nextflow-install/</guid>
+      <description> 开一个坑 本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个流程。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。
+Nextflow作为后起之秀迅速成长，拥有很好的社区支持（google group，gitter），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程nf-core。最近的一次更新推出了模块化的DSL 2架构，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。
+ 流程介绍 这个流程可以参见snakemake生成的DAG:
+步骤为：
+合并相同样本 去接头 去宿主DNA 使用Profiling工具（kraken2，MetaPhlAn2） 按系统分类拆分 合并  ## 安装Nextflow
+依赖：java &amp;gt;= 1.8
+稳定版本安装：
+curl -s https://get.nextflow.io | bash Github开发版本安装，支持DSL2语法：
+git clone https://github.com/nextflow-io/nextflow.git cd nextflow make compile make pack 最后的Nextflow在build/releases/nextflow-19.09.0-edge-all，可以重新命名为nextflow并放在$PATH中。
+export PATH=$PATH:/PATH/TO/REPO/build/releases/ (未完)
+ </description>
+    </item>
+    
+  </channel>
+</rss>

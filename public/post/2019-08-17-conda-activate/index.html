@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -300,7 +300,10 @@ activate.d/env_vars.sh #!/bin/sh ## CANU export OLD_PATH=$PATH export PATH=$(ech
 
 
       <div class="article-style" itemprop="articleBody">
-        <div class="section level2">
+        
+
+
+<div class="section level2">
 <h2>这是一个神奇的路径</h2>
 <p>我们在服务器上用conda创建了一个叫<code>metagenomics</code>的环境，希望将常用分析软件安装在该环境。其中一些软件需要使用新版本的gcc编译（如：kraken2）。安装的准备套路应该如下：</p>
 <pre class="sh"><code>export PATH=/opt/gcc-4.9.3/bin/:$PATH
@@ -381,7 +384,7 @@ export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

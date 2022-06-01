@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Telegram on Chenhao&#39;s Personal Page</title>
+    <link>/tags/telegram/</link>
+    <description>Recent content in Telegram on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Tue, 11 May 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/telegram/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Telegram bot基础使用</title>
+      <link>/post/2021-05-11-telegrambot/</link>
+      <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-11-telegrambot/</guid>
+      <description>申请telegram bot 在telegram中搜索“BotFather”，进入与其聊天页面 输入/start查看可用选项 输入或点击/newbot 输入bot的名字（必须以Bot或_bot结尾）  完成后收到如下消息，点击t.me/xxxxxx_bot即可进入与bot聊天页面
+Done! Congratulations on your new bot. You will find it at t.me/xxxxxx_bot. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you’ve finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.</description>
+    </item>
+    
+  </channel>
+</rss>

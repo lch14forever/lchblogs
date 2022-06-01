@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sankey on Chenhao&#39;s Personal Page</title>
+    <link>/tags/sankey/</link>
+    <description>Recent content in Sankey on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Mon, 30 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/sankey/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>超大宏基因组数据集CuratedMetagenomicData</title>
+      <link>/post/2017-10-30-r-curatedmetagenomicdata/</link>
+      <pubDate>Mon, 30 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-10-30-r-curatedmetagenomicdata/</guid>
+      <description>简介 CuratedMetagenomicData(https://waldronlab.github.io/curatedMetagenomicData/)的目标是用标准化的流程（MetaPhlan2、HUMAnN2）分析已发表的宏基因组数据并建立一个统一的数据集合。目前已经收录6000余个样本并在持续扩建当中。样本涵盖糖尿病、肥胖症、IBD等多种疾病，涉及皮肤、口腔、粪便等多处样本。
+ 完整帮助信息 https://bioconductor.org/packages/devel/data/experiment/vignettes/curatedMetagenomicData/inst/doc/curatedMetagenomicData.html
+ 安装 通过Bioconductor安装最新版本
+## try http:// if https:// URLs are not supported source(&amp;quot;https://bioconductor.org/biocLite.R&amp;quot;) useDevel() biocLite(&amp;quot;curatedMetagenomicData&amp;quot;)  基本使用 调用
+suppressPackageStartupMessages(library(curatedMetagenomicData)) 查看metadata
+combined_metadata ## # A tibble: 6,058 x 80 ## dataset_name sampleID subjectID body_site antibiotics_current_use ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; ## 1 AsnicarF_2017 MV_FEI1_t1Q14 MV_FEI1 stool &amp;lt;NA&amp;gt; ## 2 AsnicarF_2017 MV_FEI2_t1Q14 MV_FEI2 stool &amp;lt;NA&amp;gt; ## 3 AsnicarF_2017 MV_FEI3_t1Q14 MV_FEI3 stool &amp;lt;NA&amp;gt; ## 4 AsnicarF_2017 MV_FEI4_t1Q14 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 5 AsnicarF_2017 MV_FEI4_t2Q15 MV_FEI4 stool &amp;lt;NA&amp;gt; ## 6 AsnicarF_2017 MV_FEI5_t1Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 7 AsnicarF_2017 MV_FEI5_t2Q14 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 8 AsnicarF_2017 MV_FEI5_t3Q15 MV_FEI5 stool &amp;lt;NA&amp;gt; ## 9 AsnicarF_2017 MV_FEM1_t1Q14 MV_FEM1 stool &amp;lt;NA&amp;gt; ## 10 AsnicarF_2017 MV_FEM2_t1Q14 MV_FEM2 stool &amp;lt;NA&amp;gt; ## # .</description>
+    </item>
+    
+    <item>
+      <title>桑基图（Sankey diagram）</title>
+      <link>/post/2017-10-29-r-sankeyplot/</link>
+      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-10-29-r-sankeyplot/</guid>
+      <description>简介 桑基图（Sankey diagram）是用于表示能量或信息流动的一种可视化方式，应用于微生物组数据，可以清晰展示各个taxonomy level之间物种相对丰度的流动。从Domain到Species，相邻两级之间分支的总宽度保持不变（能量守恒），如下图：  数据准备 此处我们使用Metaphlan2 tutorial中的数据，来源于牙龈菌斑的宏基因组测序：
+download.file(&amp;#39;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014476-Supragingival_plaque_profile.txt&amp;#39;, destfile = &amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;) taxtab &amp;lt;- read.table(&amp;#39;SRS014476-Supragingival_plaque_profile.txt&amp;#39;, sep=&amp;#39;\t&amp;#39;, stringsAsFactors=FALSE)  加载networkdD3包 该包使用D3.js实现数据的交互式可视化，具体一些例子参见这里：
+library(networkD3)  数据预处理 函数sankeyNetwork主要需要两个data frame: Links和Nodes。Links主要有连接的起点（source）和终点（target），似乎此处的起点和终点只能是从0开始的数字。Nodes如果不指定ID，默认行是按照0开始的数字排列。
+second_last &amp;lt;- function(x) ifelse(length(x)&amp;gt;1, x[length(x)-1], NA) taxtab &amp;lt;- taxtab[-grep(&amp;#39;unclassified&amp;#39;, taxtab$V1), ] ## remove unlassified taxa tax_split &amp;lt;- strsplit(taxtab$V1, &amp;#39;\\|&amp;#39;) ## split into different taxonomy levels target &amp;lt;- sapply(tax_split, tail, n=1) ## target node mapping &amp;lt;- data.frame(id=0:(length(target)-1), row.names=target) target_id &amp;lt;- mapping$id source &amp;lt;- sapply(tax_split, second_last) ## source node source_id &amp;lt;- mapping[source,] value &amp;lt;- taxtab$V2 ## width of flow links &amp;lt;- data.</description>
+    </item>
+    
+  </channel>
+</rss>

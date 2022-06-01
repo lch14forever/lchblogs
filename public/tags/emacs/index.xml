@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Emacs on Chenhao&#39;s Personal Page</title>
+    <link>/tags/emacs/</link>
+    <description>Recent content in Emacs on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sun, 25 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/emacs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Emacs远程连接R</title>
+      <link>/post/2018-11-25-emacs-remote-r/</link>
+      <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-11-25-emacs-remote-r/</guid>
+      <description> 本地的R脚本，远程执行 从事生信工作，已经形成了对R语言的重度依赖，Rstudio作为专注于R的IDE拥有强大的优势，但是我还是更习惯于Emacs的ESS的操作。其实之前就遇到过一个挺有意思的问题，如何用本地的Emacs去编辑并执行服务器上的R脚本。一个很显而易见的方法就是用Emacs的Tramp SSH连接到服务器，打开R脚本，这个时候ESS会自动使用远程服务器的R来运行。但是问题来了，在画图的时候这个远程的R进程并不能通过X11把图传回，所以会自动存储为Rplot.pdf于工作目录。Google了很久，找到了以解决方案：
+打开本地shell/eshell (M-x shell/eshell) 在打开的shell中连接远程服务器（ssh -X user@remote.machine.ip 或 ssh -Y）并运行R 使用ESS remote（M-x ess-remote） 打开本地或远程（Tramp mode）的R脚本 使用C-c C-n（在CUA mode关闭情况下可使用C-Enter）或C-c C-c逐行或区域执行  在上述过程中，顺序其实不是很重要，唯一需要注意的是如果R脚本在服务器上，一定要先开启一个本地的shell，要不然Emacs会默认使用远程机器的shell。
+为了简化此过程，我写了一个函数并把它定义给快捷键C-c C-r（写在init.el或.emacs文件中）：
+(defun spawn-ess-remote (login) &amp;quot;connect to remote server and open ssh&amp;quot; (interactive &amp;quot;sUser login (uname@server.ip): &amp;quot;) (pop-to-buffer (get-buffer-create (generate-new-buffer-name &amp;quot;Remote-R&amp;quot;))) (shell (current-buffer)) (process-send-string nil (format&amp;quot;ssh -Y %s \n&amp;quot; login) ) (process-send-string nil &amp;quot;R\n&amp;quot;) (ess-remote nil &amp;quot;R&amp;quot;)) (global-set-key (kbd &amp;quot;C-c C-r&amp;quot;) &amp;#39;spawn-ess-remote)   </description>
+    </item>
+    
+  </channel>
+</rss>

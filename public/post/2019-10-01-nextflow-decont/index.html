@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.50" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -21,7 +21,7 @@
 fastp: 去接头，修剪低质量序列 BWA &#43; samtools：去宿主  参照这篇教程，我们可以设计如下简单的流程：
 #!/bin/bash ## requirement: ## fastp, BWA, samtools &gt;= 1.7 ref=$1 reads1=$2 reads2=$3 prefix=$4 threads=${5:-4} fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | bwa mem -p -t $threads $ref - | samtools fastq -f12 -F256 -1 ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz - 此处尽可能地使用管道来避免硬盘读写和不必要的数据存储。
  Nextflow模块 我们可以把以上脚本写成简单的nextflow模块decont.nf：
-params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { tag &quot;${prefix}&quot; cpus 8 publishDir params.outdir, mode: &#39;copy&#39; input: file index_path tuple prefix, file(reads1), file(reads2) output: tuple prefix, file(&quot;${prefix}*1.">
+params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { tag &quot;${prefix}&quot; cpus 8 publishDir params.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-10-01-nextflow-decont/">
@@ -99,7 +99,7 @@ params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { t
 fastp: 去接头，修剪低质量序列 BWA &#43; samtools：去宿主  参照这篇教程，我们可以设计如下简单的流程：
 #!/bin/bash ## requirement: ## fastp, BWA, samtools &gt;= 1.7 ref=$1 reads1=$2 reads2=$3 prefix=$4 threads=${5:-4} fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | bwa mem -p -t $threads $ref - | samtools fastq -f12 -F256 -1 ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz - 此处尽可能地使用管道来避免硬盘读写和不必要的数据存储。
  Nextflow模块 我们可以把以上脚本写成简单的nextflow模块decont.nf：
-params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { tag &quot;${prefix}&quot; cpus 8 publishDir params.outdir, mode: &#39;copy&#39; input: file index_path tuple prefix, file(reads1), file(reads2) output: tuple prefix, file(&quot;${prefix}*1.">
+params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { tag &quot;${prefix}&quot; cpus 8 publishDir params.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-10-01T00:00:00&#43;00:00">
@@ -299,7 +299,10 @@ params.index = &#39;hg19.fa&#39; params.outdir = &#39;./&#39; process DECONT { t
 
 
       <div class="article-style" itemprop="articleBody">
-        <div id="shell" class="section level2">
+        
+
+
+<div id="shell" class="section level2">
 <h2>Shell脚本</h2>
 <p>质控和去宿主主要由以下工具完成：</p>
 <ol style="list-style-type: decimal">
@@ -541,7 +544,7 @@ SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fas
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
