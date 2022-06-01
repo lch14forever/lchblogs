@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,13 +17,7 @@
       
     
   
-  <meta name="description" content="Data downloading and preprocessing Now let’s try to generate a figure like this:
-Sample processed by MetaPhlAn:
-https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2
-Script to merge samples:
-https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py
-Merge files into a single table
-python merge_metaphlan_tables.py profiled_samples/*.txt &gt; profiled_samples/merged_abundance_table.txt  Now switch to R Load data and library df &lt;- read.table(&quot;~/Downloads/profiled_samples/merged_abundance_table.txt&quot;, head=TRUE, stringsAsFactors = FALSE) df &lt;- df[,-ncol(df)] ## Use row means as a proxy for node size dat &lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE) library(microbiomeViz) ## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when ## loading &#39;microbiomeViz&#39;  Parse data and create a backbone tr &lt;- parseMetaphlanTSV(dat, node.">
+  <meta name="description" content="Let&rsquo;s try this for fun!">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2018-04-20-r-microbiomeviz_example/">
@@ -97,13 +91,7 @@ python merge_metaphlan_tables.py profiled_samples/*.txt &gt; profiled_samples/me
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-04-20-r-microbiomeviz_example/">
   <meta property="og:title" content="Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="Data downloading and preprocessing Now let’s try to generate a figure like this:
-Sample processed by MetaPhlAn:
-https://bitbucket.org/nsegata/metaphlan/wiki/profiled_samples.tar.bz2
-Script to merge samples:
-https://bitbucket.org/nsegata/metaphlan/raw/2f1b17a1f4e9775fe1ce42c8481279a5e69f291f/utils/merge_metaphlan_tables.py
-Merge files into a single table
-python merge_metaphlan_tables.py profiled_samples/*.txt &gt; profiled_samples/merged_abundance_table.txt  Now switch to R Load data and library df &lt;- read.table(&quot;~/Downloads/profiled_samples/merged_abundance_table.txt&quot;, head=TRUE, stringsAsFactors = FALSE) df &lt;- df[,-ncol(df)] ## Use row means as a proxy for node size dat &lt;- data.frame(V1=df[,1], V2=rowMeans(df[,-1]), stringsAsFactors = FALSE) library(microbiomeViz) ## Warning: replacing previous import &#39;ape::rotate&#39; by &#39;ggtree::rotate&#39; when ## loading &#39;microbiomeViz&#39;  Parse data and create a backbone tr &lt;- parseMetaphlanTSV(dat, node.">
+  <meta property="og:description" content="Let&rsquo;s try this for fun!">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-04-20T00:00:00&#43;00:00">
@@ -291,7 +279,10 @@ python merge_metaphlan_tables.py profiled_samples/*.txt &gt; profiled_samples/me
 
 
       <div class="article-style" itemprop="articleBody">
-        <section id="data-downloading-and-preprocessing" class="level3">
+        
+
+
+<section id="data-downloading-and-preprocessing" class="level3">
 <h3>Data downloading and preprocessing</h3>
 <p>Now let’s try to generate a figure like this:</p>
 <p><img src="https://bitbucket.org/nsegata/metaphlan/wiki/lefse_biomarkers_cladogram.png" /></p>
@@ -390,7 +381,7 @@ p</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

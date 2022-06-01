@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,14 +17,7 @@
       
     
   
-  <meta name="description" content="登录Nextflow Tower的官方网站
-点击“Sign in”并输入邮箱，会在邮箱中收到登录链接
-登陆后看到如下界面
-在运行nextflow前设置环境变量
-$ export TOWER_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxx 在运行上一篇的流程时，加入-with-tower参数
-$ ./main.nf --read_path data -with-tower N E X T F L O W ~ version 19.09.0-edge Launching `./main.nf` [angry_venter] - revision: 72dddbcd1f WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE Monitor the execution with Nextflow Tower using this url https://tower.nf/watch/xxxxxx executor &gt; local (8)  使用上面的链接或登录Nextflow Tower便可实时监控流程的运行
-运行完成后可以查看流程使用资源的情况
-(未完)">
+  <meta name="description" content="使用Nextflow tower实时监控流程的运行情况">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-10-25-nextflow-tower/">
@@ -98,14 +91,7 @@ $ ./main.nf --read_path data -with-tower N E X T F L O W ~ version 19.09.0-edge 
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2019-10-25-nextflow-tower/">
   <meta property="og:title" content="基于Nextflow的宏基因组有参分析-V Nextflow tower | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="登录Nextflow Tower的官方网站
-点击“Sign in”并输入邮箱，会在邮箱中收到登录链接
-登陆后看到如下界面
-在运行nextflow前设置环境变量
-$ export TOWER_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxx 在运行上一篇的流程时，加入-with-tower参数
-$ ./main.nf --read_path data -with-tower N E X T F L O W ~ version 19.09.0-edge Launching `./main.nf` [angry_venter] - revision: 72dddbcd1f WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE Monitor the execution with Nextflow Tower using this url https://tower.nf/watch/xxxxxx executor &gt; local (8)  使用上面的链接或登录Nextflow Tower便可实时监控流程的运行
-运行完成后可以查看流程使用资源的情况
-(未完)">
+  <meta property="og:description" content="使用Nextflow tower实时监控流程的运行情况">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-10-25T00:00:00&#43;00:00">
@@ -305,7 +291,10 @@ $ ./main.nf --read_path data -with-tower N E X T F L O W ~ version 19.09.0-edge 
 
 
       <div class="article-style" itemprop="articleBody">
-        <p>登录Nextflow Tower的<a href="tower.nf">官方网站</a></p>
+        
+
+
+<p>登录Nextflow Tower的<a href="tower.nf">官方网站</a></p>
 <p>点击“Sign in”并输入邮箱，会在邮箱中收到登录链接</p>
 <p><img src="nextflow-login.png" /></p>
 <p>登陆后看到如下界面</p>
@@ -370,7 +359,7 @@ executor &gt;  local (8)
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

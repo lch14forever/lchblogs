@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>microbiomeViz on Chenhao&#39;s Personal Page</title>
+    <link>/tags/microbiomeviz/</link>
+    <description>Recent content in microbiomeViz on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate><atom:link href="/tags/microbiomeviz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Generating GraPhlAn-like microbiome visualization using ggtree and microbiomeViz</title>
+      <link>/post/2018-04-20-r-microbiomeviz_example/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-20-r-microbiomeviz_example/</guid>
+      <description>Let&amp;rsquo;s try this for fun!</description>
+    </item>
+    
+    <item>
+      <title>microbiomeViz--斜体显示taxon name</title>
+      <link>/post/2018-02-01-r-metagenomeviz-italictaxon/</link>
+      <pubDate>Thu, 01 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-02-01-r-metagenomeviz-italictaxon/</guid>
+      <description>微生物种名属名经常需要*&lt;code&gt;斜体&lt;/code&gt;*表示，现在microbiomeViz添加了一个生成&lt;code&gt;expression&lt;/code&gt;的函数，可以直接将一个短语中的**一个**（个人认为很少会遇到画图时axis label涉及多个物种）指定名字变成斜体。</description>
+    </item>
+    
+    <item>
+      <title>microbiomeViz--人生第一个R包</title>
+      <link>/post/2018-01-18-r-metagenomeviz/</link>
+      <pubDate>Thu, 18 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-18-r-metagenomeviz/</guid>
+      <description>平日经常会分析shotgun宏基因组的数据，我们的&lt;a href=&#34;https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics&#34;&gt;pipeline&lt;/a&gt;使用MetaPhlAn，Kraken等profiler。一直觉得&lt;a href=&#34;https://bitbucket.org/nsegata/graphlan/wiki/Home&#34;&gt;GraPhlAn&lt;/a&gt;的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。</description>
+    </item>
+    
+  </channel>
+</rss>

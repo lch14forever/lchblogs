@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>General on Chenhao&#39;s Personal Page</title>
+    <link>/categories/general/</link>
+    <description>Recent content in General on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Wed, 05 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="/categories/general/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Frequently Googled Questions</title>
+      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
+      <description>一些从来都需要google的东西</description>
+    </item>
+    
+    <item>
+      <title>A collection of useful tools (Keep updating)</title>
+      <link>/post/2017-11-04-bioinfo-bioinforcollections/</link>
+      <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-04-bioinfo-bioinforcollections/</guid>
+      <description>A collection of bioinformatics resources</description>
+    </item>
+    
+  </channel>
+</rss>

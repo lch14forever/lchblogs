@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,17 +17,7 @@
       
     
   
-  <meta name="description" content="开一个坑 本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个流程。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。
-Nextflow作为后起之秀迅速成长，拥有很好的社区支持（google group，gitter），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程nf-core。最近的一次更新推出了模块化的DSL 2架构，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。
- 流程介绍 这个流程可以参见snakemake生成的DAG:
-步骤为：
-合并相同样本 去接头 去宿主DNA 使用Profiling工具（kraken2，MetaPhlAn2） 按系统分类拆分 合并  ## 安装Nextflow
-依赖：java &gt;= 1.8
-稳定版本安装：
-curl -s https://get.nextflow.io | bash Github开发版本安装，支持DSL2语法：
-git clone https://github.com/nextflow-io/nextflow.git cd nextflow make compile make pack 最后的Nextflow在build/releases/nextflow-19.09.0-edge-all，可以重新命名为nextflow并放在$PATH中。
-export PATH=$PATH:/PATH/TO/REPO/build/releases/ (未完)
- ">
+  <meta name="description" content="本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-09-27-nextflow-install/">
@@ -101,17 +91,7 @@ export PATH=$PATH:/PATH/TO/REPO/build/releases/ (未完)
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2019-09-27-nextflow-install/">
   <meta property="og:title" content="基于Nextflow的宏基因组有参分析-I 安装Nextflow | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="开一个坑 本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个流程。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。
-Nextflow作为后起之秀迅速成长，拥有很好的社区支持（google group，gitter），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程nf-core。最近的一次更新推出了模块化的DSL 2架构，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。
- 流程介绍 这个流程可以参见snakemake生成的DAG:
-步骤为：
-合并相同样本 去接头 去宿主DNA 使用Profiling工具（kraken2，MetaPhlAn2） 按系统分类拆分 合并  ## 安装Nextflow
-依赖：java &gt;= 1.8
-稳定版本安装：
-curl -s https://get.nextflow.io | bash Github开发版本安装，支持DSL2语法：
-git clone https://github.com/nextflow-io/nextflow.git cd nextflow make compile make pack 最后的Nextflow在build/releases/nextflow-19.09.0-edge-all，可以重新命名为nextflow并放在$PATH中。
-export PATH=$PATH:/PATH/TO/REPO/build/releases/ (未完)
- ">
+  <meta property="og:description" content="本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-09-27T00:00:00&#43;00:00">
@@ -311,7 +291,10 @@ export PATH=$PATH:/PATH/TO/REPO/build/releases/ (未完)
 
 
       <div class="article-style" itemprop="articleBody">
-        <div class="section level2">
+        
+
+
+<div class="section level2">
 <h2>开一个坑</h2>
 <p>本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个<a href="https://github.com/lch14forever/shotgun-metagenomics-pipeline">流程</a>。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。</p>
 <p><a href="https://www.nextflow.io/">Nextflow</a>作为后起之秀迅速成长，拥有很好的社区支持（<a href="https://groups.google.com/forum/#!forum/nextflow">google group</a>，<a href="https://gitter.im/nextflow-io/nextflow">gitter</a>），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程<a href="https://github.com/nf-core">nf-core</a>。最近的一次更新推出了模块化的<a href="https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html">DSL 2架构</a>，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。</p>
@@ -373,7 +356,7 @@ make pack</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

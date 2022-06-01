@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bioinformatics on Chenhao&#39;s Personal Page</title>
+    <link>/tags/bioinformatics/</link>
+    <description>Recent content in Bioinformatics on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Sat, 22 Aug 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/bioinformatics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kraken拓展工具KrakenTools</title>
+      <link>/post/2020-08-22-krakentools/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-08-22-krakentools/</guid>
+      <description>KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。</description>
+    </item>
+    
+    <item>
+      <title>Frequently Googled Questions</title>
+      <link>/post/2018-09-05-bioinfo-cheatsheet/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-05-bioinfo-cheatsheet/</guid>
+      <description>一些从来都需要google的东西</description>
+    </item>
+    
+    <item>
+      <title>一（三）文你读不懂PCA和PCoA</title>
+      <link>/post/2018-04-39-r-pca_pcoa/</link>
+      <pubDate>Mon, 30 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-04-39-r-pca_pcoa/</guid>
+      <description>今天看到金唯智公众号的推文《三文读懂PCA和PCoA》（《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9e.html&#34;&gt;一&lt;/a&gt;》,《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9f.html&#34;&gt;二&lt;/a&gt;》,《&lt;a href=&#34;http://blog.sina.com.cn/s/blog_a0d2a3c00102xl9h.html&#34;&gt;三&lt;/a&gt;》)。作者以平民化的语言，剔除数学术语，介绍了二者的区别，是很好的尝试，但是文中提出的很多关键性总结，都存在着明显的漏洞。</description>
+    </item>
+    
+    <item>
+      <title>Useful commands for Docker</title>
+      <link>/post/2017-12-31-bioinfo-docker_notes/</link>
+      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-12-31-bioinfo-docker_notes/</guid>
+      <description>我的Docker初学笔记</description>
+    </item>
+    
+    <item>
+      <title>A collection of useful tools (Keep updating)</title>
+      <link>/post/2017-11-04-bioinfo-bioinforcollections/</link>
+      <pubDate>Sat, 04 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-11-04-bioinfo-bioinforcollections/</guid>
+      <description>A collection of bioinformatics resources</description>
+    </item>
+    
+  </channel>
+</rss>

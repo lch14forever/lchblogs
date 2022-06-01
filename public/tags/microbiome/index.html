@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -71,8 +71,8 @@
   
 
   
-  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
-  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="alternate" href="/tags/microbiome/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/tags/microbiome/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -246,11 +246,9 @@
     <h2><a href="/post/2018-01-12-r-compositional/">成分之咒与ReBoot算法</a></h2>
     <div class="article-style">
       
-      <p># 写在前面
-本文的大部分内容都来自我们之前的一篇综述文章<a href="http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub" target="_blank">Li et al, 2016</a>。</p>
-
+      <h1 id="写在前面">写在前面</h1>
+<p>本文的大部分内容都来自我们之前的一篇综述文章<a href="http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub">Li et al, 2016</a>。</p>
 <h1 id="微生物组测序与成分数据">微生物组测序与成分数据</h1>
-
 <p>微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息&ndash;微生物总量（total abundance）。</p>
 
       

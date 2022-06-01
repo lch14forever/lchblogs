@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.30" />
+  <meta name="generator" content="Hugo 0.87.0" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,8 +17,7 @@
       
     
   
-  <meta name="description" content="Shell脚本 和fastp&#43;decont的步骤一样，我们可以首先将流程写成一个shell脚本：
-#!/bin/bash set -e -o pipefail source activate metagenomics fq1=$1 fq2=$2 prefix=$3 KRAKEN_DB=/data/minikraken2_v2_8GB ### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null for tax in s g; do bracken -d ${KRAKEN_DB} \ -i ${prefix}.">
+  <meta name="description" content="使用Kraken2&#43;Bracken获取各级分类的相对丰度">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-10-17-nextflow-kraken/">
@@ -92,8 +91,7 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2019-10-17-nextflow-kraken/">
   <meta property="og:title" content="基于Nextflow的宏基因组有参分析-IV Kraken2&#43;Bracken | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="Shell脚本 和fastp&#43;decont的步骤一样，我们可以首先将流程写成一个shell脚本：
-#!/bin/bash set -e -o pipefail source activate metagenomics fq1=$1 fq2=$2 prefix=$3 KRAKEN_DB=/data/minikraken2_v2_8GB ### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null for tax in s g; do bracken -d ${KRAKEN_DB} \ -i ${prefix}.">
+  <meta property="og:description" content="使用Kraken2&#43;Bracken获取各级分类的相对丰度">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-10-17T00:00:00&#43;00:00">
@@ -293,7 +291,10 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        <div id="shell" class="section level2">
+        
+
+
+<div id="shell" class="section level2">
 <h2>Shell脚本</h2>
 <p>和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：</p>
 <pre class="sh"><code>#!/bin/bash
@@ -550,7 +551,7 @@ SRR1950772.bracken.s.tsv  SRR1950772.kraken2.report  SRR1950773.bracken.g.tsv  S
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

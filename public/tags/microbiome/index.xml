@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Microbiome on Chenhao&#39;s Personal Page</title>
+    <link>/tags/microbiome/</link>
+    <description>Recent content in Microbiome on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Fri, 12 Jan 2018 00:00:00 +0000</lastBuildDate><atom:link href="/tags/microbiome/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>成分之咒与ReBoot算法</title>
+      <link>/post/2018-01-12-r-compositional/</link>
+      <pubDate>Fri, 12 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-12-r-compositional/</guid>
+      <description>&lt;h1 id=&#34;写在前面&#34;&gt;写在前面&lt;/h1&gt;
+&lt;p&gt;本文的大部分内容都来自我们之前的一篇综述文章&lt;a href=&#34;http://www.sciencedirect.com/science/article/pii/S1046202315300943?via%3Dihub&#34;&gt;Li et al, 2016&lt;/a&gt;。&lt;/p&gt;
+&lt;h1 id=&#34;微生物组测序与成分数据&#34;&gt;微生物组测序与成分数据&lt;/h1&gt;
+&lt;p&gt;微生物组测序数据的获得其实有很多抽样过程（Sampling process）存在，比如说，粪便微生物组其实是对肠道微生物的一次抽样，测序的过程也是对所有DNA分子的一次抽样。最后，我们得到的OTU表中的OTU read count与测序深度相关，很显然测序深度是一个技术上的干扰因子（confounder），所以我们要对OTU表进行标准化（Normalization）。最简单的标准化方法，就是用read count除以样本内所有OTU的read count之和，获得每个OTU的相对丰度（relative abundance）。这种只有相对丰度的数据（相加总数为常数1或100）被称为成分数据（Compositional data）。 你可能注意到，作为成分数据一种的微生物组的数据中缺乏一个重要的信息&amp;ndash;微生物总量（total abundance）。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

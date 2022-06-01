@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>2 on Chenhao&#39;s Personal Page</title>
+    <link>/publication_types/2/</link>
+    <description>Recent content in 2 on Chenhao&#39;s Personal Page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/publication_types/2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BEEM-Static: Accurate inference of ecological interactions from cross-sectional metagenomic data</title>
+      <link>/publication/biorxiv_beemstatic/</link>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/biorxiv_beemstatic/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Atopic Dermatitis Microbiomes Stratify into Ecologic Dermotypes Enabling Microbial Virulence and Disease Severity</title>
+      <link>/publication/jaci_skin/</link>
+      <pubDate>Thu, 08 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/jaci_skin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment</title>
+      <link>/publication/naturemedicine_hospital/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/naturemedicine_hospital/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
+      <link>/publication/microbiome_beem/</link>
+      <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/microbiome_beem/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>INC-Seq: accurate single molecule reads using nanopore sequencing</title>
+      <link>/publication/gigascience_incseq/</link>
+      <pubDate>Tue, 02 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/gigascience_incseq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Predicting Microbial Interactions through Computational Approaches</title>
+      <link>/publication/methods_review/</link>
+      <pubDate>Wed, 01 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/methods_review/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
