@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -71,8 +71,8 @@
   
 
   
-  <link rel="alternate" href="/tags/metagenomics/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
-  <link rel="feed" href="/tags/metagenomics/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Chenhao&#39;s Personal Page">
   
 
   <link rel="manifest" href="/site.webmanifest">
@@ -88,16 +88,16 @@
   
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/tags/metagenomics/">
-  <meta property="og:title" content="metagenomics | Chenhao&#39;s Personal Page">
+  <meta property="og:title" content="Metagenomics | Chenhao&#39;s Personal Page">
   <meta property="og:description" content="Research Fellow">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2020-08-22T00:00:00&#43;00:00">
+  <meta property="og:updated_time" content="2017-11-07T00:00:00&#43;00:00">
   
 
   
 
-  <title>metagenomics | Chenhao&#39;s Personal Page</title>
+  <title>Metagenomics | Chenhao&#39;s Personal Page</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -236,43 +236,23 @@
 
 <div class="universal-wrapper">
 
-  <h1>metagenomics</h1>
+  <h1>Metagenomics</h1>
 
   
 
   
-  
-  <div>
-    <h2><a href="/post/2020-08-22-krakentools/">Kraken拓展工具KrakenTools</a></h2>
-    <div class="article-style">
-      
-      KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2017-11-18-r-absolute/">有了绝对定量就完了？</a></h2>
-    <div class="article-style">
-      
-      Jeroen Raes研究组上周在Nature发表<a href="https://www.nature.com/articles/nature24460">文章</a>，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。
-      
-    </div>
-  </div>
   
   <div>
     <h2><a href="/post/2017-11-07-r-curatedmetagenomicdata_retrievedata/">从curatedMetagenoimcData提取健康样本的微生物组</a></h2>
     <div class="article-style">
       
       <h2 id="简介">简介</h2>
-<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：</p>
-<ol>
-<li>作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。</li>
-<li>用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。</li>
-<li>因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
-当然最基础的操作，就是要从数据库中提取数据。</li>
-</ol>
 
+<p>有人问我，这个curatedMetagenomicData有什么作用？对于我们这些research parasite(出处请见<a href="http://www.nejm.org/doi/full/10.1056/NEJMe1516564#t=article" target="_blank">NEJM社论</a>)来说，这样庞大的数据集当然是用来挖信息或者是测试算法了：
+1. 作为validation cohort来验证已发现的结论。如我们的<a href="https://www.nature.com/articles/nmicrobiol2016106" target="_blank">这篇文章</a>都使用了2014年Oh et al发表于Nature的数据来佐证我们发现的Staphylococcus特异性突变。
+2. 用来测试新方法，发现新的生物问题。如<a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1005614" target="_blank">这篇文章</a>中我们也用了Oh et al的数据来观测Malessezia在人体皮肤的分布。
+3. 因为数据中有大量健康人的微生物组（不同研究中的control），我们也可以用它们补充我们的对照组（当然在机器学习中要注意数据不平衡问题）。
+当然最基础的操作，就是要从数据库中提取数据。
       
     </div>
   </div>

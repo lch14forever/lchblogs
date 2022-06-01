@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,11 @@
       
     
   
-  <meta name="description" content="KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。">
+  <meta name="description" content="背景 Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用--use-mpa-style这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是运行两次Kraken2：
+### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null 经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。
+最近发现了Bracken的作者开发的很有用的工具集。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本kreport2mpa.py。
+ 使用kreport2mpa.py简化kraken流程 下面是简化后的Kraken2流程：
+kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.out \ --report ${prefix}.kraken2.report \ $reads1 $reads2 ### Convert kraken report to mpa file kreport2mpa.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2020-08-22-krakentools/">
@@ -91,7 +95,11 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2020-08-22-krakentools/">
   <meta property="og:title" content="Kraken拓展工具KrakenTools | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="KrakenTools为后续处理Kraken的结果带来了极大便利，下面重点介绍kreport2mpa.py和extract_kraken_reads.py的使用。">
+  <meta property="og:description" content="背景 Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用--use-mpa-style这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是运行两次Kraken2：
+### run it twice... kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.out \ --report ${prefix}.kraken2.tsv \ $fq1 $fq2 \ --use-mpa-style ### run again for bracken kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --report ${prefix}.kraken2 \ $fq1 $fq2 &gt; /dev/null 经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。
+最近发现了Bracken的作者开发的很有用的工具集。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本kreport2mpa.py。
+ 使用kreport2mpa.py简化kraken流程 下面是简化后的Kraken2流程：
+kraken2 \ --db $KRAKEN_DB \ --paired \ --threads 8 \ --output ${prefix}.kraken2.out \ --report ${prefix}.kraken2.report \ $reads1 $reads2 ### Convert kraken report to mpa file kreport2mpa.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2020-08-22T00:00:00&#43;00:00">
@@ -294,10 +302,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<div id="背景" class="section level2">
+        <div id="背景" class="section level2">
 <h2>背景</h2>
 <p>Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用<code>--use-mpa-style</code>这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是<a href="https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/">运行两次Kraken2</a>：</p>
 <pre class="sh"><code>### run it twice...
@@ -402,7 +407,7 @@ extract_kraken_reads.py \
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,10 @@
       
     
   
-  <meta name="description" content="Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。">
+  <meta name="description" content="微生物组研究走向绝对定量 Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算\(\beta\) -diversity，然后进行基于距离矩阵的分析（PCoA）。
+似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。
+ 使用Flow cytometry测定的肠道微生物总量的variation有多大？ 下载Nature文章中的Supplementary Table，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。
+加载R包，ggplot2主题 library(tidyverse) ## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.3.4 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.2.0 ## ✔ readr 1.1.1 ✔ forcats 0.2.0 ## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() library(data.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-11-18-r-absolute/">
@@ -91,7 +94,10 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-11-18-r-absolute/">
   <meta property="og:title" content="有了绝对定量就完了？ | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。">
+  <meta property="og:description" content="微生物组研究走向绝对定量 Jeroen Raes研究组上周在Nature发表文章，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算\(\beta\) -diversity，然后进行基于距离矩阵的分析（PCoA）。
+似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。
+ 使用Flow cytometry测定的肠道微生物总量的variation有多大？ 下载Nature文章中的Supplementary Table，这里并不不需要购买文章阅读权限，其中表6是Flow cytometry的数据。
+加载R包，ggplot2主题 library(tidyverse) ## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.3.4 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.2.0 ## ✔ readr 1.1.1 ✔ forcats 0.2.0 ## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() library(data.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-11-28T00:00:00&#43;00:00">
@@ -291,10 +297,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<section class="level2">
+        <section class="level2">
 <h2>微生物组研究走向绝对定量</h2>
 <p>Jeroen Raes研究组上周在Nature发表<a href="https://www.nature.com/articles/nature24460">文章</a>，使用Flow cytometry估算粪便中的微生物细胞数量，配合16S测序算出的相对丰度，估算出OTU的绝对数量（absolute abundance）。文章很多结论都印证了直接应用相对丰度进行分析时，我们所看到的很多现象是成分数据性质的假象（可以想象，由于相对丰度在每一个样本中相加为1或100，一个OTU相对丰度增加必将引起其他OTU相对丰度减少，所谓的compositional bias）。特别针对于计算两个OTU的相关系数，当OTU分布不均匀时，很容易看到负相关的OTU–而这仅仅是因为它们受到相加为常数的限制而已。另一个典型例子就是主成分分析（PCA），PCA意在保持欧式距离不变的情况下对数据进行变换，但是相对丰度其实不在欧式空间中（可以参考:J. Aitchison, The Statistical Analysis of Compositional Data, 1986.），这就是为什么在微生物组的研究中更多采用生态学的距离（如，Bray-Curtis distance）来计算<span class="math inline">\(\beta\)</span> -diversity，然后进行基于距离矩阵的分析（PCoA）。</p>
 <p>似乎文章的take home message很简单了，微生物组的研究，我们应该使用类似的方法进行绝对定量。可是仔细想一想，文章指出粪便微生物总量的个体差异可以达到10倍之多，这样大的差异，如果某种微生物在个体之间差异很小，转换成绝对数量之后，个体间的差异将受制于微生物总量。</p>
@@ -571,7 +574,7 @@ dat &lt;- dat %&gt;% mutate(Y=melt(Y)$value) %&gt;% mutate(MY=M*Y)</code></pre>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

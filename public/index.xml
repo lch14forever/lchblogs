@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Chenhao&#39;s Personal Page on Chenhao&#39;s Personal Page</title>
@@ -6,42 +7,1128 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© This site was created with R BlogDown and HuGo by Chenhao Li.</copyright>
-    <lastBuildDate>Mon, 30 Aug 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Oct 2017 00:00:00 -0400</lastBuildDate>
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Posts</title>
-      <link>/post/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <title>让Single cell UMAP注释支棱起来</title>
+      <link>/post/2021-08-12-singlecell-annotation-ggforce/</link>
+      <pubDate>Mon, 30 Aug 2021 00:00:00 +0000</pubDate>
       
-      <guid>/post/</guid>
+      <guid>/post/2021-08-12-singlecell-annotation-ggforce/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;最近在画UMAP的时候发现有的时候细胞亚群的注释与点重合颜色上不是很搭配，同事提出让注释“支棱”起来，首先想到的是ggforce中的&lt;code&gt;geom_mark_ellipse&lt;/code&gt;，实践中遇到一些问题，于是有了第一篇Single cell的记录。&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://ggforce.data-imaginist.com/reference/geom_mark_ellipse-2.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;ggforee&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;尝试用ggforce注释&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;尝试用ggforce注释&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+library(Seurat)
+library(SeuratData)
+library(patchwork)
+library(ggforce)
+##InstallData(&amp;quot;pbmc3k&amp;quot;)
+data(&amp;quot;pbmc3k&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points &amp;lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=points, aes(x=UMAP_1, y=UMAP_2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;864&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;非常难看不是吗？因为有一些cluster（Naive CD4 T）存在异常值，ggforce中的函数会包含所有的点。所以应该将异常值去掉，这个方法有很多，我使用的是之前用到的置信椭圆的方法。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;修改&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;修改&lt;/h3&gt;
+&lt;p&gt;思路如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对每一个cluster计算一个尽量小的置信椭圆&lt;/li&gt;
+&lt;li&gt;用置信椭圆上的点来画geom_mark_ellipse&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points &amp;lt;- 
+  data.frame(pbmc3k.final@reductions$umap@cell.embeddings, cluster=Idents(pbmc3k.final))
+
+## adapted from https://github.com/fawda123/ggord/blob/master/R/ggord.R
+theta &amp;lt;- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
+circle &amp;lt;- cbind(cos(theta), sin(theta))
+
+library(plyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## You have loaded plyr after dplyr - this is likely to cause problems.
+## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+## library(plyr); library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;plyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;aux &amp;lt;- function(x, one, two, prob=0.8) {
+    if(nrow(x) &amp;lt;= 2) {
+      return(NULL)
+    }
+    sigma &amp;lt;- var(cbind(x[,one], x[,two]))
+    mu &amp;lt;- c(mean(x[,one]), mean(x[,two]))
+    ed &amp;lt;- sqrt(qchisq(prob, df = 2))
+    data.frame(sweep(circle %*% chol(sigma) * ed, 2, mu, FUN = &amp;#39;+&amp;#39;))
+}
+ell &amp;lt;- plyr::ddply(points, &amp;quot;cluster&amp;quot;, aux, one=&amp;quot;UMAP_1&amp;quot;, two=&amp;quot;UMAP_2&amp;quot;)
+
+
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;864&#34; /&gt;
+### 微调&lt;/p&gt;
+&lt;p&gt;下面就是进行一些微调，将椭圆缩小使注释指在亚群上更好的位置&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## 调整prob参数
+ell &amp;lt;- plyr::ddply(points, &amp;quot;cluster&amp;quot;, aux, one=&amp;quot;UMAP_1&amp;quot;, two=&amp;quot;UMAP_2&amp;quot;, prob=0.1)
+DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, col=cluster),
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;768&#34; /&gt;
+把椭圆隐藏&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;DimPlot(pbmc3k.final) + 
+  geom_mark_ellipse(data=ell, aes(x=X1, y=X2, label=cluster, group=cluster),
+                    color=NA,
+                    inherit.aes = F) + 
+  NoLegend()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Voila!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;彩蛋&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;彩蛋&lt;/h3&gt;
+&lt;p&gt;我在&lt;code&gt;ggesentials&lt;/code&gt;中写了&lt;code&gt;theme_umap_ge&lt;/code&gt;函数，用来画UMAP的小坐标。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggessentials)
+DimPlot(pbmc3k.final) + 
+  theme_umap_ge(aes_x = &amp;quot;UMAP_1&amp;quot;, aes_y = &amp;quot;UMAP_2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-08-12-singlecell-annotation-ggforce_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行信息&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行信息&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] ggessentials_0.1.0      plyr_1.8.6              ggforce_0.3.3          
+##  [4] ggplot2_3.3.5           patchwork_1.1.1         pbmc3k.SeuratData_3.1.4
+##  [7] SeuratData_0.2.1        SeuratObject_4.0.2      Seurat_4.0.3           
+## [10] dplyr_1.0.7            
+## 
+## loaded via a namespace (and not attached):
+##   [1] Rtsne_0.15            colorspace_2.0-2      deldir_0.2-10        
+##   [4] ellipsis_0.3.2        ggridges_0.5.3        rstudioapi_0.13      
+##   [7] spatstat.data_2.1-0   farver_2.1.0          leiden_0.3.9         
+##  [10] listenv_0.8.0         ggrepel_0.9.1         fansi_0.5.0          
+##  [13] codetools_0.2-18      splines_4.0.5         knitr_1.33           
+##  [16] polyclip_1.10-0       jsonlite_1.7.2        ica_1.0-2            
+##  [19] cluster_2.1.1         png_0.1-7             uwot_0.1.10          
+##  [22] shiny_1.6.0           sctransform_0.3.2     spatstat.sparse_2.0-0
+##  [25] compiler_4.0.5        httr_1.4.2            Matrix_1.3-4         
+##  [28] fastmap_1.1.0         lazyeval_0.2.2        cli_3.0.1            
+##  [31] tweenr_1.0.2          later_1.2.0           htmltools_0.5.1.1    
+##  [34] tools_4.0.5           igraph_1.2.6          gtable_0.3.0         
+##  [37] glue_1.4.2            RANN_2.6.1            reshape2_1.4.4       
+##  [40] rappdirs_0.3.3        Rcpp_1.0.7            scattermore_0.7      
+##  [43] jquerylib_0.1.4       vctrs_0.3.8           nlme_3.1-152         
+##  [46] blogdown_1.4          lmtest_0.9-38         xfun_0.22            
+##  [49] stringr_1.4.0         globals_0.14.0        mime_0.11            
+##  [52] miniUI_0.1.1.1        lifecycle_1.0.0       irlba_2.3.3          
+##  [55] goftest_1.2-2         future_1.21.0         MASS_7.3-53.1        
+##  [58] zoo_1.8-9             scales_1.1.1          spatstat.core_2.3-0  
+##  [61] promises_1.2.0.1      spatstat.utils_2.2-0  parallel_4.0.5       
+##  [64] RColorBrewer_1.1-2    yaml_2.2.1            reticulate_1.20      
+##  [67] pbapply_1.4-3         gridExtra_2.3         sass_0.4.0           
+##  [70] rpart_4.1-15          stringi_1.7.3         highr_0.9            
+##  [73] rlang_0.4.11          pkgconfig_2.0.3       matrixStats_0.60.0   
+##  [76] evaluate_0.14         lattice_0.20-41       ROCR_1.0-11          
+##  [79] purrr_0.3.4           tensor_1.5            labeling_0.4.2       
+##  [82] htmlwidgets_1.5.3     cowplot_1.1.1         tidyselect_1.1.1     
+##  [85] ggsci_2.9             parallelly_1.27.0     RcppAnnoy_0.0.19     
+##  [88] magrittr_2.0.1        bookdown_0.23         R6_2.5.0             
+##  [91] generics_0.1.0        withr_2.4.2           pillar_1.6.2         
+##  [94] mgcv_1.8-34           fitdistrplus_1.1-5    survival_3.2-10      
+##  [97] abind_1.4-5           tibble_3.1.3          future.apply_1.8.1   
+## [100] crayon_1.4.1          KernSmooth_2.23-18    utf8_1.2.2           
+## [103] spatstat.geom_2.2-2   plotly_4.9.4.1        rmarkdown_2.10       
+## [106] grid_4.0.5            data.table_1.14.0     digest_0.6.27        
+## [109] xtable_1.8-4          tidyr_1.1.3           httpuv_1.6.1         
+## [112] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Nextflow长命令segmentation fault的解决</title>
+      <link>/post/2021-08-08-nextflow-trick/</link>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-08-08-nextflow-trick/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;最近在Mac上运行nextflow的一个流程，流程下载上千个文件，然后其中一步涉及将这上千个文件拷贝到一个文件夹下，运行的命令大概如下&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;cp d0001.rds d0002.rds d0003.rds ... d1000.rds data_rds/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在nextflow的流程中这样实现&lt;/p&gt;
+&lt;pre class=&#34;nextflow&#34;&gt;&lt;code&gt;process gatherRDS {
+    input:
+      file rds
+    output:
+      path &amp;quot;data&amp;quot;
+    script:
+      &amp;quot;&amp;quot;&amp;quot;
+      mkdir data
+      cp $rds data/
+      &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;但是运行时不断遇到segmentation fault的情况（MacOS Big Sur 11.5）。在github找到了&lt;a href=&#34;https://github.com/nextflow-io/nextflow/issues/1364&#34;&gt;答案&lt;/a&gt;。加入&lt;code&gt;ulimit -Ss unlimited&lt;/code&gt;，可以解除对程序的内存限制，解决问题。&lt;/p&gt;
+&lt;pre class=&#34;nextflow&#34;&gt;&lt;code&gt;process gatherRDS {
+    beforeScript &amp;#39;ulimit -Ss unlimited&amp;#39; // avoid long input segfault
+
+    input:
+      file rds
+    output:
+      path &amp;quot;data&amp;quot;
+    script:
+      &amp;quot;&amp;quot;&amp;quot;
+      mkdir data
+      cp $rds data/
+      &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>nf-core流程使用</title>
+      <link>/post/2021-05-20-nextflow-nfcore/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-20-nextflow-nfcore/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/&#34;&gt;nf-core&lt;/a&gt;是由Nextflow使用开发者共同开发维护的优秀项目，涵盖各种生信数据分析的高质量流程。依赖于Nextflow的优势，基本可以在任何HPC环境即插即用，解决生信分析中规模化、可重复性等众多痛点。本文以ATAC-Seq为例，介绍如何使用nf-core中的流程。该流程从质控、比对到差异分析、IGV可视化一键完成。&lt;/p&gt;
+&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;测试环境&lt;/h3&gt;
+&lt;p&gt;Ubuntu 20.04 （Root权限）&lt;/p&gt;
+&lt;p&gt;安装Docker&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo snap install docker # 用snap安装
+sudo usermod -aG docker ${USER} # 修正权限问题&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装java&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt install default-jdk&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装nextflow&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -fsSL get.nextflow.io | bash
+sudo mv nextflow /usr/local/bin&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下载&lt;a href=&#34;https://nf-co.re/atacseq&#34;&gt;nf-core/atacseq&lt;/a&gt;流程并运行实例&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt; nextflow run nf-core/atacseq -profile test,docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;运行&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;运行&lt;/h3&gt;
+&lt;p&gt;根据自己的样本，创建一个以下格式的csv文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;group,replicate,fastq_1,fastq_2
+control,1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+control,2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+control,3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+treatment,1,AEG588A4_S4_L003_R1_001.fastq.gz,AEG588A4_S4_L003_R2_001.fastq.gz
+treatment,2,AEG588A5_S5_L003_R1_001.fastq.gz,AEG588A5_S5_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L003_R1_001.fastq.gz,AEG588A6_S6_L003_R2_001.fastq.gz
+treatment,3,AEG588A6_S6_L004_R1_001.fastq.gz,AEG588A6_S6_L004_R2_001.fastq.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;group&lt;/code&gt;：实验组别，如实验组、对照组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;replicate&lt;/code&gt;：实验重复编号&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_1&lt;/code&gt;：fastq1绝对路径&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fastq_2&lt;/code&gt;：fastq2绝对路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;运行&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export NXF_OPTS=&amp;#39;-Xms1g -Xmx4g&amp;#39; # 建议限制Java虚拟机的内存
+nextflow run nf-core/atacseq --input design.csv --genome GRCh37 -profile docker&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://nf-co.re/pipelines&#34; class=&#34;uri&#34;&gt;https://nf-co.re/pipelines&lt;/a&gt;
+&lt;a href=&#34;https://nf-co.re/atacseq/1.2.1/usage&#34; class=&#34;uri&#34;&gt;https://nf-co.re/atacseq/1.2.1/usage&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Telegram bot基础使用</title>
+      <link>/post/2021-05-11-telegrambot/</link>
+      <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021-05-11-telegrambot/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;申请telegram-bot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;申请telegram bot&lt;/h2&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;在telegram中搜索“BotFather”，进入与其聊天页面&lt;/li&gt;
+&lt;li&gt;输入&lt;code&gt;/start&lt;/code&gt;查看可用选项&lt;/li&gt;
+&lt;li&gt;输入或点击&lt;code&gt;/newbot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;输入bot的名字（必须以&lt;code&gt;Bot&lt;/code&gt;或&lt;code&gt;_bot&lt;/code&gt;结尾）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;完成后收到如下消息，点击&lt;code&gt;t.me/xxxxxx_bot&lt;/code&gt;即可进入与bot聊天页面&lt;/p&gt;
+&lt;p&gt;Done! Congratulations on your new bot. You will find it at &lt;code&gt;t.me/xxxxxx_bot&lt;/code&gt;. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you’ve finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.&lt;/p&gt;
+&lt;p&gt;Use this token to access the HTTP API:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Keep your token secure and store it safely, it can be used by anyone to control your bot.&lt;/p&gt;
+&lt;p&gt;For a description of the Bot API, see this page: &lt;a href=&#34;https://core.telegram.org/bots/api&#34; class=&#34;uri&#34;&gt;https://core.telegram.org/bots/api&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用curl发送消息&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用cURL发送消息&lt;/h2&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;在与bot聊天页面输入任意消息&lt;/li&gt;
+&lt;li&gt;打开https://api.telegram.org/bot&lt;code&gt;{TOKEN}&lt;/code&gt;/getUpdates （这里有这个bot的消息历史）&lt;/li&gt;
+&lt;li&gt;在这个JSON文件中找到&lt;code&gt;CHAT_ID&lt;/code&gt; (…“chat”:{“id”:{CHAT_ID}…)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;接下来使用如下命令发送消息（TOKEN和CHAT_ID替换为自己的），好像群组的chat ID为负数，个人的chat ID为正数&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;TELEGRAM_BOT_TOKEN=TOKEN
+curl -X POST \
+     -H &amp;#39;Content-Type: application/json&amp;#39; \
+     -d &amp;#39;{&amp;quot;chat_id&amp;quot;: &amp;quot;CHAT_ID&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;测试消息！&amp;quot;}&amp;#39;
+     &amp;quot;https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;看到如下提示，并收到telegram消息&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;{&amp;quot;ok&amp;quot;:true,&amp;quot;result&amp;quot;:{&amp;quot;message_id&amp;quot;:14,&amp;quot;from&amp;quot;:{&amp;quot;id&amp;quot;:BOT_ID,&amp;quot;is_bot&amp;quot;:true,&amp;quot;first_name&amp;quot;:&amp;quot;xxxxxxx_bot&amp;quot;,&amp;quot;username&amp;quot;:&amp;quot;xxxxxxxx_bot&amp;quot;},&amp;quot;chat&amp;quot;:{&amp;quot;id&amp;quot;:CHAT_ID,&amp;quot;first_name&amp;quot;:&amp;quot;XXXX&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;private&amp;quot;},&amp;quot;date&amp;quot;:1620736546,&amp;quot;text&amp;quot;:&amp;quot;测试消息！&amp;quot;}}%&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/&#34; class=&#34;uri&#34;&gt;https://www.freecodecamp.org/news/telegram-push-notifications-58477e71b2c2/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>BEEM-Static: Accurate inference of ecological interactions from cross-sectional metagenomic data</title>
+      <link>/publication/biorxiv_beemstatic/</link>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/biorxiv_beemstatic/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Publications</title>
-      <link>/publication/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <title>Atopic Dermatitis Microbiomes Stratify into Ecologic Dermotypes Enabling Microbial Virulence and Disease Severity</title>
+      <link>/publication/jaci_skin/</link>
+      <pubDate>Thu, 08 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/publication/</guid>
+      <guid>/publication/jaci_skin/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Recent &amp; Upcoming Talks</title>
-      <link>/talk/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <title>Kraken拓展工具KrakenTools</title>
+      <link>/post/2020-08-22-krakentools/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/talk/</guid>
+      <guid>/post/2020-08-22-krakentools/</guid>
+      <description>&lt;div id=&#34;背景&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;背景&lt;/h2&gt;
+&lt;p&gt;Kraken（Kraken2）默认的report格式并不利于后续的分析，在运行Kraken时我通常会使用&lt;code&gt;--use-mpa-style&lt;/code&gt;这个参数来生成像MetaPhlan（MetaPhlan2）格式的结果。但是如果想要做后续的分析（Bracken），就还要用到report格式的结果。之前我采用的策略是&lt;a href=&#34;https://lichenhao.netlify.app/post/2019-10-17-nextflow-kraken/&#34;&gt;运行两次Kraken2&lt;/a&gt;：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &amp;gt; /dev/null&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;经验上来讲Kraken很大一部分运行时间花在将数据库载入内存和硬盘读写（IO），对于大数据库、深度测序，会造成一定的资源浪费、并且CPU利用率不高。&lt;/p&gt;
+&lt;p&gt;最近发现了Bracken的作者开发的&lt;a href=&#34;https://github.com/jenniferlu717/KrakenTools&#34;&gt;很有用的工具集&lt;/a&gt;。其中包含一个将Kraken report格式转换为mpa格式的输出的脚本&lt;code&gt;kreport2mpa.py&lt;/code&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用kreport2mpa.py简化kraken流程&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用&lt;code&gt;kreport2mpa.py&lt;/code&gt;简化kraken流程&lt;/h2&gt;
+&lt;p&gt;下面是简化后的Kraken2流程：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.kraken2.out \
+    --report ${prefix}.kraken2.report \
+    $reads1 $reads2 
+    ### Convert kraken report to mpa file
+kreport2mpa.py \
+     -r ${prefix}.kraken2.report \
+     -o ${prefix}.kraken2.tax \
+     --no-intermediate-ranks&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;shotgunmetagenomics-nf流程的develop branch已经更新了对应的&lt;a href=&#34;https://github.com/lch14forever/shotgunmetagenomics-nf/blob/develop/modules/profilers_kraken2_bracken.nf&#34;&gt;module&lt;/a&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用extract_kraken_reads.py提取对应taxid的序列&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;使用&lt;code&gt;extract_kraken_reads.py&lt;/code&gt;提取对应TaxID的序列&lt;/h2&gt;
+&lt;p&gt;这个程序可以用来快速过滤出属于一个物种（或其他分类等级）的序列。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;## 提取E. coli序列
+extract_kraken_reads.py \
+    -t 562 \ 
+    -k ${prefix}.kraken2.report \
+    -s1 $reads1 -s2 $reads2 \
+    -o $extracted1 -o2 $extracted2 \
+    --fastq-output&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;参考&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;参考&lt;/h2&gt;
+&lt;p&gt;KrakenTools: &lt;a href=&#34;https://github.com/jenniferlu717/KrakenTools&#34; class=&#34;uri&#34;&gt;https://github.com/jenniferlu717/KrakenTools&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cartography of opportunistic pathogens and antibiotic resistance genes in a tertiary hospital environment</title>
+      <link>/publication/naturemedicine_hospital/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/naturemedicine_hospital/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Projects</title>
-      <link>/project/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <title>基于Nextflow的宏基因组有参分析-VI Nextflow tower本地配置</title>
+      <link>/post/2019-10-29-nextflow-tower-deploy/</link>
+      <pubDate>Tue, 29 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/project/</guid>
+      <guid>/post/2019-10-29-nextflow-tower-deploy/</guid>
+      <description>&lt;div id=&#34;测试环境&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;测试环境&lt;/h3&gt;
+&lt;p&gt;Ubuntu 18.04 （Root权限）&lt;/p&gt;
+&lt;p&gt;AWS安全组配置：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;Custom TCP&lt;/th&gt;
+&lt;th&gt;TCP&lt;/th&gt;
+&lt;th&gt;8000&lt;/th&gt;
+&lt;th&gt;0.0.0.0/0&lt;/th&gt;
+&lt;th&gt;ss&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Custom TCP&lt;/td&gt;
+&lt;td&gt;TCP&lt;/td&gt;
+&lt;td&gt;8000&lt;/td&gt;
+&lt;td&gt;::/0&lt;/td&gt;
+&lt;td&gt;ss&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;安装jdk1.8及编译依赖&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;安装jdk（&amp;gt;1.8）及编译依赖&lt;/h3&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt update
+sudo apt install openjdk-8-jdk-headless
+sudo apt install build-essential&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;安装dockerdocker-compose&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;安装docker，docker-compose&lt;/h3&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo apt install docker.io
+sudo curl -L &amp;quot;https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)&amp;quot; -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;更改docker权限此处需要登出并重新登陆&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;更改docker权限（此处需要登出并重新登陆）&lt;/h3&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;sudo usermod -a -G docker $USER&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;下载nf-tower&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;下载nf-tower&lt;/h3&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;## install git
+sudo apt install git
+git clone https://github.com/seqeralabs/nf-tower&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;配置环境变量&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;配置环境变量&lt;/h3&gt;
+&lt;p&gt;此处需要申请一个发邮件的服务器，nf推荐了https://sendgrid.com&lt;/p&gt;
+&lt;p&gt;在左侧选项栏点击&lt;code&gt;Settings&lt;/code&gt;–&amp;gt;&lt;code&gt;APIKeys&lt;/code&gt;–&amp;gt;&lt;code&gt;Create API Key&lt;/code&gt;–&amp;gt;输入key name并选择Full Access
+点击生成的秘钥直接拷贝到剪切板，如“SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx”&lt;/p&gt;
+&lt;p&gt;编辑配置文件&lt;code&gt;nf-tower/tower-backend/src/main/resources/application.yml&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;...
+  smtp:
+    host: &amp;quot;smtp.sendgrid.net&amp;quot;
+    port: &amp;quot;587&amp;quot;
+    auth: &amp;quot;${TOWER_SMTP_AUTH:true}&amp;quot;
+    user: &amp;quot;apikey&amp;quot;
+    password: &amp;quot;SG.dsVDEPp9SCOJFxe8QObVcAxxxxxxxxxxxxx&amp;quot;
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;编译tower&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;编译tower&lt;/h3&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;make build
+make run&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;使用nextflow-tower&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;使用Nextflow Tower&lt;/h3&gt;
+&lt;p&gt;使用方法基本与tower.nf网站一致。有一点需要注意，如果nextflow部署在服务器上，需要修改邮件中的链接地址：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;邮件中链接为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;localhost&lt;/strong&gt;:8000/auth?uid=xxxx&lt;/li&gt;
+&lt;li&gt;修改为：&lt;a href=&#34;http://&#34; class=&#34;uri&#34;&gt;http://&lt;/a&gt;&lt;strong&gt;服务器地址&lt;/strong&gt;:8000/auth?uid=xxxx&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-V Nextflow tower</title>
+      <link>/post/2019-10-25-nextflow-tower/</link>
+      <pubDate>Fri, 25 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-25-nextflow-tower/</guid>
+      <description>&lt;p&gt;登录Nextflow Tower的&lt;a href=&#34;tower.nf&#34;&gt;官方网站&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;点击“Sign in”并输入邮箱，会在邮箱中收到登录链接&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;nextflow-login.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;登陆后看到如下界面&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;nextflow-token.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;在运行nextflow前设置环境变量&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ export TOWER_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxx&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在运行上一篇的流程时，加入&lt;code&gt;-with-tower&lt;/code&gt;参数&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ./main.nf --read_path data -with-tower
+
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [angry_venter] - revision: 72dddbcd1f
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+Monitor the execution with Nextflow Tower using this url https://tower.nf/watch/xxxxxx
+executor &amp;gt;  local (8)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;使用上面的链接或登录Nextflow Tower便可实时监控流程的运行&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;nextflow-tower.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;运行完成后可以查看流程使用资源的情况&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;nextflow-finish.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-IV Kraken2&#43;Bracken</title>
+      <link>/post/2019-10-17-nextflow-kraken/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-17-nextflow-kraken/</guid>
+      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shell脚本&lt;/h2&gt;
+&lt;p&gt;和fastp+decont的步骤一样，我们可以首先将流程写成一个shell脚本：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/bash
+set -e -o pipefail
+source activate metagenomics
+
+fq1=$1
+fq2=$2
+prefix=$3
+KRAKEN_DB=/data/minikraken2_v2_8GB 
+
+### run it twice...
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --output ${prefix}.out \
+    --report ${prefix}.kraken2.tsv \
+    $fq1 $fq2 \
+    --use-mpa-style
+
+### run again for bracken
+kraken2 \
+    --db $KRAKEN_DB \
+    --paired \
+    --threads 8 \
+    --report ${prefix}.kraken2 \
+    $fq1 $fq2 &amp;gt; /dev/null
+
+
+for tax in s g;
+do
+bracken -d ${KRAKEN_DB} \
+    -i ${prefix}.kraken2 \
+    -o ${prefix}.bracken.${tax} \
+    -l ${tax^^}
+
+sed &amp;#39;s/ /_/g&amp;#39; ${prefix}.bracken.${tax} | \
+    tail -n+2 | \
+    cut -f 1,7 &amp;gt; ${prefix}.${tax}
+done&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在上面的脚本里面，为了获取mpa（MetaPhlAn）格式的输出，我运行了两次Kraken2，第一次生成mpa格式的分类谱，第二次生成Bracken所需要的report格式。Kraken2的参考数据库（含Bracken参考）可从官方&lt;a href=&#34;https://ccb.jhu.edu/software/kraken2/downloads.shtml&#34;&gt;FTP&lt;/a&gt;下载。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nextflow模块&lt;/h2&gt;
+&lt;p&gt;将上面的脚本写成一个nextflow模块kraken2.nf：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.outdir = &amp;#39;./&amp;#39;
+
+process KRAKEN2 {
+    tag &amp;quot;${prefix}&amp;quot;
+    cpus 8
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+    output:
+    tuple prefix, file(&amp;quot;${prefix}.kraken2.report&amp;quot;)
+    tuple prefix, file(&amp;quot;${prefix}.kraken2.tax&amp;quot;)
+    file &amp;quot;${prefix}.kraken2.out&amp;quot;
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpus \\
+    --output ${prefix}.kraken2.out \\
+    --report ${prefix}.kraken2.tax \\
+    $reads1 $reads2 \\
+    --use-mpa-style \\
+
+    ### run again for bracken
+    kraken2 \\
+    --db $index_path \\
+    --paired \\
+    --threads $task.cpu \\
+    --report ${prefix}.kraken2.report \\
+    $reads1 $reads2 \\
+    --output -
+    &amp;quot;&amp;quot;&amp;quot;
+}
+
+process BRACKEN {
+    tag &amp;quot;${prefix}&amp;quot;
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path  // This must have the bracken database
+    tuple prefix, file(kraken2_report)
+    each tax
+
+    output:
+    file &amp;quot;${prefix}*.tsv&amp;quot;
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    TAX=$tax; \\
+
+    bracken -d $index_path \\
+    -i $kraken2_report \\
+    -o ${prefix}.bracken.${tax} \\
+    -l \${TAX^^}; \\
+
+    sed &amp;#39;s/ /_/g&amp;#39; ${prefix}.bracken.${tax} | \\
+    tail -n+2 | \\
+    cut -f 1,7 &amp;gt; ${prefix}.bracken.${tax}.tsv
+    &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中&lt;code&gt;each&lt;/code&gt;相当于上面脚本的&lt;code&gt;for&lt;/code&gt;循环，对于不同的分类&lt;code&gt;s&lt;/code&gt;（species），&lt;code&gt;g&lt;/code&gt;（genus）分别运行bracken。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;主脚本中调用模块&lt;/h2&gt;
+&lt;p&gt;接上一篇中的主脚本（&lt;code&gt;main.nf&lt;/code&gt;），我们可以直接使用DECONT过程的结果作为Kraken2+Bracken的输入：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// parameters decont
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;
+ch_bwa_idx = file(params.decont_refpath)
+// parameters kraken2                                              // ***
+params.kraken2_refpath = &amp;#39;/data/minikraken2_v2_8GB_201904_UPDATE/&amp;#39; // ***
+params.kraken2_outdir = &amp;#39;./pipeline_output/kraken2_out&amp;#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***
+
+include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)
+include &amp;#39;./kraken2&amp;#39; params(outdir: &amp;quot;$params.kraken2_outdir&amp;quot;)       // ***
+
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&amp;#39;s&amp;#39;, &amp;#39;g&amp;#39;)) // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;加入&lt;code&gt;// ***&lt;/code&gt;的部分为添加的内容&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;配置参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters kraken2                                              // ***
+params.kraken2_refpath = &amp;#39;/data/minikraken2_v2_8GB_201904_UPDATE/&amp;#39; // ***
+params.kraken2_outdir = &amp;#39;./pipeline_output/kraken2_out&amp;#39;            // ***
+ch_kraken_idx = file(params.kraken2_refpath)                       // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处于DECONT过程的配置类似，这里假设Bracken的索引和Kraken2的索引在同一个目录下。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;引用模块&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;include &amp;#39;./kraken2&amp;#39; params(outdir: &amp;quot;$params.kraken2_outdir&amp;quot;)      // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处与DECONT过程的配置类似&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程定义&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;workflow{
+    DECONT(ch_bwa_idx, ch_reads)
+    KRAKEN2(ch_kraken_idx, DECONT.out[0])                          // ***
+    BRACKEN(ch_kraken_idx, KRAKEN2.out[0], Channel.from(&amp;#39;s&amp;#39;, &amp;#39;g&amp;#39;)) // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在上一篇博文，DECONT的输出被定义为两个tuple：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;第一个tuple为去宿主DNA之后的fastq文件，第二个为fastp的质控文件，运行KRAKEN过程的时候，我们以&lt;code&gt;DECONT.out[0]&lt;/code&gt;来使用DECONT过程结果的第一个tuple。同样的，在BRACKEN过程调用时，我们以&lt;code&gt;KRAKEN2.out[0]&lt;/code&gt;来使用KRAKEN2过程结果的第一个tuple&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;执行&lt;/h2&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls data
+$ ./main.nf
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [jolly_heyrovsky] - revision: b913fda572
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+executor &amp;gt;  local (8)
+[6f/7c66ef] process &amp;gt; DECONT (SRR1950773)  [100%] 2 of 2 ✔
+[51/9f4f92] process &amp;gt; KRAKEN2 (SRR1950773) [100%] 2 of 2 ✔
+[c7/603e5e] process &amp;gt; BRACKEN (SRR1950772) [100%] 4 of 4 ✔
+Completed at: 17-Oct-2019 12:57:14
+Duration    : 3m 50s
+CPU hours   : 0.5
+Succeeded   : 8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看结果：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls pipeline_output/kraken2_out/
+SRR1950772.bracken.g.tsv  SRR1950772.kraken2.out     SRR1950772.kraken2.tax    SRR1950773.bracken.s.tsv  SRR1950773.kraken2.report
+SRR1950772.bracken.s.tsv  SRR1950772.kraken2.report  SRR1950773.bracken.g.tsv  SRR1950773.kraken2.out    SRR1950773.kraken2.tax&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-III 质控&#43;去宿主DNA</title>
+      <link>/post/2019-10-01-nextflow-decont/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-10-01-nextflow-decont/</guid>
+      <description>&lt;div id=&#34;shell&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shell脚本&lt;/h2&gt;
+&lt;p&gt;质控和去宿主主要由以下工具完成：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;fastp: 去接头，修剪低质量序列&lt;/li&gt;
+&lt;li&gt;BWA + samtools：去宿主&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;参照这篇&lt;a href=&#34;http://www.metagenomics.wiki/tools/short-read/remove-host-sequences&#34;&gt;教程&lt;/a&gt;，我们可以设计如下简单的流程：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;#!/bin/bash
+
+## requirement:
+## fastp, BWA, samtools &amp;gt;= 1.7
+
+ref=$1
+reads1=$2
+reads2=$3
+prefix=$4
+threads=${5:-4}
+
+fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | 
+    bwa mem -p -t $threads $ref - | 
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此处尽可能地使用管道来避免硬盘读写和不必要的数据存储。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nextflow模块&lt;/h2&gt;
+&lt;p&gt;我们可以把以上脚本写成简单的nextflow模块decont.nf：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.index = &amp;#39;hg19.fa&amp;#39;
+params.outdir = &amp;#39;./&amp;#39;
+
+process DECONT {
+    tag &amp;quot;${prefix}&amp;quot;
+    cpus 8
+    publishDir params.outdir, mode: &amp;#39;copy&amp;#39;
+
+    input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+    output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)
+
+    script:
+    &amp;quot;&amp;quot;&amp;quot;
+    fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | \\
+    bwa mem -p -t $task.cpus ${index_path}/${params.index} - | \\
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -
+    &amp;quot;&amp;quot;&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;模块参数:&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;params.index = &amp;#39;hg19.fa&amp;#39;
+params.outdir = &amp;#39;./&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;和上一篇介绍的流程参数一致，定义了在该模块的参数（我推测这些参数的scope是local，即仅限于该模块，有待确定）。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;过程定义：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;process DECONT {
+    input:
+    ...
+    output:
+    ...
+    script:
+    ...
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;以上为Nextflow过程(process)的骨架结构，主要由输入(input)，输出(output)，脚本(script)来构成。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;过程指令：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;tag &amp;quot;${prefix}&amp;quot;
+cpus 8
+publishDir params.outdir, mode: &amp;#39;copy&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tag&lt;/code&gt;：给每一个过程执行命名，方便在执行日志中查看&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cpus&lt;/code&gt;：此过程运行时的CPU数量&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;publishDir&lt;/code&gt;：结果发布路径，运行完成后将最终的结果（由&lt;code&gt;output&lt;/code&gt;定义）拷贝（&lt;code&gt;&#39;copy&#39;&lt;/code&gt;）到该路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;更多的指令建议参考Nextflow的&lt;a href=&#34;https://www.nextflow.io/docs/latest/process.html#directives&#34;&gt;官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;输入、输出：&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;input:
+    file index_path
+    tuple prefix, file(reads1), file(reads2)
+
+output:
+    tuple prefix, file(&amp;quot;${prefix}*1.fastq.gz&amp;quot;), file(&amp;quot;${prefix}*2.fastq.gz&amp;quot;)
+    tuple file(&amp;quot;${prefix}.html&amp;quot;), file(&amp;quot;${prefix}.json&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;由关键字&lt;code&gt;input:&lt;/code&gt;或&lt;code&gt;output:&lt;/code&gt;(注意冒号)构成，后面接内容(全都为&lt;code&gt;Channel&lt;/code&gt;类型)。内容可包含：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;值(&lt;code&gt;val&lt;/code&gt;)：可省略&lt;/li&gt;
+&lt;li&gt;文件(&lt;code&gt;file&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;列表(&lt;code&gt;tuple&lt;/code&gt;)：形式为&lt;code&gt;[element1, element2, elemnet3, ...]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注：似乎在Nextflow文档中&lt;code&gt;tuple&lt;/code&gt;和&lt;code&gt;list&lt;/code&gt;等同。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;脚本&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;script:
+    &amp;quot;&amp;quot;&amp;quot;
+    fastp -i $reads1 -I $reads2 --stdout -j ${prefix}.json -h ${prefix}.html | \\
+    bwa mem -p -t $task.cpus ${index_path}/${params.index} - | \\
+    samtools fastq -f12 -F256  -1  ${prefix}_fastpdecont_1.fastq.gz -2 ${prefix}_fastpdecont_2.fastq.gz -
+    &amp;quot;&amp;quot;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow过程的脚本部分为Shell脚本，注意Shell中变量要使用&lt;code&gt;\$&lt;/code&gt;开头。脚本部分涉及的文件(或路径)必须是Channel。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;在主脚本中调用模块&lt;/h2&gt;
+&lt;p&gt;延续上一篇中的主脚本(&lt;code&gt;main.nf&lt;/code&gt;)，我们可以调用DECONT过程：&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// parameters decont                                                                       // ***
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;                                                // ***
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;                                                          // ***
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;                                     // ***
+ch_bwa_idx = file(params.decont_refpath)                                                   // ***
+include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)  // ***
+
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+workflow{                                                                                 // ***
+    DECONT(ch_bwa_idx, ch_reads)                                                          // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;加入&lt;code&gt;// ***&lt;/code&gt;的部分为添加的内容&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div id=&#34;decont&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;配置DECONT过程参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters decont                                                                       // ***
+params.decont_refpath = &amp;#39;/data/nucleotide/&amp;#39;                                                // ***
+params.decont_index   = &amp;#39;hg19.fa&amp;#39;                                                          // ***
+params.decont_outdir  = &amp;#39;./pipeline_output/decont_out&amp;#39;                                     // ***
+ch_bwa_idx = file(params.decont_refpath)                                                   // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;我们知道DECONT部分需要四个参数：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;BWA索引路径&lt;/li&gt;
+&lt;li&gt;BWA索引的前缀&lt;/li&gt;
+&lt;li&gt;DECONT输出路径&lt;/li&gt;
+&lt;li&gt;输入fastq文件：[prefix, r1.fastq, r2.fastq] (&lt;code&gt;tuple prefix, file(reads1), file(reads2)&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;注意这里BWA索引路径需要以Channel的形式传入&lt;/strong&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;引用模块&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;include &amp;#39;./decont&amp;#39; params(index: &amp;quot;$params.decont_index&amp;quot;, outdir: &amp;quot;$params.decont_outdir&amp;quot;)  // ***&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;非文件或路径的参数通过&lt;code&gt;params(param1:, param2:)&lt;/code&gt;传入。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程定义&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;workflow{                                                                                 // ***
+    DECONT(ch_bwa_idx, ch_reads)                                                          // ***
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;执行流程，process所需的输入文件通过上面的方式传入。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;执行&lt;/h2&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls data
+SRR1950772_1.fastq.gz  SRR1950772_2.fastq.gz  SRR1950773_1.fastq.gz  SRR1950773_2.fastq.gz
+$ ./main.nf
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [desperate_mcnulty] - revision: f74174c1c6
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+executor &amp;gt;  local (2)
+[f7/14223b] process &amp;gt; DECONT (SRR1950773) [100%] 2 of 2 ✔&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看结果：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls pipeline_output/decont_out/
+SRR1950772_fastpdecont_1.fastq.gz  SRR1950772.html  SRR1950773_fastpdecont_1.fastq.gz  SRR1950773.html
+SRR1950772_fastpdecont_2.fastq.gz  SRR1950772.json  SRR1950773_fastpdecont_2.fastq.gz  SRR1950773.json&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-II 主函数和输入输出</title>
+      <link>/post/2019-09-29-nextflow-main/</link>
+      <pubDate>Sun, 29 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-29-nextflow-main/</guid>
+      <description>&lt;div id=&#34;nextflow&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;第一个Nextflow程序&lt;/h2&gt;
+&lt;p&gt;创建以下名为main.nf的Nextflow文件&lt;/p&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow
+
+// DSL 2 syntax
+nextflow.preview.dsl=2
+
+// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;
+
+// help message
+def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
+// Create channel for reads
+ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+ch_reads.view()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;逐行解析&lt;/h2&gt;
+&lt;div id=&#34;shebang&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Shebang&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;#!/usr/bin/env nextflow&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;同很多Unix-like脚本一样，第一行叫做&lt;a href=&#34;https://en.wikipedia.org/wiki/Shebang_(Unix)&#34;&gt;“shebang” (Hash bang)&lt;/a&gt;，出现在脚本第一行并以&lt;code&gt;#!&lt;/code&gt;开头。它告诉系统用什么环境软件去解析这个脚本，当它存在并且脚本可执行的时候，我们可以通过直接调用该脚本来运行程序。以下为示例：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;通过Interpreter来调用脚本（shebang不存在时也可使用）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;nextflow run ./main.nf&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;直接调用（需要shebang）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;chmod u+x ./main.nf ## 添加可执行权限
+./main.nf           ## 系统自动使用nextflow运行&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dsl2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;使用DSL2语言&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;nextflow.preview.dsl=2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注：DSL2是新功能，后续语法可能会调整&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level3&#34;&gt;
+&lt;h3&gt;流程参数&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;// parameters
+params.help = false
+params.read_path  = &amp;quot;${workflow.projectDir}/data&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow通过params这个字典来允许执行时直接传入参数。上述的两个参数&lt;code&gt;help&lt;/code&gt;，和&lt;code&gt;read_path&lt;/code&gt;，在命令行中可通过&lt;code&gt;--help&lt;/code&gt;，&lt;code&gt;--read_path /PATH/TO/READS&lt;/code&gt;，来更改。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;./main.nf --help ## 将params.help的值更改为true
+./main.nf --read_path /data/reads/ ## 将params.read_path的值更改为~/reads&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;groovy&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Groovy原生支持&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;def helpMessage() {
+    log.info&amp;quot;&amp;quot;&amp;quot;
+    =================================================================
+    Usage: ${workflow.projectDir}/main.nf --read_path PATH/OF/READS
+    =================================================================
+    &amp;quot;&amp;quot;&amp;quot;.stripIndent()
+}
+if (params.help){
+    helpMessage()
+    exit 0
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nextflow基于Groovy语言，可在流程中直接使用。以上部分定义了函数&lt;code&gt;helppMessage&lt;/code&gt;，在接到&lt;code&gt;--help&lt;/code&gt;输入时会输出帮助文档并退出执行。&lt;code&gt;workflow&lt;/code&gt;为Nextflow定义的特殊字典，&lt;code&gt;${workflow.projectDir}&lt;/code&gt;对应了当前脚本(&lt;code&gt;main.nf&lt;/code&gt;)的目录。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ./main.nf --help
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [distraught_meitner] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+=================================================================
+Usage: /home/ubuntu/shotgunmetagenomics-nf/tutorial/main.nf --read_path PATH/OF/READS
+=================================================================&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;channel&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Channel&lt;/h3&gt;
+&lt;pre class=&#34;groovy&#34;&gt;&lt;code&gt;ch_reads = Channel
+    .fromFilePairs(params.read_path + &amp;#39;/**{1,2}.f*q*&amp;#39;, flat: true)
+
+ch_reads.view()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Netflow定义了Channel，通过Channel来在不同过程(Process)之间传递文件。Channel保证了基于不同文件的运算独立、并行进行。Channel对应的文件会被“拷贝”(经常以symbolic link的形式)到&lt;code&gt;work/&lt;/code&gt;目录下。这个定义其实不是很容易说得清楚，建议阅读Nextflow&lt;a href=&#34;https://www.nextflow.io/docs/latest/channel.html&#34;&gt;帮助文档&lt;/a&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;fromFilePair&lt;/code&gt;专门为fastq打造，可以直接将不同的样本以列表形式分组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&#39;/**{1,2}.f*q*&#39;&lt;/code&gt;定义了文件匹配方式，&lt;code&gt;**&lt;/code&gt;表示递归地检索文件，&lt;code&gt;{1,2}.f*q*&lt;/code&gt;跟bash本身的文件匹配一致，这里会匹配结尾为&lt;code&gt;1.fastq.gz&lt;/code&gt;，&lt;code&gt;2.fastq&lt;/code&gt;，&lt;code&gt;1.fq&lt;/code&gt;，&lt;code&gt;2.fq.gz&lt;/code&gt;的文件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;flat: ture&lt;/code&gt;使返回的双端序列和匹配ID存储为一个列表中。下面是一个例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;$ ls /data/reads/
+SRR1950772_1.fastq.gz  SRR1950772_2.fastq.gz  SRR1950773_1.fastq.gz  SRR1950773_2.fastq.gz
+
+$ ./main.nf --read_path /data/reads/
+N E X T F L O W  ~  version 19.09.0-edge
+Launching `./main.nf` [elegant_volta] - revision: bb88634790
+WARN: DSL 2 IS AN EXPERIMENTAL FEATURE UNDER DEVELOPMENT -- SYNTAX MAY CHANGE IN FUTURE RELEASE
+[SRR1950773, /data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]
+[SRR1950772, /data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果默认情况 (&lt;code&gt;flat: false&lt;/code&gt;)使用&lt;code&gt;.fromFilePairs(params.read_path + &#39;/**{1,2}.f*q*&#39;)&lt;/code&gt;，输出结果会将Read1和Read2合并在一个列表中：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;[SRR1950773, [/data/reads/SRR1950773_1.fastq.gz, /data/reads/SRR1950773_2.fastq.gz]]
+[SRR1950772, [/data/reads/SRR1950772_1.fastq.gz, /data/reads/SRR1950772_2.fastq.gz]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：
+&lt;a href=&#34;https://www.nextflow.io/docs/latest/&#34; class=&#34;uri&#34;&gt;https://www.nextflow.io/docs/latest/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>基于Nextflow的宏基因组有参分析-I 安装Nextflow</title>
+      <link>/post/2019-09-27-nextflow-install/</link>
+      <pubDate>Fri, 27 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-09-27-nextflow-install/</guid>
+      <description>&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;开一个坑&lt;/h2&gt;
+&lt;p&gt;本系列介绍如何搭建基于Nextflow的宏基因组有参分析流程。在此之前我曾经使用bpipe和snakemake写过这个&lt;a href=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline&#34;&gt;流程&lt;/a&gt;。在我们实验室中所有的有参分析都是这个pipeline跑出来的。个人感觉bpipe用起来其实很顺手自然，但是由于社区实在是不够活跃。snakemake基于python而且有很多开发者支持，所以为了学习snakemake，我将之前的流程重新写成了snakemake。但是后来渐渐发现make的这种从后向前结构很别扭，基于文件名构建DAG也是缺乏灵活性。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.nextflow.io/&#34;&gt;Nextflow&lt;/a&gt;作为后起之秀迅速成长，拥有很好的社区支持（&lt;a href=&#34;https://groups.google.com/forum/#!forum/nextflow&#34;&gt;google group&lt;/a&gt;，&lt;a href=&#34;https://gitter.im/nextflow-io/nextflow&#34;&gt;gitter&lt;/a&gt;），原生对云环境（AWS，google cloud）支持，拥有大量优秀成熟流程&lt;a href=&#34;https://github.com/nf-core&#34;&gt;nf-core&lt;/a&gt;。最近的一次更新推出了模块化的&lt;a href=&#34;https://www.nextflow.io/blog/2019/one-more-step-towards-modules.html&#34;&gt;DSL 2架构&lt;/a&gt;，构建可重复利用的流程未来可期。为了更好地学习Nextflow，我将把之前的shotgunMetagenomics流程重写，并把过程记录下来，也希望可以帮助到更多人。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section level2&#34;&gt;
+&lt;h2&gt;流程介绍&lt;/h2&gt;
+&lt;p&gt;这个流程可以参见snakemake生成的DAG:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/lch14forever/shotgun-metagenomics-pipeline/raw/master/snakemake_pipeline/work_flow.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;步骤为：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;合并相同样本&lt;/li&gt;
+&lt;li&gt;去接头&lt;/li&gt;
+&lt;li&gt;去宿主DNA&lt;/li&gt;
+&lt;li&gt;使用Profiling工具（kraken2，MetaPhlAn2）&lt;/li&gt;
+&lt;li&gt;按系统分类拆分&lt;/li&gt;
+&lt;li&gt;合并&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;## 安装Nextflow&lt;/p&gt;
+&lt;p&gt;依赖：java &amp;gt;= 1.8&lt;/p&gt;
+&lt;p&gt;稳定版本安装：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;curl -s https://get.nextflow.io | bash&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Github开发版本安装，支持DSL2语法：&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;git clone https://github.com/nextflow-io/nextflow.git
+
+cd nextflow
+
+make compile
+
+make pack&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;最后的Nextflow在&lt;code&gt;build/releases/nextflow-19.09.0-edge-all&lt;/code&gt;，可以重新命名为&lt;code&gt;nextflow&lt;/code&gt;并放在&lt;code&gt;$PATH&lt;/code&gt;中。&lt;/p&gt;
+&lt;pre class=&#34;sh&#34;&gt;&lt;code&gt;export PATH=$PATH:/PATH/TO/REPO/build/releases/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(未完)&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>An expectation-maximization algorithm enables accurate ecological modeling using longitudinal metagenome sequencing data</title>
+      <link>/publication/microbiome_beem/</link>
+      <pubDate>Sat, 31 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/publication/microbiome_beem/</guid>
       <description></description>
     </item>
     

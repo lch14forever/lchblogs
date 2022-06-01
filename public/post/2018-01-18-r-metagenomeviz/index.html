@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,12 @@
       
     
   
-  <meta name="description" content="平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。一直觉得GraPhlAn的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。">
+  <meta name="description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
+download.file(&quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;, dependencies = T) ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (3db1d3a6) has not changed since last install. ## Use `force = TRUE` to force installation  使用 目前有三个函数：">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2018-01-18-r-metagenomeviz/">
@@ -91,7 +96,12 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2018-01-18-r-metagenomeviz/">
   <meta property="og:title" content="microbiomeViz--人生第一个R包 | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。一直觉得GraPhlAn的图很好看，在Y叔的指导下准备基于ggtree来用R实现它。">
+  <meta property="og:description" content="为啥写这个 平日经常会分析shotgun宏基因组的数据，我们的pipeline使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：
+download.file(&quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;) knitr::kable(head(read.table(&#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)))   V1 V2    k__Bacteria 100.00000  k__Bacteria|p__Firmicutes 64.91753  k__Bacteria|p__Bacteroidetes 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia 64.91753  k__Bacteria|p__Bacteroidetes|c__Bacteroidia 35.08247  k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales 64.91753    第一列是分类信息注释，第二列是相对丰度（百分比）。在做这种图可视化方面，目前个人见过最强大的是GraPhlAn:
+官网上相关的教程很详细，但是问题是，这个完全封闭的python程序，想要hack，还真的是挺难得。Krona可能是另一个选择，但是同样还是会有同样的问题。最近发布的R包Metacoder，画出的图个人真心不是很喜欢：
+跟Y叔讨论了一下用ggtree实现像GraPhlAn那样图的可能性，得到了肯定的答复，于是开始自己造轮子。
+ MicrobiomeViz–千里之行，始于足下 其实可以写一个简单的函数，但是还是想做一个拓展性更强的东西，所以就有了这个包（不断完善中）： https://github.com/lch14forever/microbiomeViz
+ MetaPhlan结果的parser 安装 devtools::install_github(&quot;lch14forever/microbiomeViz&quot;, dependencies = T) ## Skipping install of &#39;microbiomeViz&#39; from a github remote, the SHA1 (3db1d3a6) has not changed since last install. ## Use `force = TRUE` to force installation  使用 目前有三个函数：">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-01-18T00:00:00&#43;00:00">
@@ -279,10 +289,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<div id="为啥写这个" class="section level3">
+        <div id="为啥写这个" class="section level3">
 <h3>为啥写这个</h3>
 <p>平日经常会分析shotgun宏基因组的数据，我们的<a href="https://github.com/gis-rpd/pipelines/tree/devel/metagenomics/shotgun-metagenomics">pipeline</a>使用MetaPhlAn，Kraken等profiler。这种数据经常会产生一个表格，如下：</p>
 <pre class="r"><code>download.file(&quot;https://github.com/biobakery/biobakery/raw/master/demos/biobakery_demos/data/metaphlan2/output/SRS014459-Stool_profile.txt&quot;, &#39;~/Downloads/SRS014459-Stool_profile.txt&#39;)
@@ -466,7 +473,7 @@ Biom数据支持</li>
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     

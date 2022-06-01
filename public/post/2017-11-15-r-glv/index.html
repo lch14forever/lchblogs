@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme" content="hugo-academic">
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.30" />
   <meta name="author" content="Chenhao Li">
 
   
@@ -17,7 +17,8 @@
       
     
   
-  <meta name="description" content="Relative scaling for GLV models">
+  <meta name="description" content="The model \(\frac{dx_i}{dt}= ax_i&#43;\sum_{j=1}^pb_{ij}x_ix_j\)
+## library library(&#39;deSolve&#39;) ## GLV function lvm &lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &lt;- alpha * x &#43; x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &lt;- c(0.1, 0.2, 0.3) beta &lt;- t(matrix(c(-0.5, -0.3 , 0, 0.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2017-11-15-r-glv/">
@@ -91,7 +92,8 @@
   <meta property="og:site_name" content="Chenhao&#39;s Personal Page">
   <meta property="og:url" content="/post/2017-11-15-r-glv/">
   <meta property="og:title" content="Generalized Lotka-Volterra model | Chenhao&#39;s Personal Page">
-  <meta property="og:description" content="Relative scaling for GLV models">
+  <meta property="og:description" content="The model \(\frac{dx_i}{dt}= ax_i&#43;\sum_{j=1}^pb_{ij}x_ix_j\)
+## library library(&#39;deSolve&#39;) ## GLV function lvm &lt;- function(t, x, params){ with(as.list(params, c(x)), { dx &lt;- alpha * x &#43; x * (beta %*% x) list(dx) }) } ## numerical integration n.integrate &lt;- function(time, init.x, model, params){ as.data.frame(ode(init.x, time, model, params)) } ## normalizations TSS &lt;- function(x){ apply(x, 1, function(x)x/sum(x)) }  GLV with 3 species alpha &lt;- c(0.1, 0.2, 0.3) beta &lt;- t(matrix(c(-0.5, -0.3 , 0, 0.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2017-11-15T00:00:00&#43;00:00">
@@ -291,10 +293,7 @@
 
 
       <div class="article-style" itemprop="articleBody">
-        
-
-
-<section id="the-model" class="level2">
+        <section id="the-model" class="level2">
 <h2>The model</h2>
 <p><span class="math inline">\(\frac{dx_i}{dt}= ax_i+\sum_{j=1}^pb_{ij}x_ix_j\)</span></p>
 <pre class="r"><code>## library
@@ -404,7 +403,7 @@ matplot(dat.norm.w_scaled_beta - dat.norm, type=&#39;b&#39;, ylab=&#39;Absolute 
   
 <section id="comments">
   <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     
