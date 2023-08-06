@@ -1,0 +1,97 @@
+---
+title: "Visium中的H&E组织图像的位置计算"
+author: "Chenhao Li"
+output: html_document
+categories: ["R", "ggplot2", "Seurat"]
+tags: ["R", "ggplot2", "Seurat"]
+date: 2023-08-06
+summary: "探索Seurat中SpatialPlot的实现和拓展"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Seurat 
+
+数据来源：https://support.10xgenomics.com/spatial-gene-expression/datasets/1.0.0/V1_Human_Lymph_Node
+
+```{r}
+library(dplyr)
+library(readr)
+library(Seurat)
+
+data <- Load10X_Spatial("~/Downloads/V1_Human_Lymph_Node/", filename = "V1_Human_Lymph_Node_filtered_feature_bc_matrix.h5")
+
+SpatialFeaturePlot(data, features = "CR2")
+```
+
+`SpatialDimPlot`或`SpatialFeaturePlot`会产生一个patchwork/ggplot的对象，所以我们可以按照ggplot的方式添加图层。首先构建一个有每个spot位置信息（`GetTissueCoordinates`）和表达量信息（`FetchData`）的data.frame。
+
+```{r}
+feature.data <- FetchData(data, c("CR2", "CLU")) %>% merge(GetTissueCoordinates(data), by=0)
+head(feature.data)
+```
+以`geom_star`添加（画半圆需要最新github版本的ggstar）
+
+```{r fig.height=10, fig.width=10}
+library(ggplot2)
+library(ggstar)
+library(ggnewscale)
+SpatialDimPlot(data, pt.size.factor = 0) + NoLegend() + 
+  new_scale_fill() +
+  geom_star(data=feature.data, aes(x=imagecol, y=576-imagerow, fill=CR2), 
+            inherit.aes = F, starshape=31, size=2.5, alpha=0.5)  +
+  scale_fill_gradient(low="darkblue", high="red") +
+  new_scale_fill() + 
+  geom_star(data=feature.data, aes(x=imagecol, y=576-imagerow, fill=CLU), 
+            inherit.aes = F, starshape=31, size=2.5, angle=180, alpha=0.5)  +
+  scale_fill_gradient(low="darkblue", high="green")
+  
+```
+
+更深入的理解需要明白两个重要的坐标变换：（1）`imagerow`和`imagecol`是如何计算出来的；（2）作图时如何将他们对应到图像上。
+
+这些重要的位置信息其实可以在spaceranger的`spatial/`文件夹下找到
+
+```{sh}
+cd ~/Downloads/V1_Human_Lymph_Node
+tree spatial/
+file spatial/tissue_lowres_image.png
+
+cat spatial/scalefactors_json.json
+```
+
+ - `tissue_lowres_image.png`：Load10X_Spatial默认寻找的图像，可以看到是一个576x600的图像
+ - `tissue_positions_list.csv`：记录了每个UMI对应的位置（[参考官方文档](https://support.10xgenomics.com/spatial-gene-expression/software/pipelines/latest/output/spatial)）。其中最后两列是：`pxl_row_in_fullres`: The row pixel coordinate of the center of the spot in the full resolution image. `pxl_col_in_fullres`: The column pixel coordinate of the center of the spot in the full resolution image.
+ - `scalefactors_json.json`：关键的scaling factor参数。`tissue_lowres_scalef`对应的`tissue_lowres_image.png`为**0.051033426**
+ 
+从上面`GetTissueCoordinates`的输出中我们看到barcode`AAACAAGTATCTCCCA-1`对应的位置是`(imagerow=356.31538, imagecol=425.97601)`。在10X原始位置信息中我们可以找到这个barcode的对应位置：
+
+
+```{r}
+read_csv("~/Downloads/V1_Human_Lymph_Node/spatial/tissue_positions_list.csv", col_names = F) %>% 
+  filter(X1=="AAACAAGTATCTCCCA-1")
+```
+ 
+对应的坐标为`(6982, 8347)`，从这个坐标换算到`lowres`图像的系数为JSON文件中的`0.051033426`：
+ 
+```{r}
+read_csv("~/Downloads/V1_Human_Lymph_Node/spatial/tissue_positions_list.csv", col_names = F) %>% 
+  filter(X1=="AAACAAGTATCTCCCA-1") %>% 
+  select(X1, X5, X6) %>% 
+  mutate_if(is.numeric, ~ .x*0.051033426)
+```
+
+在作图的时候需要注意`x`为`imagecol`，`y`为翻转的`imagerow`，也就是`576-imagerow`，其中576为图像的高度
+
+```{r eval=FALSE, include=FALSE}
+geom_star(data=feature.data, aes(x=imagecol, y=576-imagerow, fill=CLU)
+```
+
+执行信息
+
+```{r}
+sessionInfo()
+```
+
